@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SLU Aviation Weather Restrictions</title>
+<style>
+    body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f4; }
+    h1, h2 { color: #333; }
+    table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    th { background-color: #4CAF50; color: white; }
+    .highlight { background-color: #ffcccc; font-weight: bold; }
+    .metar { background-color: #e0e0e0; padding: 10px; margin-bottom: 20px; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<h1>Saint Louis University Oliver L. Parks Department of Aviation Science</h1>
+<h2>Current Weather and Flight Restrictions</h2>
+
+<h3>Latest METAR Data</h3>
+<div class="metar" id="kcps-metar">KCPS METAR: Loading...</div>
+<div class="metar" id="kstl-metar">KSTL METAR: Loading...</div>
+
+<h3>Current Weather Conditions (KCPS)</h3>
+<p id="weather-conditions">Temperature: Loading... | Relative Humidity: Loading...</p>
+
+<h3>Pilot Restrictions</h3>
+<table>
+<tr>
+    <th>Pilot Type</th><th>Ceiling < 1,500 ft AGL</th><th>Visibility < 3 SM</th>
+    <th>Surface Winds</th><th>Crosswind Runway 12</th><th>Crosswind Runway 30</th><th>Status</th>
+</tr>
+<tr id="student-restrictions">
+    <td>Student Pilot</td><td id="student-ceiling">...</td><td id="student-visibility">...</td>
+    <td id="student-winds">...</td><td id="student-crosswind-12">...</td><td id="student-crosswind-30">...</td><td id="student-status">...</td>
+</tr>
+<tr id="private-restrictions">
+    <td>Private Pilot</td><td id="private-ceiling">...</td><td id="private-visibility">...</td>
+    <td id="private-winds">...</td><td id="private-crosswind-12">...</td><td id="private-crosswind-30">...</td><td id="private-status">...</td>
+</tr>
+<tr id="instrument-restrictions">
+    <td>Instrument/Commercial</td><td id="instrument-ceiling">...</td><td id="instrument-visibility">...</td>
+    <td id="instrument-winds">...</td><td id="instrument-crosswind-12">...</td><td id="instrument-crosswind-30">...</td><td id="instrument-status">...</td>
+</tr>
+</table>
+
+<h3>Heat Index and Temperature Restrictions</h3>
+<table>
+<tr><th>Condition</th><th>Status</th></tr>
+<tr id="heat-index-105"><td>Heat Index ≥ 105°F: All Flights Restricted</td><td id="heat-index-105-status">...</td></tr>
+<tr id="heat-index-100"><td>Heat Index ≥ 100°F: Diamond Flights Restricted</td><td id="heat-index-100-status">...</td></tr>
+<tr id="temp-32"><td>Temperature < 32°F: Avoid extended power-off ops</td><td id="temp-32-status">...</td></tr>
+<tr id="temp-23"><td>Temperature ≤ 23°F: Preheat or recent flight required</td><td id="temp-23-status">...</td></tr>
+<tr id="temp-14"><td>Temperature ≤ 14°F: No solos or cross-countries</td><td id="temp-14-status">...</td></tr>
+<tr id="temp-5"><td>Temperature ≤ 5°F: All Flights Restricted</td><td id="temp-5-status">...</td></tr>
+</table>
+
+<script>
+const kcpsElevation = 413;
+const currentTime = new Date();  // current UTC time
+const twoHoursAgo = new Date(currentTime - 2 * 60 * 60 * 1000);
+
+const kcpsUrl = "https://corsproxy.io/?" + encodeURIComponent("https://tgftp.nws.noaa.gov/data/observations/metar/stations/KCPS.TXT");
+const kstlUrl = "https://corsproxy.io/?" + encodeURIComponent("https://tgftp.nws.noaa.gov/data/observations/metar/stations/KSTL.TXT");
+
+function parseMetar(metar) {
+    const parts = metar.split(' ');
+    let windDir = 0, windSpeed = 0, visibility = 10, clouds = [], temp = 0, dewpoint = 0, timestamp = null;
+    for (let i = 1; i < parts.length; i++) {
+        if (/^\d{6}Z$/.test(parts[i])) {
+            const day = parseInt(parts[i].substring(0, 2));
+            const hour = parseInt(parts[i].substring(2, 4));
+            const minute = parseInt(parts[i].substring(4, 6));
+            timestamp = new Date(Date.UTC(currentTime.getUTCMonth() === 11 && day < 15 ? currentTime.getUTCFullYear() + 1 : currentTime.getUTCFullYear(), currentTime.getUTCMonth(), day, hour, minute));
+        }
+        if (/^\d{3}\d{2}KT$/.test(parts[i])) {
+            windDir = parseInt(parts[i].substring(0, 3));
+            windSpeed = parseInt(parts[i].substring(3, 5));
+        }
+        if (/^\d{1,2}SM$/.test(parts[i])) {
+            visibility = parseInt(parts[i]);
+        }
+        if (/^(FEW|SCT|BKN|OVC)\d{3}$/.test(parts[i])) {
+            clouds.push(parts[i]);
+        }
+        if (/^(M?\d{1,2})\/(M?\d{1,2})$/.test(parts[i])) {
+            const [match, t, d] = parts[i].match(/(M?\d{1,2})\/(M?\d{1,2})/);
+            temp = t.startsWith('M') ? -parseInt(t.slice(1)) : parseInt(t);
+            dewpoint = d.startsWith('M') ? -parseInt(d.slice(1)) : parseInt(d);
+        }
+    }
+    return { windDir, windSpeed, visibility, clouds, temp, dewpoint, timestamp };
+}
+
+function calculateCrosswind(windDir, windSpeed, runwayHeading) {
+    let angle = Math.abs(windDir - runwayHeading);
+    if (angle > 180) angle = 360 - angle;
+    return Math.abs(windSpeed * Math.sin(angle * Math.PI / 180));
+}
+function calculateRH(tempC, dewpointC) {
+    const a = 17.625, b = 243.04;
+    return 100 * (Math.exp((a * dewpointC)/(b + dewpointC)) / Math.exp((a * tempC)/(b + tempC)));
+}
+function calculateHI(tempF, rh) {
+    if (tempF < 80) return tempF;
+    return Math.round(-42.379 + 2.04901523 * tempF + 10.14333127 * rh - 0.22475541 * tempF * rh
+        - 0.00683783 * tempF * tempF - 0.05481717 * rh * rh
+        + 0.00122874 * tempF * tempF * rh + 0.00085282 * tempF * rh * rh
+        - 0.00000199 * tempF * tempF * rh * rh);
+}
+
+function clearHighlights() {
+    ["student","private","instrument"].forEach(id =>
+        document.getElementById(id+"-restrictions").classList.remove("highlight"));
+    ["heat-index-105","heat-index-100","temp-32","temp-23","temp-14","temp-5"].forEach(id =>
+        document.getElementById(id).classList.remove("highlight"));
+}
+
+function checkRestrictions(data, elevation) {
+    clearHighlights();
+    const ceilingCloud = data.clouds.find(c => c.startsWith("BKN") || c.startsWith("OVC"));
+    const ceiling = ceilingCloud ? parseInt(ceilingCloud.substring(3)) * 100 - elevation : Infinity;
+    const cross12 = calculateCrosswind(data.windDir, data.windSpeed, 120);
+    const cross30 = calculateCrosswind(data.windDir, data.windSpeed, 300);
+    const tempF = data.temp * 9/5 + 32;
+    const rh = Math.min(calculateRH(data.temp, data.dewpoint), 100);
+    const hi = calculateHI(tempF, rh);
+
+    document.getElementById("weather-conditions").innerText =
+        `Temperature: ${tempF.toFixed(1)}°F | Relative Humidity: ${rh.toFixed(0)}%`;
+
+    [["student",1500,3,20,10,10],["private",1500,3,25,15,15],["instrument",null,3,30,20,20]].forEach(rule=>{
+        const [type, ceilLimit, visLimit, windLimit, cross12Limit, cross30Limit] = rule;
+        const ceilingOK = ceilLimit ? ceiling >= ceilLimit : true;
+        const visOK = data.visibility >= visLimit;
+        const windOK = data.windSpeed < windLimit;
+        const cross12OK = cross12 <= cross12Limit;
+        const cross30OK = cross30 <= cross30Limit;
+
+        document.getElementById(`${type}-ceiling`).innerText = ceilLimit ? (ceilingOK ? "✓":"✗") : "N/A";
+        document.getElementById(`${type}-visibility`).innerText = visOK ? "✓":"✗";
+        document.getElementById(`${type}-winds`).innerText = windOK ? "✓":"✗";
+        document.getElementById(`${type}-crosswind-12`).innerText = cross12OK ? "✓":"✗";
+        document.getElementById(`${type}-crosswind-30`).innerText = cross30OK ? "✓":"✗";
+
+        const allowed = ceilingOK && visOK && windOK && cross12OK && cross30OK;
+        document.getElementById(`${type}-status`).innerText = allowed ? "Solo Allowed" : "No Solo Allowed";
+        if (!allowed) document.getElementById(`${type}-restrictions`).classList.add("highlight");
+    });
+
+    [["heat-index-105", hi>=105],["heat-index-100", hi>=100],["temp-32", tempF<32],
+     ["temp-23", tempF<=23],["temp-14", tempF<=14],["temp-5", tempF<=5]].forEach(([id, restrict])=>{
+        document.getElementById(`${id}-status`).innerText = restrict ? "Restricted" : "Not Restricted";
+        if (restrict) document.getElementById(id).classList.add("highlight");
+    });
+}
+
+async function fetchWeatherData() {
+    try {
+        let kcpsMetar = await (await fetch(kcpsUrl)).text();
+        kcpsMetar = kcpsMetar.trim().split("\n").pop();
+        document.getElementById("kcps-metar").innerText = `KCPS METAR:\n${kcpsMetar}`;
+        let kcpsData = parseMetar(kcpsMetar);
+
+        if (kcpsData.timestamp && kcpsData.timestamp >= twoHoursAgo) {
+            checkRestrictions(kcpsData, kcpsElevation);
+        } else {
+            let kstlMetar = await (await fetch(kstlUrl)).text();
+            kstlMetar = kstlMetar.trim().split("\n").pop();
+            document.getElementById("kstl-metar").innerText = `KSTL METAR:\n${kstlMetar}`;
+            let kstlData = parseMetar(kstlMetar);
+            if (kstlData.timestamp && kstlData.timestamp >= twoHoursAgo) {
+                checkRestrictions(kstlData, 605);
+            }
+        }
+    } catch (err) {
+        console.error("Error fetching METARs:", err);
+    }
+}
+fetchWeatherData();
+</script>
+</body>
+</html>
