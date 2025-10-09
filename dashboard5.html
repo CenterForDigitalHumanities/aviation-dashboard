@@ -108,17 +108,9 @@
     <h3>Service Announcements</h3>
     <div id="announcements-content">
         <div class="announcement-item">
-            <div class="announcement-date">October 9, 2025</div>
-            <div class="announcement-title">Welcome to the Aviation Dashboard</div>
-            <div class="announcement-content">This dashboard provides real-time weather conditions and flight
-                restrictions for SLU Aviation operations. Please check this section regularly for important updates.
-            </div>
-        </div>
-        <!-- Additional announcements can be added here -->
-        <div class="announcement-item hidden">
-            <div class="announcement-date">Date</div>
-            <div class="announcement-title">Announcement Title</div>
-            <div class="announcement-content">Announcement content goes here.</div>
+            <div class="announcement-date">Loading...</div>
+            <div class="announcement-title">Loading announcements...</div>
+            <div class="announcement-content">Please wait while we fetch the latest service announcements.</div>
         </div>
     </div>
 </div>
@@ -307,7 +299,102 @@ async function fetchWeatherData() {
         document.getElementById("kcps-metar").innerText = "Error loading weather data";
     }
 }
+
+async function fetchAnnouncements() {
+    try {
+        const owner = 'CenterForDigitalHumanities';
+        const repo = 'aviation-dashboard';
+        
+        // Fetch discussions directly from GitHub API
+        // Note: This uses the public REST API endpoint for discussions
+        const discussionsUrl = `https://api.github.com/repos/${owner}/${repo}/discussions`;
+        
+        const response = await fetch(discussionsUrl, {
+            headers: {
+                'Accept': 'application/vnd.github.v3+json'
+            }
+        });
+
+        if (!response.ok) {
+            console.warn(`GitHub API returned ${response.status}, falling back to default announcement`);
+            showDefaultAnnouncement();
+            return;
+        }
+
+        const discussions = await response.json();
+        
+        // Filter for announcements (category name or label)
+        const announcements = discussions
+            .filter(d => d.category?.name === 'Announcements')
+            .filter(d => d.state === 'open')
+            .sort((a, b) => new Date(b.created_at) - new Date(a.created_at)) // Newest first
+            .slice(0, 10) // Limit to 10 most recent
+            .map(d => ({
+                title: d.title,
+                content: d.body || '',
+                date: d.created_at
+            }));
+        
+        if (announcements.length === 0) {
+            const container = document.getElementById('announcements-content');
+            container.innerHTML = `
+                <div class="announcement-item">
+                    <div class="announcement-title">No announcements at this time</div>
+                    <div class="announcement-content">Check back later for updates.</div>
+                </div>
+            `;
+            return;
+        }
+
+        displayAnnouncements(announcements);
+
+    } catch (error) {
+        console.error('Error fetching announcements:', error);
+        showDefaultAnnouncement();
+    }
+}
+
+function displayAnnouncements(announcements) {
+    const container = document.getElementById('announcements-content');
+    
+    container.innerHTML = announcements.map(announcement => {
+        const date = new Date(announcement.date || announcement.createdAt).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+        
+        // Convert markdown to basic HTML (simple implementation)
+        const content = (announcement.content || announcement.body || '')
+            .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\*(.+?)\*/g, '<em>$1</em>')
+            .replace(/\n/g, '<br>');
+
+        return `
+            <div class="announcement-item">
+                <div class="announcement-date">${date}</div>
+                <div class="announcement-title">${announcement.title}</div>
+                <div class="announcement-content">${content}</div>
+            </div>
+        `;
+    }).join('');
+}
+
+function showDefaultAnnouncement() {
+    const container = document.getElementById('announcements-content');
+    container.innerHTML = `
+        <div class="announcement-item">
+            <div class="announcement-date">October 9, 2025</div>
+            <div class="announcement-title">Welcome to the Aviation Dashboard</div>
+            <div class="announcement-content">This dashboard provides real-time weather conditions and flight
+                restrictions for SLU Aviation operations. Please check this section regularly for important updates.
+            </div>
+        </div>
+    `;
+}
+
 fetchWeatherData();
+fetchAnnouncements();
 </script>
 </body>
 </html>
