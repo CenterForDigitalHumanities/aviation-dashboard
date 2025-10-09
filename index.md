@@ -21,6 +21,9 @@ Large-format TV display dashboard with weather graphics, flight status, announce
 ### [Simplified Dashboard](dashboard5.html)
 Streamlined dashboard with prominent flight status card showing current operational status at a glance.
 
+### [Quick View Dashboard](quick.html)
+Large-format TV display dashboard with weather graphics, auto-refresh timers, and optimized two-column layout for monitor viewing.
+
 ### [Demo Page](documentation/demo.html)
 Demonstration page showing all possible status scenarios with live current conditions and 11 example scenarios.
 
@@ -76,6 +79,8 @@ The system uses a **concentric restriction model** with four status levels:
 - ✅ **Service announcements** section for operational updates
 - ✅ **Large-format TV display** option for monitor viewing
 - ✅ **Mobile-responsive** design for access anywhere
+- ✅ **Visual weather graphics** with icons and color-coded alerts
+- ✅ **Large-format TV display option** for monitor viewing
 
 ---
 
@@ -84,6 +89,7 @@ The system uses a **concentric restriction model** with four status levels:
 - [View Main Dashboard](dashboard.html)
 - [View Quick View Dashboard](quick.html)
 - [View Simplified Dashboard](dashboard5.html)
+- [View Quick View Dashboard](quick.html)
 - [View Demo Scenarios](documentation/demo.html)
 - [Read Documentation](documentation/)
 - [GitHub Repository](https://github.com/CenterForDigitalHumanities/aviation-dashboard)
