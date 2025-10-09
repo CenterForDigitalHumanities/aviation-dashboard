@@ -1,5 +1,4 @@
 ---
-layout: default
 title: SLU Aviation Dashboard
 ---
 
@@ -19,7 +18,7 @@ Full-featured dashboard with comprehensive weather data, heat index restrictions
 ### [Simplified Dashboard](dashboard5.html)
 Streamlined dashboard with prominent flight status card showing current operational status at a glance.
 
-### [Demo Page](demo.html)
+### [Demo Page](documentation/demo.html)
 Demonstration page showing all possible status scenarios with live current conditions and 11 example scenarios.
 
 ---
@@ -79,7 +78,7 @@ The system uses a **concentric restriction model** with four status levels:
 
 - [View Main Dashboard](dashboard.html)
 - [View Simplified Dashboard](dashboard5.html)
-- [View Demo Scenarios](demo.html)
+- [View Demo Scenarios](documentation/demo.html)
 - [Read Documentation](documentation/)
 - [GitHub Repository](https://github.com/CenterForDigitalHumanities/aviation-dashboard)
 

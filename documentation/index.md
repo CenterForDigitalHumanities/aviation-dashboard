@@ -1,5 +1,4 @@
 ---
-layout: default
 title: Documentation Index
 permalink: /documentation/
 ---
@@ -24,6 +23,9 @@ Heat index and cold temperature operational limits and restrictions.
 
 ### 5. [Runway Information](runway-information.md)
 Runway headings and airport elevation data used in calculations.
+
+### 6. [Demo Page](demo.html)
+Interactive demonstration showing all 11 flight restriction scenarios with live current conditions and detailed examples.
 
 ---
 

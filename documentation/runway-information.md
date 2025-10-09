@@ -1,5 +1,4 @@
 ---
-layout: default
 title: Runway Information
 permalink: /documentation/runway-information/
 ---
@@ -277,3 +276,4 @@ These factors may be added in future versions if operational needs require.
 - [Flight Restrictions Overview](flight-restrictions.md)
 - [Wind Restrictions](wind-restrictions.md)
 - [Visibility and Ceiling Restrictions](visibility-ceiling-restrictions.md)
+- [Demo Page](demo.html) - Interactive crosswind calculation examples

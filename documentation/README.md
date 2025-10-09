@@ -1,5 +1,4 @@
 ---
-layout: default
 title: Documentation Guide
 permalink: /documentation/guide/
 ---
@@ -137,6 +136,31 @@ Quick navigation to all documentation files with overview of the concentric rest
 
 ---
 
+### [Demo Page](demo.html)
+**Key Topics**:
+- Live current conditions with real-time METAR data
+- 11 interactive scenarios demonstrating all restriction levels
+- Visual examples of all four flight status levels
+- Combined wind, visibility, ceiling, and temperature scenarios
+- Heat index and cold weather examples
+
+**Scenario Coverage**:
+1. Perfect flying conditions (All Clear)
+2. Moderate winds (Private+ Only)
+3. High crosswind (Commercial Only)
+4. Very high winds (All Restricted)
+5. Low ceiling (All Restricted)
+6. Poor visibility (All Restricted)
+7. Multiple factors (Commercial Only)
+8. Marginal conditions (Private+ Only)
+9. Extreme heat (All Restricted)
+10. Cold weather with winds (Private+ Only)
+11. Extreme cold (All Restricted)
+
+**Use This When**: Training pilots, explaining the restriction model, demonstrating system capabilities, or understanding how different weather conditions affect flight status.
+
+---
+
 ## Quick Reference: All Thresholds
 
 ### Wind Thresholds
@@ -183,21 +207,21 @@ Quick navigation to all documentation files with overview of the concentric rest
 - `documentation/wind-restrictions.md`
 - `dashboard.html` - checkRestrictions()
 - `dashboard5.html` - checkRestrictions()
-- `demo.html` - loadCurrentConditions()
+- `documentation/demo.html` - loadCurrentConditions()
 - `shared-weather.js` - calculateCrosswind()
 
 **Temperature Restrictions**:
 - `documentation/temperature-restrictions.md`
 - `dashboard.html` - heat index table
 - `dashboard5.html` - heat index table and flight status
-- `demo.html` - temperature scenarios
+- `documentation/demo.html` - temperature scenarios
 - `shared-weather.js` - calculateHeatIndex(), calculateHumidity()
 
 **Visibility/Ceiling Restrictions**:
 - `documentation/visibility-ceiling-restrictions.md`
 - `dashboard.html` - checkRestrictions()
 - `dashboard5.html` - checkRestrictions()
-- `demo.html` - loadCurrentConditions()
+- `documentation/demo.html` - loadCurrentConditions()
 
 ---
 
@@ -277,7 +301,7 @@ Restrictions should be reviewed periodically and updated based on:
 - `README.md` - Project overview
 - `dashboard.html` - Main operational dashboard
 - `dashboard5.html` - Simplified dashboard
-- `demo.html` - Demonstration with scenarios
+- `documentation/demo.html` - Demonstration with scenarios
 - `shared-weather.js` - Calculation utilities
 - `.github/workflows/update-weather.yml` - Automated data updates
 - `scripts/fetch-weather.py` - Weather fetching script

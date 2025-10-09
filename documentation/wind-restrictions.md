@@ -1,5 +1,4 @@
 ---
-layout: default
 title: Wind Restrictions
 permalink: /documentation/wind-restrictions/
 ---
@@ -163,7 +162,7 @@ Wind restrictions are displayed with the 🌬️ emoji indicator:
 
 ## Testing Scenarios
 
-The following scenarios are demonstrated in `demo.html`:
+The following scenarios are demonstrated in the [demo page](demo.html):
 
 1. **Moderate Winds** (Scenario 2): 22 knots → Private+ Only
 2. **High Crosswind** (Scenario 3): 18.2 knot crosswind → Commercial Only
@@ -177,3 +176,4 @@ The following scenarios are demonstrated in `demo.html`:
 - [Flight Restrictions Overview](flight-restrictions.md)
 - [Visibility and Ceiling Restrictions](visibility-ceiling-restrictions.md)
 - [Runway Information](runway-information.md)
+- [Demo Page](demo.html) - Interactive wind restriction examples

@@ -1,5 +1,4 @@
 ---
-layout: default
 title: Flight Restrictions Overview
 permalink: /documentation/flight-restrictions/
 ---
@@ -153,7 +152,7 @@ When multiple restricting factors are present, all are displayed in the flight s
 - The most restrictive condition always takes precedence
 - Temperature restrictions are evaluated independently but can upgrade the overall status
 - All thresholds are applied consistently across both dashboards (dashboard.html and dashboard5.html)
-- The demo.html page shows 11 scenarios demonstrating all restriction levels
+- The [demo page](demo.html) shows 11 scenarios demonstrating all restriction levels
 
 ---
 
@@ -161,3 +160,4 @@ When multiple restricting factors are present, all are displayed in the flight s
 - [Wind Restrictions](wind-restrictions.md)
 - [Visibility and Ceiling Restrictions](visibility-ceiling-restrictions.md)
 - [Temperature Restrictions](temperature-restrictions.md)
+- [Demo Page](demo.html) - Interactive examples of all scenarios

@@ -1,5 +1,4 @@
 ---
-layout: default
 title: Visibility and Ceiling Restrictions
 permalink: /documentation/visibility-ceiling-restrictions/
 ---
@@ -205,7 +204,7 @@ When multiple BKN or OVC layers exist:
 
 ## Testing Scenarios
 
-The following scenarios are demonstrated in `demo.html`:
+The following scenarios are demonstrated in the [demo page](demo.html):
 
 1. **Low Ceiling** (Scenario 5): 1,200 ft ceiling → All Restricted
 2. **Poor Visibility** (Scenario 6): 2.0 SM visibility → All Restricted
@@ -239,3 +238,4 @@ Restricting factors: ☁️ Ceiling 1100 ft, 👁️ Visibility 1.5 SM
 - [Flight Restrictions Overview](flight-restrictions.md)
 - [Wind Restrictions](wind-restrictions.md)
 - [Runway Information](runway-information.md)
+- [Demo Page](demo.html) - Interactive visibility and ceiling examples

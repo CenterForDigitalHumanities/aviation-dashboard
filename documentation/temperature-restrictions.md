@@ -1,5 +1,4 @@
 ---
-layout: default
 title: Temperature Restrictions
 permalink: /documentation/temperature-restrictions/
 ---
@@ -267,7 +266,7 @@ Restricting factors: 🌬️ 22 knots, ❄️ Temperature 18°F - Preheat requir
 
 ## Testing Scenarios
 
-Temperature scenarios are demonstrated in `demo.html`:
+Temperature scenarios are demonstrated in the [demo page](demo.html):
 
 1. **Extreme Heat** (Scenario 9): Heat Index 108°F → All Restricted
 2. **Cold Weather with Winds** (Scenario 10): 18°F with 22kt winds → Private+ Only (combined)
@@ -294,3 +293,4 @@ Temperature scenarios are demonstrated in `demo.html`:
 - [Flight Restrictions Overview](flight-restrictions.md)
 - [Wind Restrictions](wind-restrictions.md)
 - [Visibility and Ceiling Restrictions](visibility-ceiling-restrictions.md)
+- [Demo Page](demo.html) - Interactive temperature restriction examples
