@@ -516,8 +516,8 @@ function calculateFlightRestrictions(data, elevation) {
     }
     
     // Temperature restrictions
-    if (data.temperature !== undefined && data.temperature !== null) {
-        const tempF = data.temperature * 9/5 + 32;
+    if (data.temperatureC !== undefined && data.temperatureC !== null) {
+        const tempF = data.temperatureC * 9/5 + 32;
         if (tempF <= 5) {
             restrictions.all.push(`🌡️ ${tempF.toFixed(0)}°F`);
         } else if (tempF <= 14) {
@@ -527,8 +527,8 @@ function calculateFlightRestrictions(data, elevation) {
         }
         
         // Heat index for high temperatures
-        if (data.dewpoint !== undefined && tempF >= 80) {
-            const dewpointF = data.dewpoint * 9/5 + 32;
+        if (data.dewPointC !== undefined && tempF >= 80) {
+            const dewpointF = data.dewPointC * 9/5 + 32;
             const heatIndex = calculateHeatIndex(tempF, dewpointF);
             if (heatIndex >= 105) {
                 restrictions.all.push(`🔥 ${heatIndex.toFixed(0)}°F heat index`);
@@ -570,8 +570,8 @@ function calculateFlightRestrictions(data, elevation) {
 
 function updateWeatherGraphics(data) {
     // Temperature
-    if (data.temperature !== undefined && data.temperature !== null) {
-        const tempF = data.temperature * 9/5 + 32;
+    if (data.temperatureC !== undefined && data.temperatureC !== null) {
+        const tempF = data.temperatureC * 9/5 + 32;
         document.getElementById('temp-value').textContent = `${tempF.toFixed(0)}°F`;
         
         const tempMetric = document.getElementById('temp-metric');
@@ -584,9 +584,9 @@ function updateWeatherGraphics(data) {
     }
     
     // Humidity
-    if (data.temperature !== undefined && data.dewpoint !== undefined) {
-        const tempC = data.temperature;
-        const dewpointC = data.dewpoint;
+    if (data.temperatureC !== undefined && data.dewPointC !== undefined) {
+        const tempC = data.temperatureC;
+        const dewpointC = data.dewPointC;
         const humidity = 100 * Math.exp((17.625 * dewpointC) / (243.04 + dewpointC)) / Math.exp((17.625 * tempC) / (243.04 + tempC));
         document.getElementById('humidity-value').textContent = `${humidity.toFixed(0)}%`;
         
