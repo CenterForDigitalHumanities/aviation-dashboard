@@ -150,10 +150,10 @@ def main():
     }
     
     # Write to file
-    with open('weather-data.json', 'w') as f:
+    with open('data/weather-data.json', 'w') as f:
         json.dump(output_data, f, indent=2)
     
-    print('Weather data written to weather-data.json')
+    print('Weather data written to data/weather-data.json')
     print(json.dumps(output_data, indent=2))
     
     return output_data
