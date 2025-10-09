@@ -111,7 +111,7 @@ Each workflow run shows:
 ### Invalid Data
 1. Check workflow logs for METAR fetch errors
 2. Verify NOAA URLs are still correct
-3. Check parsing logic in fetch-weather.js
+3. Check parsing logic in fetch-weather.py
 
 ### Dashboard Not Updating
 1. Clear browser cache
