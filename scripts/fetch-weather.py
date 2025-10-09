@@ -6,7 +6,7 @@ Fetches METAR data from NOAA and parses it into JSON format
 
 import json
 import re
-from datetime import datetime
+from datetime import datetime, timezone
 from urllib.request import urlopen
 from urllib.error import URLError
 
@@ -59,9 +59,9 @@ def parse_metar(metar_text):
         day = int(time_match.group(1)[0:2])
         hour = int(time_match.group(1)[2:4])
         minute = int(time_match.group(1)[4:6])
-        now = datetime.utcnow()
-        metar_date = datetime(now.year, now.month, day, hour, minute)
-        data['timestamp'] = metar_date.isoformat() + 'Z'
+        now = datetime.now(timezone.utc)
+        metar_date = datetime(now.year, now.month, day, hour, minute, tzinfo=timezone.utc)
+        data['timestamp'] = metar_date.isoformat()
     
     # Wind
     wind_match = re.search(r'(\d{3})(\d{2,3})(G(\d{2,3}))?KT', metar_text)
@@ -124,7 +124,7 @@ def parse_metar(metar_text):
 def main():
     """Main function to fetch and process weather data"""
     print('Starting weather data fetch...')
-    print(f'Timestamp: {datetime.utcnow().isoformat()}Z')
+    print(f'Timestamp: {datetime.now(timezone.utc).isoformat()}')
     
     # Fetch both METARs
     kcps_metar = fetch_metar(KCPS_URL)
@@ -136,7 +136,7 @@ def main():
     
     # Create output data structure
     output_data = {
-        'lastUpdated': datetime.utcnow().isoformat() + 'Z',
+        'lastUpdated': datetime.now(timezone.utc).isoformat(),
         'kcps': kcps_data or {
             'station': 'KCPS',
             'metar': 'Data unavailable',
@@ -149,11 +149,11 @@ def main():
         }
     }
     
-    # Write to file
-    with open('data/weather-data.json', 'w') as f:
+    # Write to file (in scripts directory, workflow will copy it)
+    with open('weather-data.json', 'w') as f:
         json.dump(output_data, f, indent=2)
     
-    print('Weather data written to data/weather-data.json')
+    print('Weather data written to weather-data.json')
     print(json.dumps(output_data, indent=2))
     
     return output_data
