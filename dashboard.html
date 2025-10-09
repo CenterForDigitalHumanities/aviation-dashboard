@@ -204,175 +204,59 @@
         </div>
     </div>
 
+    <!-- Shared weather utilities -->
+    <script src="shared-weather.js"></script>
+
     <script>
-        const OPENWEATHER_API_KEY = "5961a427c0046352f815238c583582d7";
-        const KCPS_METAR_URL = "https://tgftp.nws.noaa.gov/data/observations/metar/stations/KCPS.TXT";
-        const KSTL_METAR_URL = "https://tgftp.nws.noaa.gov/data/observations/metar/stations/KSTL.TXT";
-        const KCPS_RUNWAY_12_HDG = 122; // True heading for KCPS Runway 12
-        const KCPS_RUNWAY_30_HDG = 302; // True heading for KCPS Runway 30
-
-        async function fetchMetar(url) {
-            try {
-                const response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return await response.text();
-            } catch (error) {
-                console.error(`Could not fetch METAR from ${url}:`, error);
-                return null;
-            }
-        }
-
-        function parseMetar(metarText) {
-            const data = {};
-            if (!metarText) return null;
-
-            const parts = metarText.split(/\s+/);
-            
-            // Extract observation time (UTC)
-            const timeMatch = metarText.match(/(\d{6}Z)/);
-            if (timeMatch) {
-                const day = parseInt(timeMatch[1].substring(0, 2));
-                const hour = parseInt(timeMatch[1].substring(2, 4));
-                const minute = parseInt(timeMatch[1].substring(4, 6));
-                const now = new Date();
-                const year = now.getUTCFullYear();
-                const month = now.getUTCMonth(); // 0-11
-                const metarDate = new Date(Date.UTC(year, month, day, hour, minute));
-                data.time = metarDate;
-            } else {
-                 console.warn("Could not parse METAR time.");
-                 data.time = new Date(0); // Set to epoch if time cannot be parsed
-            }
-
-            // Wind
-            const windMatch = metarText.match(/(\d{3})(\d{2,3})(G\d{2})?KT/);
-            if (windMatch) {
-                data.windDirection = parseInt(windMatch[1]);
-                data.windSpeed = parseInt(windMatch[2]);
-                data.windGust = windMatch[3] ? parseInt(windMatch[3].substring(1)) : null;
-            } else {
-                const calmWindMatch = metarText.match(/00000KT/);
-                if (calmWindMatch) {
-                    data.windDirection = 0;
-                    data.windSpeed = 0;
-                    data.windGust = null;
-                } else {
-                    data.windDirection = null;
-                    data.windSpeed = null;
-                    data.windGust = null;
-                }
-            }
-
-            // Visibility
-            const visMatch = metarText.match(/(\d{1,2}SM)|(M?\d\/\dSM)|(CAVOK)|(P(\d{4})SM)/);
-            if (visMatch) {
-                if (visMatch[1]) { // e.g., 10SM
-                    data.visibility = parseInt(visMatch[1]);
-                } else if (visMatch[2]) { // e.g., 1/2SM, M1/4SM
-                    const fraction = visMatch[2].replace('SM', '').replace('M', '');
-                    const [num, den] = fraction.split('/').map(Number);
-                    if (den) data.visibility = num / den;
-                    else data.visibility = num; // For cases like M1/4SM it would be just "1/4" after replace
-                } else if (visMatch[3] === 'CAVOK') { // Ceiling And Visibility OK
-                    data.visibility = 10; // Interpreted as >= 10 SM
-                    data.cloudCeiling = 99999; // Effectively no ceiling for restriction purposes
-                } else if (visMatch[4]) { // P6SM (greater than 6SM)
-                    data.visibility = parseInt(visMatch[5]);
-                }
-            } else {
-                data.visibility = null; // Could be obscured or missing
-            }
-
-
-            // Temperature and Dew Point
-            const tempDewMatch = metarText.match(/(M?\d{2})\/(M?\d{2})/);
-            if (tempDewMatch) {
-                data.temperatureC = parseInt(tempDewMatch[1].replace('M', '-'));
-                data.dewPointC = parseInt(tempDewMatch[2].replace('M', '-'));
-            } else {
-                data.temperatureC = null;
-                data.dewPointC = null;
-            }
-
-            // Clouds (ceiling defined as lowest broken or overcast layer)
-            const cloudMatches = metarText.match(/(BKN|OVC|VV)(\d{3})/g);
-            data.cloudCeiling = null;
-            if (cloudMatches) {
-                let lowestCeiling = Infinity;
-                cloudMatches.forEach(cloudLayer => {
-                    const height = parseInt(cloudLayer.substring(3)) * 100;
-                    if (cloudLayer.startsWith('BKN') || cloudLayer.startsWith('OVC')) {
-                        if (height < lowestCeiling) {
-                            lowestCeiling = height;
-                        }
-                    }
-                });
-                if (lowestCeiling !== Infinity) {
-                    data.cloudCeiling = lowestCeiling;
-                }
-            } else {
-                const clrMatch = metarText.match(/CLR|SKC/);
-                if (clrMatch) {
-                    data.cloudCeiling = 99999; // Effectively no ceiling
-                }
-                 const vvMatch = metarText.match(/VV(\d{3})/); // Vertical Visibility
-                 if (vvMatch) {
-                    data.cloudCeiling = parseInt(vvMatch[1]) * 100;
-                 }
-            }
-            
-            return data;
-        }
-
-        // Function to get humidity from temperature and dew point (Celsius)
-        // Source: https://www.wpc.ncep.noaa.gov/html/temp2humid.shtml (simplified)
-        function calculateHumidity(T, DP) {
-            if (T === null || DP === null) return null;
-            const ES = 6.1078 * Math.exp((17.27 * T) / (T + 237.3));
-            const E = 6.1078 * Math.exp((17.27 * DP) / (DP + 237.3));
-            return (E / ES) * 100;
-        }
-
-        // Heat Index calculation (Steadman's formula for temperature in Fahrenheit and RH as percentage)
-        // Source: https://www.wpc.ncep.noaa.gov/html/heatindex_formula.shtml
-        function calculateHeatIndex(tempF, rh) {
-            if (tempF < 80) return tempF; // Heat index is same as temperature below 80F
-            if (rh === null) return null;
-
-            const HI = -42.379 + (2.04901523 * tempF) + (10.14333127 * rh) - (0.22475541 * tempF * rh) -
-                       (0.00683783 * tempF * tempF) - (0.05481717 * rh * rh) +
-                       (0.00122874 * tempF * tempF * rh) + (0.00085282 * tempF * rh * rh) -
-                       (0.00000199 * tempF * tempF * rh * rh);
-            return HI;
-        }
-
-        function toFahrenheit(celsius) {
-            if (celsius === null) return null;
-            return (celsius * 9/5) + 32;
-        }
-
-        function toKnots(mph) {
-            if (mph === null) return null;
-            return mph * 0.868976;
-        }
-
-        function toMPH(knots) {
-            if (knots === null) return null;
-            return knots / 0.868976;
-        }
-
-        function calculateCrosswind(windDirection, windSpeed, runwayHeading) {
-            if (windDirection === null || windSpeed === null) return null;
-            const angleDiff = Math.abs(windDirection - runwayHeading);
-            const effectiveAngle = angleDiff > 180 ? 360 - angleDiff : angleDiff; // Smallest angle
-            return windSpeed * Math.sin(effectiveAngle * Math.PI / 180);
-        }
+        const OPENWEATHER_API_KEY = "5961a427c0046352f815238c583582d7"
+        const KCPS_RUNWAY_12_HDG = 122 // True heading for KCPS Runway 12
+        const KCPS_RUNWAY_30_HDG = 302 // True heading for KCPS Runway 30
 
         async function getWeatherData() {
-            let kcpsMetarText = await fetchMetar(KCPS_METAR_URL);
-            let kstlMetarText = await fetchMetar(KSTL_METAR_URL);
+            // Try to fetch from pre-parsed JSON first
+            const jsonData = await fetchWeatherDataFromJSON();
+            
+            let kcpsMetarText = null;
+            let kstlMetarText = null;
+            let kcpsData = null;
+            let kstlData = null;
+
+            if (jsonData) {
+                // Use data from JSON file
+                console.log("Using weather data from JSON file");
+                
+                if (jsonData.kcps && jsonData.kcps.metar) {
+                    kcpsMetarText = jsonData.kcps.metar;
+                    // Convert JSON data to format expected by rest of code
+                    kcpsData = {
+                        time: jsonData.kcps.timestamp ? new Date(jsonData.kcps.timestamp) : null,
+                        windDirection: jsonData.kcps.windDirection,
+                        windSpeed: jsonData.kcps.windSpeed,
+                        windGust: jsonData.kcps.windGust,
+                        visibility: jsonData.kcps.visibility,
+                        cloudCeiling: jsonData.kcps.cloudCeiling,
+                        temperature: jsonData.kcps.temperatureC,
+                        dewPoint: jsonData.kcps.dewPointC,
+                        altimeter: jsonData.kcps.altimeter
+                    };
+                }
+                
+                if (jsonData.kstl && jsonData.kstl.metar) {
+                    kstlMetarText = jsonData.kstl.metar;
+                    // Convert JSON data to format expected by rest of code
+                    kstlData = {
+                        time: jsonData.kstl.timestamp ? new Date(jsonData.kstl.timestamp) : null,
+                        windDirection: jsonData.kstl.windDirection,
+                        windSpeed: jsonData.kstl.windSpeed,
+                        windGust: jsonData.kstl.windGust,
+                        visibility: jsonData.kstl.visibility,
+                        cloudCeiling: jsonData.kstl.cloudCeiling,
+                        temperature: jsonData.kstl.temperatureC,
+                        dewPoint: jsonData.kstl.dewPointC,
+                        altimeter: jsonData.kstl.altimeter
+                    };
+                }
+            }
 
             document.getElementById('metarKCPS').textContent = kcpsMetarText || 'N/A';
             document.getElementById('metarKSTL').textContent = kstlMetarText || 'N/A';
@@ -380,13 +264,10 @@
             let weatherData = null;
             const now = new Date();
 
-            const kcpsData = kcpsMetarText ? parseMetar(kcpsMetarText) : null;
-            const kstlData = kstlMetarText ? parseMetar(kstlMetarText) : null;
-
-            if (kcpsData && (now.getTime() - kcpsData.time.getTime()) / (1000 * 60 * 60) < 2) {
+            if (kcpsData && kcpsData.time && (now.getTime() - kcpsData.time.getTime()) / (1000 * 60 * 60) < 2) {
                 weatherData = kcpsData;
                 console.log("Using KCPS METAR as it is recent.");
-            } else if (kstlData && (now.getTime() - kstlData.time.getTime()) / (1000 * 60 * 60) < 2) {
+            } else if (kstlData && kstlData.time && (now.getTime() - kstlData.time.getTime()) / (1000 * 60 * 60) < 2) {
                 weatherData = kstlData;
                 console.log("Using KSTL METAR as KCPS is not recent or unavailable.");
             } else {
@@ -401,8 +282,8 @@
                             windDirection: openWeatherData.wind.deg,
                             windSpeed: toKnots(openWeatherData.wind.speed), // OpenWeatherMap 'speed' is m/s by default, converting to knots
                             visibility: openWeatherData.visibility ? openWeatherData.visibility / 1000 * 0.621371 : null, // meters to miles
-                            temperatureC: openWeatherData.main.temp,
-                            dewPointC: null, // OpenWeatherMap current API usually doesn't provide dew point directly in main response
+                            temperature: openWeatherData.main.temp,
+                            dewPoint: null, // OpenWeatherMap current API usually doesn't provide dew point directly in main response
                             cloudCeiling: openWeatherData.clouds.all ? openWeatherData.clouds.all * 100 : null, // Simple estimation if available, assuming cloud percentage maps to a 'ceiling' which isn't ideal but best with limited data
                             time: new Date(openWeatherData.dt * 1000)
                         };
@@ -432,9 +313,9 @@
                 return;
             }
 
-            const tempC = weatherData.temperatureC;
+            const tempC = weatherData.temperature;
             const tempF = toFahrenheit(tempC);
-            const humidity = weatherData.humidity !== undefined ? weatherData.humidity : calculateHumidity(tempC, weatherData.dewPointC);
+            const humidity = weatherData.humidity !== undefined ? weatherData.humidity : calculateHumidity(tempC, weatherData.dewPoint);
             const windSpeed = weatherData.windSpeed;
             const windDirection = weatherData.windDirection;
             const visibilitySM = weatherData.visibility;

@@ -56,59 +56,13 @@
 <tr id="temp-5"><td>Temperature ≤ 5°F: All Flights Restricted</td><td id="temp-5-status">...</td></tr>
 </table>
 
+<!-- Shared weather utilities -->
+<script src="shared-weather.js"></script>
+
 <script>
-const kcpsElevation = 413;
-const currentTime = new Date();  // current UTC time
-const twoHoursAgo = new Date(currentTime - 2 * 60 * 60 * 1000);
-
-const kcpsUrl = "https://corsproxy.io/?" + encodeURIComponent("https://tgftp.nws.noaa.gov/data/observations/metar/stations/KCPS.TXT");
-const kstlUrl = "https://corsproxy.io/?" + encodeURIComponent("https://tgftp.nws.noaa.gov/data/observations/metar/stations/KSTL.TXT");
-
-function parseMetar(metar) {
-    const parts = metar.split(' ');
-    let windDir = 0, windSpeed = 0, visibility = 10, clouds = [], temp = 0, dewpoint = 0, timestamp = null;
-    for (let i = 1; i < parts.length; i++) {
-        if (/^\d{6}Z$/.test(parts[i])) {
-            const day = parseInt(parts[i].substring(0, 2));
-            const hour = parseInt(parts[i].substring(2, 4));
-            const minute = parseInt(parts[i].substring(4, 6));
-            timestamp = new Date(Date.UTC(currentTime.getUTCMonth() === 11 && day < 15 ? currentTime.getUTCFullYear() + 1 : currentTime.getUTCFullYear(), currentTime.getUTCMonth(), day, hour, minute));
-        }
-        if (/^\d{3}\d{2}KT$/.test(parts[i])) {
-            windDir = parseInt(parts[i].substring(0, 3));
-            windSpeed = parseInt(parts[i].substring(3, 5));
-        }
-        if (/^\d{1,2}SM$/.test(parts[i])) {
-            visibility = parseInt(parts[i]);
-        }
-        if (/^(FEW|SCT|BKN|OVC)\d{3}$/.test(parts[i])) {
-            clouds.push(parts[i]);
-        }
-        if (/^(M?\d{1,2})\/(M?\d{1,2})$/.test(parts[i])) {
-            const [match, t, d] = parts[i].match(/(M?\d{1,2})\/(M?\d{1,2})/);
-            temp = t.startsWith('M') ? -parseInt(t.slice(1)) : parseInt(t);
-            dewpoint = d.startsWith('M') ? -parseInt(d.slice(1)) : parseInt(d);
-        }
-    }
-    return { windDir, windSpeed, visibility, clouds, temp, dewpoint, timestamp };
-}
-
-function calculateCrosswind(windDir, windSpeed, runwayHeading) {
-    let angle = Math.abs(windDir - runwayHeading);
-    if (angle > 180) angle = 360 - angle;
-    return Math.abs(windSpeed * Math.sin(angle * Math.PI / 180));
-}
-function calculateRH(tempC, dewpointC) {
-    const a = 17.625, b = 243.04;
-    return 100 * (Math.exp((a * dewpointC)/(b + dewpointC)) / Math.exp((a * tempC)/(b + tempC)));
-}
-function calculateHI(tempF, rh) {
-    if (tempF < 80) return tempF;
-    return Math.round(-42.379 + 2.04901523 * tempF + 10.14333127 * rh - 0.22475541 * tempF * rh
-        - 0.00683783 * tempF * tempF - 0.05481717 * rh * rh
-        + 0.00122874 * tempF * tempF * rh + 0.00085282 * tempF * rh * rh
-        - 0.00000199 * tempF * tempF * rh * rh);
-}
+const kcpsElevation = 413
+const currentTime = new Date()  // current UTC time
+const twoHoursAgo = new Date(currentTime - 2 * 60 * 60 * 1000)
 
 function clearHighlights() {
     ["student","private","instrument"].forEach(id =>
@@ -119,13 +73,27 @@ function clearHighlights() {
 
 function checkRestrictions(data, elevation) {
     clearHighlights();
-    const ceilingCloud = data.clouds.find(c => c.startsWith("BKN") || c.startsWith("OVC"));
+    const ceilingCloud = (() => {
+        const clouds = data.clouds ?? []
+        const str = clouds.find(c => typeof c === 'string' && (c.startsWith('BKN') || c.startsWith('OVC')))
+        if (str) return str
+        let num = clouds.find(c => typeof c === 'number')
+        if (num == null) {
+            const numStr = clouds.find(c => typeof c === 'string' && /^\d+$/.test(c))
+            if (numStr) num = parseInt(numStr, 10)
+        }
+        if (num == null) return undefined
+        // treat sentinel like 99999 as infinite/no ceiling
+        if (num >= 99999) return undefined
+        const hundreds = Math.max(1, Math.round(num / 100))
+        return 'BKN' + String(hundreds).padStart(3, '0')
+    })()
     const ceiling = ceilingCloud ? parseInt(ceilingCloud.substring(3)) * 100 - elevation : Infinity;
     const cross12 = calculateCrosswind(data.windDir, data.windSpeed, 120);
     const cross30 = calculateCrosswind(data.windDir, data.windSpeed, 300);
-    const tempF = data.temp * 9/5 + 32;
-    const rh = Math.min(calculateRH(data.temp, data.dewpoint), 100);
-    const hi = calculateHI(tempF, rh);
+    const tempF = toFahrenheit(data.temperature);
+    const rh = Math.min(calculateHumidity(data.temperature, data.dewpoint), 100);
+    const hi = calculateHeatIndex(tempF, rh);
 
     document.getElementById("weather-conditions").innerText =
         `Temperature: ${tempF.toFixed(1)}°F | Relative Humidity: ${rh.toFixed(0)}%`;
@@ -158,24 +126,62 @@ function checkRestrictions(data, elevation) {
 
 async function fetchWeatherData() {
     try {
-        let kcpsMetar = await (await fetch(kcpsUrl)).text();
-        kcpsMetar = kcpsMetar.trim().split("\n").pop();
-        document.getElementById("kcps-metar").innerText = `KCPS METAR:\n${kcpsMetar}`;
-        let kcpsData = parseMetar(kcpsMetar);
-
-        if (kcpsData.timestamp && kcpsData.timestamp >= twoHoursAgo) {
-            checkRestrictions(kcpsData, kcpsElevation);
-        } else {
-            let kstlMetar = await (await fetch(kstlUrl)).text();
-            kstlMetar = kstlMetar.trim().split("\n").pop();
-            document.getElementById("kstl-metar").innerText = `KSTL METAR:\n${kstlMetar}`;
-            let kstlData = parseMetar(kstlMetar);
-            if (kstlData.timestamp && kstlData.timestamp >= twoHoursAgo) {
-                checkRestrictions(kstlData, 605);
+        // Try to fetch from pre-parsed JSON first
+        const jsonData = await fetchWeatherDataFromJSON();
+        
+        if (jsonData) {
+            console.log("Using weather data from JSON file");
+            
+            // Always display both METARs
+            if (jsonData.kcps && jsonData.kcps.metar) {
+                document.getElementById("kcps-metar").innerText = `KCPS METAR:\n${jsonData.kcps.metar}`;
             }
+            
+            if (jsonData.kstl && jsonData.kstl.metar) {
+                document.getElementById("kstl-metar").innerText = `KSTL METAR:\n${jsonData.kstl.metar}`;
+            }
+            
+            // Process KCPS data for restrictions if recent
+            if (jsonData.kcps && jsonData.kcps.metar) {
+                const kcpsData = {
+                    windDir: jsonData.kcps.windDirection || 0,
+                    windSpeed: jsonData.kcps.windSpeed || 0,
+                    visibility: jsonData.kcps.visibility || 10,
+                    clouds: jsonData.kcps.cloudCeiling ? [jsonData.kcps.cloudCeiling] : [],
+                    temperature: jsonData.kcps.temperatureC || 0,
+                    dewpoint: jsonData.kcps.dewPointC || 0,
+                    timestamp: jsonData.kcps.timestamp ? new Date(jsonData.kcps.timestamp) : null
+                };
+                
+                if (kcpsData.timestamp && kcpsData.timestamp >= twoHoursAgo) {
+                    checkRestrictions(kcpsData, kcpsElevation);
+                    return; // Exit after processing KCPS
+                }
+            }
+            
+            // If KCPS is old or unavailable, use KSTL data for restrictions
+            if (jsonData.kstl && jsonData.kstl.metar) {
+                const kstlData = {
+                    windDir: jsonData.kstl.windDirection || 0,
+                    windSpeed: jsonData.kstl.windSpeed || 0,
+                    visibility: jsonData.kstl.visibility || 10,
+                    clouds: jsonData.kstl.cloudCeiling ? [jsonData.kstl.cloudCeiling] : [],
+                    temperature: jsonData.kstl.temperatureC || 0,
+                    dewpoint: jsonData.kstl.dewPointC || 0,
+                    timestamp: jsonData.kstl.timestamp ? new Date(jsonData.kstl.timestamp) : null
+                };
+                
+                if (kstlData.timestamp && kstlData.timestamp >= twoHoursAgo) {
+                    checkRestrictions(kstlData, 605);
+                }
+            }
+        } else {
+            console.warn("Could not load weather data from JSON file");
+            document.getElementById("kcps-metar").innerText = "Weather data unavailable";
         }
     } catch (err) {
-        console.error("Error fetching METARs:", err);
+        console.error("Error fetching weather data:", err);
+        document.getElementById("kcps-metar").innerText = "Error loading weather data";
     }
 }
 fetchWeatherData();
