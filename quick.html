@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SLU Aviation Weather Dashboard - Quick View</title>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    html, body {
+        height: 100vh;
+        overflow: hidden;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #1a1a1a;
+        color: #e0e0e0;
+    }
+    
+    body {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    header {
+        background-color: #2a2a2a;
+        padding: 10px 20px;
+        border-bottom: 3px solid #ffa500;
+        flex-shrink: 0;
+    }
+    
+    h1 {
+        color: #ffa500;
+        font-size: 1.5em;
+        text-align: center;
+        margin: 0;
+    }
+    
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        padding: 10px;
+        gap: 10px;
+        flex: 1;
+        min-height: 0;
+        overflow: hidden;
+    }
+    
+    .flight-status-section {
+        grid-column: 1;
+        grid-row: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+    }
+    
+    .announcements-section {
+        grid-column: 2;
+        grid-row: 1;
+        background-color: #2a2a2a;
+        border: 2px solid #ffa500;
+        border-radius: 8px;
+        padding: 15px;
+        overflow-y: auto;
+        min-height: 0;
+    }
+    
+    .metar-section {
+        grid-column: 1;
+        grid-row: 2;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        overflow-y: auto;
+        min-height: 0;
+    }
+    
+    .weather-conditions-section {
+        grid-column: 2;
+        grid-row: 2;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        overflow-y: auto;
+    }
+    
+    h2, h3 {
+        color: #ffa500;
+        margin: 0 0 8px 0;
+        font-size: 1.1em;
+        flex-shrink: 0;
+    }
+    
+    .metar-time {
+        font-weight: normal;
+        font-size: 0.85em;
+        color: #999;
+    }
+    
+    .metar { 
+        background-color: #2a2a2a;
+        padding: 10px;
+        white-space: pre-wrap;
+        font-size: 0.9em;
+        font-family: 'Courier New', monospace;
+        border-radius: 5px;
+        border: 1px solid #444;
+        flex-shrink: 0;
+        overflow: hidden;
+    }
+    
+    .announcement-item {
+        margin-bottom: 12px;
+        padding: 10px;
+        border-left: 4px solid #ff6b35;
+        background-color: #1a1a1a;
+        border-radius: 4px;
+    }
+    
+    .announcement-date {
+        font-size: 0.75em;
+        color: #999;
+        margin-bottom: 5px;
+    }
+    
+    .announcement-title {
+        font-weight: bold;
+        color: #ffa500;
+        margin-bottom: 5px;
+        font-size: 0.95em;
+    }
+    
+    .announcement-content {
+        font-size: 0.85em;
+        line-height: 1.3;
+    }
+    
+    .flight-status-card {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: #2a2a2a;
+        border-radius: 12px;
+        padding: 20px;
+        border: 3px solid;
+        text-align: center;
+    }
+    
+    .flight-status-card.all-clear {
+        border-color: #4caf50;
+        background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(76, 175, 80, 0.05));
+    }
+    
+    .flight-status-card.student-restricted {
+        border-color: #ff9800;
+        background: linear-gradient(135deg, rgba(255, 152, 0, 0.1), rgba(255, 152, 0, 0.05));
+    }
+    
+    .flight-status-card.private-only {
+        border-color: #ff5722;
+        background: linear-gradient(135deg, rgba(255, 87, 34, 0.1), rgba(255, 87, 34, 0.05));
+    }
+    
+    .flight-status-card.all-restricted {
+        border-color: #f44336;
+        background: linear-gradient(135deg, rgba(244, 67, 54, 0.1), rgba(244, 67, 54, 0.05));
+    }
+    
+    .status-title {
+        font-size: 2em;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+    
+    .flight-status-card.all-clear .status-title { color: #4caf50; }
+    .flight-status-card.student-restricted .status-title { color: #ff9800; }
+    .flight-status-card.private-only .status-title { color: #ff5722; }
+    .flight-status-card.all-restricted .status-title { color: #f44336; }
+    
+    .status-details {
+        font-size: 1em;
+        color: #ccc;
+        line-height: 1.4;
+    }
+    
+    .weather-conditions-card {
+        background-color: #2a2a2a;
+        border: 2px solid #4a90e2;
+        border-radius: 8px;
+        padding: 15px;
+        flex: 1;
+        overflow-y: auto;
+        min-height: 0;
+    }
+    
+    .weather-metrics {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr 1fr;
+        gap: 8px;
+        height: 100%;
+    }
+    
+    .weather-metric {
+        background-color: #1a1a1a;
+        border: 2px solid #4a90e2;
+        border-radius: 6px;
+        padding: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+    }
+    
+    .weather-metric.warning {
+        border-color: #ff9800;
+        background-color: rgba(255, 152, 0, 0.1);
+    }
+    
+    .weather-metric.alert {
+        border-color: #f44336;
+        background-color: rgba(244, 67, 54, 0.1);
+    }
+    
+    .weather-icon {
+        font-size: 2em;
+        flex-shrink: 0;
+    }
+    
+    .weather-info {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .weather-label {
+        font-size: 0.7em;
+        color: #999;
+        text-transform: uppercase;
+        margin-bottom: 2px;
+    }
+    
+    .weather-value {
+        font-size: 1.2em;
+        font-weight: bold;
+        color: #e0e0e0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .footer {
+        text-align: center;
+        padding: 5px 10px;
+        background-color: #2a2a2a;
+        color: #999;
+        border-top: 1px solid #444;
+        font-size: 0.7em;
+        flex-shrink: 0;
+    }
+    
+    .footer p {
+        margin: 2px 0;
+        line-height: 1.3;
+    }
+    
+    #updateTime {
+        color: #ffa500;
+        font-weight: bold;
+    }
+</style>
+</head>
+<body>
+
+<header>
+    <h1>SLU Aviation Weather Dashboard</h1>
+</header>
+
+<div class="dashboard-grid">
+    <!-- Flight Status Section (Top Left) -->
+    <div class="flight-status-section">
+        <div id="overall-flight-status" class="flight-status-card all-clear">
+            <div class="status-title">Loading...</div>
+            <div class="status-details">Checking weather conditions...</div>
+        </div>
+    </div>
+
+    <!-- Announcements Section (Top Right) -->
+    <div class="announcements-section">
+        <h2>Service Announcements</h2>
+        <div id="announcements-content">
+            <div class="announcement-item">
+                <div class="announcement-title">Loading announcements...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- METAR Section (Bottom Left) -->
+    <div class="metar-section">
+        <h3>METAR Data</h3>
+        <div>
+            <h3>KCPS METAR <span id="kcps-time" class="metar-time"></span></h3>
+            <div id="kcps-metar" class="metar">Loading KCPS METAR...</div>
+        </div>
+        <div>
+            <h3>KSTL METAR <span id="kstl-time" class="metar-time"></span></h3>
+            <div id="kstl-metar" class="metar">Loading KSTL METAR...</div>
+        </div>
+    </div>
+
+    <!-- Weather Conditions Section (Bottom Right) -->
+    <div class="weather-conditions-section">
+        <div class="weather-conditions-card">
+            <h3>Current Weather Conditions</h3>
+            <div class="weather-metrics">
+                <div class="weather-metric" id="temp-metric">
+                    <div class="weather-icon">🌡️</div>
+                    <div class="weather-info">
+                        <div class="weather-label">Temperature</div>
+                        <div class="weather-value" id="temp-value">-- °F</div>
+                    </div>
+                </div>
+                
+                <div class="weather-metric" id="humidity-metric">
+                    <div class="weather-icon">💧</div>
+                    <div class="weather-info">
+                        <div class="weather-label">Humidity</div>
+                        <div class="weather-value" id="humidity-value">-- %</div>
+                    </div>
+                </div>
+                
+                <div class="weather-metric" id="wind-metric">
+                    <div class="weather-icon">🌬️</div>
+                    <div class="weather-info">
+                        <div class="weather-label">Wind</div>
+                        <div class="weather-value" id="wind-value">-- kt</div>
+                    </div>
+                </div>
+                
+                <div class="weather-metric" id="visibility-metric">
+                    <div class="weather-icon">👁️</div>
+                    <div class="weather-info">
+                        <div class="weather-label">Visibility</div>
+                        <div class="weather-value" id="visibility-value">-- SM</div>
+                    </div>
+                </div>
+                
+                <div class="weather-metric" id="clouds-metric">
+                    <div class="weather-icon">☁️</div>
+                    <div class="weather-info">
+                        <div class="weather-label">Ceiling</div>
+                        <div class="weather-value" id="clouds-value">-- ft</div>
+                    </div>
+                </div>
+                
+                <div class="weather-metric" id="crosswind-metric">
+                    <div class="weather-icon">💨</div>
+                    <div class="weather-info">
+                        <div class="weather-label">Max Crosswind</div>
+                        <div class="weather-value" id="crosswind-value">-- kt</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="footer">
+    <p>Data last updated: <span id="updateTime">N/A</span></p>
+    <p>Disclaimer: This page provides general aviation weather information and restrictions for planning purposes only. Always consult official weather briefings and Air Traffic Control for actual flight operations.</p>
+</div>
+
+<!-- Shared weather utilities -->
+<script src="shared-weather.js"></script>
+
+<script>
+const kcpsElevation = 413;
+const kstlElevation = 618;
+const KCPS_RUNWAY_12_HDG = 122;
+const KCPS_RUNWAY_30_HDG = 302;
+
+function getMinutesAgo(timestamp) {
+    if (!timestamp) return '';
+    
+    const metarTime = new Date(timestamp);
+    const now = new Date();
+    const diffMinutes = Math.floor((now - metarTime) / (1000 * 60));
+    
+    if (diffMinutes < 1) return '(< 1 min ago)';
+    if (diffMinutes < 60) return `(${diffMinutes} min${diffMinutes > 1 ? 's' : ''} ago)`;
+    
+    const hours = Math.floor(diffMinutes / 60);
+    const mins = diffMinutes % 60;
+    if (hours === 1 && mins === 0) return '(1 hr ago)';
+    if (mins === 0) return `(${hours} hrs ago)`;
+    return `(${hours} hr${hours > 1 ? 's' : ''} ${mins} min${mins > 1 ? 's' : ''} ago)`;
+}
+
+async function fetchWeatherData() {
+    try {
+        const response = await fetch('data/weather-data.json');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        
+        // Update timestamp
+        const updateTimeElement = document.getElementById('updateTime');
+        if (updateTimeElement) {
+            updateTimeElement.textContent = new Date().toLocaleString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            });
+        }
+        
+        // Display KCPS METAR
+        if (data.kcps && data.kcps.metar) {
+            document.getElementById("kcps-metar").innerText = data.kcps.metar;
+            if (data.kcps.timestamp) {
+                document.getElementById("kcps-time").innerText = getMinutesAgo(data.kcps.timestamp);
+            }
+        }
+        
+        // Display KSTL METAR
+        if (data.kstl && data.kstl.metar) {
+            document.getElementById("kstl-metar").innerText = data.kstl.metar;
+            if (data.kstl.timestamp) {
+                document.getElementById("kstl-time").innerText = getMinutesAgo(data.kstl.timestamp);
+            }
+        }
+        
+        // Use KCPS data preferentially
+        const weatherData = data.kcps || data.kstl;
+        
+        if (weatherData) {
+            // Calculate flight restrictions
+            const restrictions = calculateFlightRestrictions(weatherData, kcpsElevation);
+            
+            // Update flight status card
+            const statusCard = document.getElementById('overall-flight-status');
+            statusCard.className = 'flight-status-card ' + restrictions.class;
+            statusCard.innerHTML = `
+                <div class="status-title">${restrictions.title}</div>
+                <div class="status-details">${restrictions.details}</div>
+            `;
+            
+            // Update weather graphics
+            updateWeatherGraphics(weatherData);
+        }
+    } catch (err) {
+        console.error("Error fetching weather data:", err);
+        document.getElementById("kcps-metar").innerText = "Error loading weather data";
+    }
+}
+
+function calculateFlightRestrictions(data, elevation) {
+    const restrictions = {
+        student: [],
+        private: [],
+        all: []
+    };
+    
+    // Wind speed restrictions
+    if (data.windSpeed !== undefined && data.windSpeed !== null) {
+        if (data.windSpeed > 25) {
+            restrictions.all.push(`🌬️ ${data.windSpeed} knots`);
+        } else if (data.windSpeed > 20) {
+            restrictions.private.push(`🌬️ ${data.windSpeed} knots`);
+        } else if (data.windSpeed > 15) {
+            restrictions.student.push(`🌬️ ${data.windSpeed} knots`);
+        }
+    }
+    
+    // Crosswind restrictions
+    if (data.windDirection !== undefined && data.windSpeed !== undefined) {
+        const crosswind12 = calculateCrosswind(data.windDirection, data.windSpeed, KCPS_RUNWAY_12_HDG);
+        const crosswind30 = calculateCrosswind(data.windDirection, data.windSpeed, KCPS_RUNWAY_30_HDG);
+        const maxCrosswind = Math.max(crosswind12, crosswind30);
+        
+        if (maxCrosswind > 15) {
+            restrictions.private.push(`💨 ${maxCrosswind.toFixed(1)} kt crosswind`);
+        } else if (maxCrosswind > 10) {
+            restrictions.student.push(`💨 ${maxCrosswind.toFixed(1)} kt crosswind`);
+        }
+    }
+    
+    // Visibility restrictions
+    if (data.visibility !== undefined && data.visibility !== null) {
+        if (data.visibility < 3) {
+            restrictions.all.push(`👁️ ${data.visibility} SM vis`);
+        } else if (data.visibility < 5) {
+            restrictions.private.push(`👁️ ${data.visibility} SM vis`);
+        } else if (data.visibility < 7) {
+            restrictions.student.push(`👁️ ${data.visibility} SM vis`);
+        }
+    }
+    
+    // Ceiling restrictions
+    if (data.cloudCeiling !== undefined && data.cloudCeiling !== null && data.cloudCeiling < 99999) {
+        const ceilingAGL = data.cloudCeiling - elevation;
+        if (ceilingAGL < 1500) {
+            restrictions.all.push(`☁️ ${ceilingAGL} ft ceiling`);
+        } else if (ceilingAGL < 3000) {
+            restrictions.private.push(`☁️ ${ceilingAGL} ft ceiling`);
+        } else if (ceilingAGL < 5000) {
+            restrictions.student.push(`☁️ ${ceilingAGL} ft ceiling`);
+        }
+    }
+    
+    // Temperature restrictions
+    if (data.temperature !== undefined && data.temperature !== null) {
+        const tempF = data.temperature * 9/5 + 32;
+        if (tempF <= 5) {
+            restrictions.all.push(`🌡️ ${tempF.toFixed(0)}°F`);
+        } else if (tempF <= 14) {
+            restrictions.private.push(`🌡️ ${tempF.toFixed(0)}°F`);
+        } else if (tempF <= 23) {
+            restrictions.student.push(`🌡️ ${tempF.toFixed(0)}°F`);
+        }
+        
+        // Heat index for high temperatures
+        if (data.dewpoint !== undefined && tempF >= 80) {
+            const dewpointF = data.dewpoint * 9/5 + 32;
+            const heatIndex = calculateHeatIndex(tempF, dewpointF);
+            if (heatIndex >= 105) {
+                restrictions.all.push(`🔥 ${heatIndex.toFixed(0)}°F heat index`);
+            } else if (heatIndex >= 100) {
+                restrictions.private.push(`🔥 ${heatIndex.toFixed(0)}°F heat index`);
+            } else if (heatIndex >= 95) {
+                restrictions.student.push(`🔥 ${heatIndex.toFixed(0)}°F heat index`);
+            }
+        }
+    }
+    
+    // Determine overall status
+    if (restrictions.all.length > 0) {
+        return {
+            class: 'all-restricted',
+            title: 'All Flights Restricted',
+            details: 'Restricting factors: ' + restrictions.all.join(', ')
+        };
+    } else if (restrictions.private.length > 0) {
+        return {
+            class: 'private-only',
+            title: 'Private+ Only',
+            details: 'Restricting factors: ' + restrictions.private.join(', ')
+        };
+    } else if (restrictions.student.length > 0) {
+        return {
+            class: 'student-restricted',
+            title: 'Students Restricted',
+            details: 'Restricting factors: ' + restrictions.student.join(', ')
+        };
+    } else {
+        return {
+            class: 'all-clear',
+            title: 'All Pilots Clear',
+            details: 'No weather restrictions in effect'
+        };
+    }
+}
+
+function updateWeatherGraphics(data) {
+    // Temperature
+    if (data.temperature !== undefined && data.temperature !== null) {
+        const tempF = data.temperature * 9/5 + 32;
+        document.getElementById('temp-value').textContent = `${tempF.toFixed(0)}°F`;
+        
+        const tempMetric = document.getElementById('temp-metric');
+        tempMetric.classList.remove('warning', 'alert');
+        if (tempF <= 5 || tempF >= 105) {
+            tempMetric.classList.add('alert');
+        } else if (tempF <= 23 || tempF >= 100) {
+            tempMetric.classList.add('warning');
+        }
+    }
+    
+    // Humidity
+    if (data.temperature !== undefined && data.dewpoint !== undefined) {
+        const tempC = data.temperature;
+        const dewpointC = data.dewpoint;
+        const humidity = 100 * Math.exp((17.625 * dewpointC) / (243.04 + dewpointC)) / Math.exp((17.625 * tempC) / (243.04 + tempC));
+        document.getElementById('humidity-value').textContent = `${humidity.toFixed(0)}%`;
+        
+        const humidityMetric = document.getElementById('humidity-metric');
+        humidityMetric.classList.remove('warning', 'alert');
+        if (humidity >= 80) {
+            humidityMetric.classList.add('warning');
+        }
+    }
+    
+    // Wind
+    if (data.windSpeed !== undefined && data.windSpeed !== null) {
+        const windDir = data.windDirection || 0;
+        document.getElementById('wind-value').textContent = `${windDir}° @ ${data.windSpeed} kt`;
+        
+        const windMetric = document.getElementById('wind-metric');
+        windMetric.classList.remove('warning', 'alert');
+        if (data.windSpeed > 25) {
+            windMetric.classList.add('alert');
+        } else if (data.windSpeed > 20) {
+            windMetric.classList.add('warning');
+        }
+    }
+    
+    // Visibility
+    if (data.visibility !== undefined && data.visibility !== null) {
+        document.getElementById('visibility-value').textContent = `${data.visibility} SM`;
+        
+        const visMetric = document.getElementById('visibility-metric');
+        visMetric.classList.remove('warning', 'alert');
+        if (data.visibility < 3) {
+            visMetric.classList.add('alert');
+        } else if (data.visibility < 5) {
+            visMetric.classList.add('warning');
+        }
+    }
+    
+    // Clouds/Ceiling
+    if (data.cloudCeiling !== undefined && data.cloudCeiling !== null) {
+        if (data.cloudCeiling >= 99999) {
+            document.getElementById('clouds-value').textContent = 'Clear';
+        } else {
+            const ceilingAGL = data.cloudCeiling - kcpsElevation;
+            document.getElementById('clouds-value').textContent = `${ceilingAGL} ft`;
+            
+            const cloudsMetric = document.getElementById('clouds-metric');
+            cloudsMetric.classList.remove('warning', 'alert');
+            if (ceilingAGL < 1500) {
+                cloudsMetric.classList.add('alert');
+            } else if (ceilingAGL < 3000) {
+                cloudsMetric.classList.add('warning');
+            }
+        }
+    }
+    
+    // Crosswind
+    if (data.windDirection !== undefined && data.windSpeed !== undefined) {
+        const crosswind12 = calculateCrosswind(data.windDirection, data.windSpeed, KCPS_RUNWAY_12_HDG);
+        const crosswind30 = calculateCrosswind(data.windDirection, data.windSpeed, KCPS_RUNWAY_30_HDG);
+        const maxCrosswind = Math.max(crosswind12, crosswind30);
+        
+        document.getElementById('crosswind-value').textContent = `${maxCrosswind.toFixed(1)} kt`;
+        
+        const crosswindMetric = document.getElementById('crosswind-metric');
+        crosswindMetric.classList.remove('warning', 'alert');
+        if (maxCrosswind > 15) {
+            crosswindMetric.classList.add('alert');
+        } else if (maxCrosswind > 10) {
+            crosswindMetric.classList.add('warning');
+        }
+    }
+}
+
+async function fetchAnnouncements() {
+    try {
+        const owner = 'CenterForDigitalHumanities';
+        const repo = 'aviation-dashboard';
+        
+        // Fetch discussions directly from GitHub API
+        // Note: This uses the public REST API endpoint for discussions
+        const discussionsUrl = `https://api.github.com/repos/${owner}/${repo}/discussions`;
+        
+        const response = await fetch(discussionsUrl, {
+            headers: {
+                'Accept': 'application/vnd.github.v3+json'
+            }
+        });
+
+        if (!response.ok) {
+            console.warn(`GitHub API returned ${response.status}, falling back to default announcement`);
+            showDefaultAnnouncement();
+            return;
+        }
+
+        const discussions = await response.json();
+        
+        // Filter for announcements (category name or label)
+        const announcements = discussions
+            .filter(d => d.category?.name === 'Announcements')
+            .filter(d => d.state === 'open')
+            .sort((a, b) => new Date(b.created_at) - new Date(a.created_at)) // Newest first
+            .slice(0, 10) // Limit to 10 most recent
+            .map(d => ({
+                title: d.title,
+                content: d.body || '',
+                date: d.created_at
+            }));
+        
+        if (announcements.length === 0) {
+            const container = document.getElementById('announcements-content');
+            container.innerHTML = `
+                <div class="announcement-item">
+                    <div class="announcement-title">No announcements at this time</div>
+                    <div class="announcement-content">Check back later for updates.</div>
+                </div>
+            `;
+            return;
+        }
+
+        displayAnnouncements(announcements);
+
+    } catch (error) {
+        console.error('Error fetching announcements:', error);
+        showDefaultAnnouncement();
+    }
+}
+
+function displayAnnouncements(announcements) {
+    const container = document.getElementById('announcements-content');
+    
+    container.innerHTML = announcements.map(announcement => {
+        const date = new Date(announcement.date);
+        const formattedDate = date.toLocaleDateString('en-US', { 
+            month: 'short', 
+            day: 'numeric', 
+            year: 'numeric' 
+        });
+        
+        // Strip HTML tags from content for display
+        const strippedContent = announcement.content.replace(/<[^>]*>/g, '');
+        // Limit content length
+        const truncatedContent = strippedContent.length > 200 
+            ? strippedContent.substring(0, 200) + '...' 
+            : strippedContent;
+        
+        return `
+            <div class="announcement-item">
+                <div class="announcement-date">${formattedDate}</div>
+                <div class="announcement-title">${announcement.title}</div>
+                <div class="announcement-content">${truncatedContent}</div>
+            </div>
+        `;
+    }).join('');
+}
+
+function showDefaultAnnouncement() {
+    const container = document.getElementById('announcements-content');
+    container.innerHTML = `
+        <div class="announcement-item">
+            <div class="announcement-title">Welcome to SLU Aviation Dashboard</div>
+            <div class="announcement-content">This dashboard provides real-time weather conditions and flight
+                restrictions for SLU Aviation operations. Please check this section regularly for important updates.
+            </div>
+        </div>
+    `;
+}
+
+// Initial fetch on page load
+fetchWeatherData();
+fetchAnnouncements();
+
+// Set up auto-refresh timers
+// Refresh weather data every 5 minutes (300000 milliseconds)
+setInterval(fetchWeatherData, 300000);
+
+// Refresh announcements every 15 minutes (900000 milliseconds)
+setInterval(fetchAnnouncements, 900000);
+</script>
+</body>
+</html>
