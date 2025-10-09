@@ -1,0 +1,50 @@
+name: Update Weather Data
+
+on:
+  schedule:
+    # Runs every 15 minutes
+    - cron: '*/15 * * * *'
+  workflow_dispatch: # Allows manual trigger from Actions tab
+  push:
+    branches:
+      - gh-actions-timer
+      - main
+    paths:
+      - '.github/workflows/update-weather.yml'
+      - 'scripts/fetch-weather.py'
+
+jobs:
+  fetch-weather:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write  # Required to commit and push changes
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+          
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+          
+      - name: Fetch weather data
+        run: |
+          cd scripts
+          python fetch-weather.py
+          
+      - name: Copy weather data to data directory
+        run: |
+          mkdir -p data
+          cp scripts/weather-data.json data/weather-data.json
+          
+      - name: Commit and push if changed
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+          git add data/weather-data.json
+          # Only commit if there are changes
+          git diff --quiet && git diff --staged --quiet || (git commit -m "🌤️ Update weather data - $(date -u +%Y-%m-%dT%H:%M:%SZ)" && git push)
