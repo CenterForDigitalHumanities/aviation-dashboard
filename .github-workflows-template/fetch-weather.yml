@@ -1,0 +1,47 @@
+name: Fetch Weather Data
+
+on:
+  schedule:
+    # Runs every 15 minutes
+    - cron: '*/15 * * * *'
+  workflow_dispatch: # Allows manual trigger from Actions tab
+
+jobs:
+  fetch-and-commit:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout weather fetcher repo
+        uses: actions/checkout@v3
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          
+      - name: Install dependencies
+        run: npm install
+        
+      - name: Fetch weather data
+        run: node fetch-weather.js
+        
+      - name: Checkout target repository
+        uses: actions/checkout@v3
+        with:
+          repository: CenterForDigitalHumanities/aviation-dashboard
+          token: ${{ secrets.TARGET_REPO_TOKEN }}
+          path: aviation-dashboard
+          
+      - name: Copy weather data to target repo
+        run: |
+          mkdir -p aviation-dashboard/data
+          cp weather-data.json aviation-dashboard/data/weather-data.json
+          
+      - name: Commit and push to target repo
+        run: |
+          cd aviation-dashboard
+          git config user.name "Weather Bot"
+          git config user.email "weather-bot@github.com"
+          git add data/weather-data.json
+          git diff --quiet && git diff --staged --quiet || git commit -m "Update weather data - $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          git push

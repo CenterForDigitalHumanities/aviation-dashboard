@@ -23,11 +23,75 @@
             color: #0056b3;
             text-align: center;
         }
-        .metar-section, .restrictions-section, .heat-index-section {
+        .metar-section, .restrictions-section, .heat-index-section, .announcements-section {
             margin-bottom: 30px;
             padding: 15px;
             border: 1px solid #ddd;
             border-radius: 5px;
+        }
+        .announcements-section {
+            background-color: #fff8dc;
+            border-color: #ffa500;
+        }
+        .announcement-item {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-left: 4px solid #ff6b35;
+            background-color: #f9f9f9;
+        }
+        .announcement-date {
+            font-size: 0.9em;
+            color: #666;
+            font-weight: bold;
+        }
+        .announcement-title {
+            font-weight: bold;
+            color: #0056b3;
+            margin-bottom: 5px;
+        }
+        .announcement-content {
+            margin-bottom: 0;
+        }
+        .hidden {
+            display: none;
+        }
+        .flight-status-card {
+            background-color: #f8f9fa;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            font-size: 1.1em;
+            margin: 15px 0;
+        }
+        .flight-status-card.all-clear {
+            background-color: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+        .flight-status-card.commercial-only {
+            background-color: #fff3cd;
+            border-color: #ffc107;
+            color: #856404;
+        }
+        .flight-status-card.private-only {
+            background-color: #f8d7da;
+            border-color: #fd7e14;
+            color: #721c24;
+        }
+        .flight-status-card.all-restricted {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        .status-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .status-details {
+            font-size: 0.9em;
+            margin-top: 8px;
         }
         .metar-data {
             font-family: 'Courier New', monospace;
@@ -72,6 +136,28 @@
     <div class="container">
         <h1>Saint Louis University Oliver L. Parks Department of Aviation Science</h1>
         <h2>Pilot Wind and Visibility Restrictions</h2>
+        <h3>Current Flight Status</h3>
+        <div id="overallFlightStatus" class="flight-status-card">
+            <div class="status-title">Checking conditions...</div>
+            <div class="status-details"></div>
+        </div>
+
+        <div class="announcements-section">
+            <h3>Service Announcements</h3>
+            <div id="announcements-content">
+                <div class="announcement-item">
+                    <div class="announcement-date">October 9, 2025</div>
+                    <div class="announcement-title">Welcome to the Aviation Dashboard</div>
+                    <div class="announcement-content">This dashboard provides real-time weather conditions and flight restrictions for SLU Aviation operations. Please check this section regularly for important updates.</div>
+                </div>
+                <!-- Additional announcements can be added here -->
+                <div class="announcement-item hidden">
+                    <div class="announcement-date">Date</div>
+                    <div class="announcement-title">Announcement Title</div>
+                    <div class="announcement-content">Announcement content goes here.</div>
+                </div>
+            </div>
+        </div>
 
         <div class="metar-section">
             <h3>Latest Weather METARs</h3>
@@ -92,65 +178,6 @@
             <p><strong>Crosswind for Runway 12 (122° True):</strong> <span id="crosswind12">N/A</span></p>
             <p><strong>Crosswind for Runway 30 (302° True):</strong> <span id="crosswind30">N/A</span></p>
 
-            <h3>Pilot Solo Restrictions</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Restriction Type</th>
-                        <th>Condition</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td rowspan="4"><strong>Student Pilot Solo</strong></td>
-                        <td>Cloud ceiling &lt; 1,500 ft AGL</td>
-                        <td id="studentCeilingStatus"></td>
-                    </tr>
-                    <tr>
-                        <td>Visibility &lt; 3 SM</td>
-                        <td id="studentVisibilityStatus"></td>
-                    </tr>
-                    <tr>
-                        <td>Surface winds &ge; 20 knots</td>
-                        <td id="studentSurfaceWindStatus"></td>
-                    </tr>
-                    <tr>
-                        <td>Crosswind &gt; 10 knots (RWY 12 or 30)</td>
-                        <td id="studentCrosswindStatus"></td>
-                    </tr>
-                    <tr>
-                        <td rowspan="4"><strong>Private Pilot Solo</strong></td>
-                        <td>Cloud ceiling &lt; 1,500 ft AGL</td>
-                        <td id="privateCeilingStatus"></td>
-                    </tr>
-                    <tr>
-                        <td>Visibility &lt; 3 SM</td>
-                        <td id="privateVisibilityStatus"></td>
-                    </tr>
-                    <tr>
-                        <td>Surface winds &ge; 25 knots</td>
-                        <td id="privateSurfaceWindStatus"></td>
-                    </tr>
-                    <tr>
-                        <td>Crosswind &gt; 15 knots (RWY 12 or 30)</td>
-                        <td id="privateCrosswindStatus"></td>
-                    </tr>
-                    <tr>
-                        <td rowspan="3"><strong>Instrument/Commercial Pilot Solo</strong></td>
-                        <td>Visibility &lt; 3 SM</td>
-                        <td id="instCommVisibilityStatus"></td>
-                    </tr>
-                    <tr>
-                        <td>Surface winds &ge; 30 knots</td>
-                        <td id="instCommSurfaceWindStatus"></td>
-                    </tr>
-                    <tr>
-                        <td>Crosswind &gt; 20 knots (RWY 12 or 30)</td>
-                        <td id="instCommCrosswindStatus"></td>
-                    </tr>
-                </tbody>
-            </table>
         </div>
 
         <div class="heat-index-section">
@@ -206,10 +233,28 @@
 
     <script>
         const OPENWEATHER_API_KEY = "5961a427c0046352f815238c583582d7";
+        const WEATHER_DATA_URL = "data/weather-data.json"; // Pre-fetched weather data
         const KCPS_METAR_URL = "https://tgftp.nws.noaa.gov/data/observations/metar/stations/KCPS.TXT";
         const KSTL_METAR_URL = "https://tgftp.nws.noaa.gov/data/observations/metar/stations/KSTL.TXT";
         const KCPS_RUNWAY_12_HDG = 122; // True heading for KCPS Runway 12
         const KCPS_RUNWAY_30_HDG = 302; // True heading for KCPS Runway 30
+
+        // Fetch pre-processed weather data from JSON file (no CORS issues!)
+        async function fetchWeatherDataFromJSON() {
+            try {
+                console.log("Fetching pre-processed weather data from JSON file...");
+                const response = await fetch(WEATHER_DATA_URL);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                console.log("Successfully loaded weather data from JSON");
+                return data;
+            } catch (error) {
+                console.warn("Could not fetch pre-processed weather data:", error);
+                return null;
+            }
+        }
 
         async function fetchMetar(url) {
             try {
@@ -371,26 +416,78 @@
         }
 
         async function getWeatherData() {
-            let kcpsMetarText = await fetchMetar(KCPS_METAR_URL);
-            let kstlMetarText = await fetchMetar(KSTL_METAR_URL);
-
-            document.getElementById('metarKCPS').textContent = kcpsMetarText || 'N/A';
-            document.getElementById('metarKSTL').textContent = kstlMetarText || 'N/A';
-
+            // Try to load pre-fetched weather data first (no CORS issues!)
+            const jsonData = await fetchWeatherDataFromJSON();
+            
+            let kcpsMetarText = null;
+            let kstlMetarText = null;
             let weatherData = null;
             const now = new Date();
 
-            const kcpsData = kcpsMetarText ? parseMetar(kcpsMetarText) : null;
-            const kstlData = kstlMetarText ? parseMetar(kstlMetarText) : null;
+            if (jsonData && jsonData.kcps && jsonData.kstl) {
+                console.log("Using pre-fetched weather data from JSON file");
+                kcpsMetarText = jsonData.kcps.metar;
+                kstlMetarText = jsonData.kstl.metar;
+                
+                // Use the parsed data directly from JSON
+                if (jsonData.kcps.timestamp) {
+                    const kcpsTime = new Date(jsonData.kcps.timestamp);
+                    if ((now.getTime() - kcpsTime.getTime()) / (1000 * 60 * 60) < 2) {
+                        weatherData = {
+                            windDirection: jsonData.kcps.windDirection,
+                            windSpeed: jsonData.kcps.windSpeed,
+                            windGust: jsonData.kcps.windGust,
+                            visibility: jsonData.kcps.visibility,
+                            temperatureC: jsonData.kcps.temperatureC,
+                            dewPointC: jsonData.kcps.dewPointC,
+                            cloudCeiling: jsonData.kcps.cloudCeiling,
+                            time: kcpsTime
+                        };
+                        console.log("Using KCPS data from JSON file");
+                    } else if (jsonData.kstl.timestamp) {
+                        const kstlTime = new Date(jsonData.kstl.timestamp);
+                        if ((now.getTime() - kstlTime.getTime()) / (1000 * 60 * 60) < 2) {
+                            weatherData = {
+                                windDirection: jsonData.kstl.windDirection,
+                                windSpeed: jsonData.kstl.windSpeed,
+                                windGust: jsonData.kstl.windGust,
+                                visibility: jsonData.kstl.visibility,
+                                temperatureC: jsonData.kstl.temperatureC,
+                                dewPointC: jsonData.kstl.dewPointC,
+                                cloudCeiling: jsonData.kstl.cloudCeiling,
+                                time: kstlTime
+                            };
+                            console.log("Using KSTL data from JSON file");
+                        }
+                    }
+                }
+            }
 
-            if (kcpsData && (now.getTime() - kcpsData.time.getTime()) / (1000 * 60 * 60) < 2) {
-                weatherData = kcpsData;
-                console.log("Using KCPS METAR as it is recent.");
-            } else if (kstlData && (now.getTime() - kstlData.time.getTime()) / (1000 * 60 * 60) < 2) {
-                weatherData = kstlData;
-                console.log("Using KSTL METAR as KCPS is not recent or unavailable.");
-            } else {
-                console.warn("Both KCPS and KSTL METARs are older than 2 hours or unavailable. Attempting OpenWeatherMap.");
+            // Fallback: try to fetch METARs directly (will likely fail due to CORS)
+            if (!weatherData) {
+                console.log("JSON data unavailable or stale, trying direct METAR fetch...");
+                kcpsMetarText = await fetchMetar(KCPS_METAR_URL);
+                kstlMetarText = await fetchMetar(KSTL_METAR_URL);
+
+                const kcpsData = kcpsMetarText ? parseMetar(kcpsMetarText) : null;
+                const kstlData = kstlMetarText ? parseMetar(kstlMetarText) : null;
+
+                if (kcpsData && (now.getTime() - kcpsData.time.getTime()) / (1000 * 60 * 60) < 2) {
+                    weatherData = kcpsData;
+                    console.log("Using KCPS METAR as it is recent.");
+                } else if (kstlData && (now.getTime() - kstlData.time.getTime()) / (1000 * 60 * 60) < 2) {
+                    weatherData = kstlData;
+                    console.log("Using KSTL METAR as fallback.");
+                }
+            }
+
+            // Display METARs
+            document.getElementById('metarKCPS').textContent = kcpsMetarText || 'METAR unavailable - using backup data source';
+            document.getElementById('metarKSTL').textContent = kstlMetarText || 'METAR unavailable - using backup data source';
+
+            // Last resort: OpenWeatherMap
+            if (!weatherData) {
+                console.warn("METAR data unavailable. Attempting OpenWeatherMap.");
                 // Fallback to OpenWeatherMap
                 try {
                     const openWeatherResponse = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=St. Louis,US&appid=${OPENWEATHER_API_KEY}&units=metric`);
@@ -459,48 +556,71 @@
             document.getElementById('heatIndexValue').textContent = heatIndex !== null ? `${heatIndex.toFixed(1)}°F` : 'N/A';
 
 
-            // --- Apply Pilot Restrictions ---
-            function setStatus(elementId, conditionMet, restrictionText) {
-                const element = document.getElementById(elementId);
-                if (conditionMet) {
-                    element.className = 'highlight';
-                    element.textContent = `RESTRICTED: ${restrictionText}`;
-                } else {
-                    element.className = 'success';
-                    element.textContent = 'OK';
+            // --- Apply Concentric Pilot Restrictions ---
+            function determineFlightStatus(weatherData) {
+                const tempC = weatherData.temperatureC;
+                const tempF = toFahrenheit(tempC);
+                const humidity = weatherData.humidity !== undefined ? weatherData.humidity : calculateHumidity(tempC, weatherData.dewPointC);
+                const windSpeed = weatherData.windSpeed;
+                const windDirection = weatherData.windDirection;
+                const visibilitySM = weatherData.visibility;
+                const cloudCeilingAGL = weatherData.cloudCeiling;
+                const crosswind12 = calculateCrosswind(windDirection, windSpeed, KCPS_RUNWAY_12_HDG);
+                const crosswind30 = calculateCrosswind(windDirection, windSpeed, KCPS_RUNWAY_30_HDG);
+                const maxCrosswind = Math.max(crosswind12 || 0, crosswind30 || 0);
+
+                const restrictingFactors = [];
+
+                // Check Student Pilot restrictions (most restrictive)
+                if (cloudCeilingAGL !== null && cloudCeilingAGL < 1500) {
+                    restrictingFactors.push(`☁️ Ceiling ${cloudCeilingAGL} ft`);
                 }
+                if (visibilitySM !== null && visibilitySM < 3) {
+                    restrictingFactors.push(`👁️ Visibility ${visibilitySM.toFixed(1)} SM`);
+                }
+                if (windSpeed !== null && windSpeed >= 30) {
+                    restrictingFactors.push(`🌬️ ${windSpeed} knots`);
+                    return { level: 'all-restricted', title: 'All Flights Restricted', factors: restrictingFactors };
+                }
+                if (maxCrosswind > 20) {
+                    restrictingFactors.push(`🌬️ Crosswind ${maxCrosswind.toFixed(1)} knots`);
+                    return { level: 'all-restricted', title: 'All Flights Restricted', factors: restrictingFactors };
+                }
+                if (windSpeed !== null && windSpeed >= 25) {
+                    restrictingFactors.push(`🌬️ ${windSpeed} knots`);
+                    return { level: 'commercial-only', title: 'Commercial/Instrument Only', factors: restrictingFactors };
+                }
+                if (maxCrosswind > 15) {
+                    restrictingFactors.push(`🌬️ Crosswind ${maxCrosswind.toFixed(1)} knots`);
+                    return { level: 'commercial-only', title: 'Commercial/Instrument Only', factors: restrictingFactors };
+                }
+                if (windSpeed !== null && windSpeed >= 20) {
+                    restrictingFactors.push(`🌬️ ${windSpeed} knots`);
+                    return { level: 'private-only', title: 'Private+ Only', factors: restrictingFactors };
+                }
+                if (maxCrosswind > 10) {
+                    restrictingFactors.push(`🌬️ Crosswind ${maxCrosswind.toFixed(1)} knots`);
+                    return { level: 'private-only', title: 'Private+ Only', factors: restrictingFactors };
+                }
+
+                if (restrictingFactors.length > 0) {
+                    return { level: 'all-restricted', title: 'All Flights Restricted', factors: restrictingFactors };
+                }
+
+                return { level: 'all-clear', title: 'All Pilots Clear', factors: [] };
             }
 
-            // Student Pilot Restrictions
-            const studentCeilingRestricted = cloudCeilingAGL !== null && cloudCeilingAGL < 1500;
-            const studentVisibilityRestricted = visibilitySM !== null && visibilitySM < 3;
-            const studentSurfaceWindRestricted = windSpeed !== null && windSpeed >= 20;
-            const studentCrosswindRestricted = (crosswind12 !== null && crosswind12 > 10) || (crosswind30 !== null && crosswind30 > 10);
-
-            setStatus('studentCeilingStatus', studentCeilingRestricted, 'Ceiling too low');
-            setStatus('studentVisibilityStatus', studentVisibilityRestricted, 'Visibility too low');
-            setStatus('studentSurfaceWindStatus', studentSurfaceWindRestricted, 'Surface winds too high');
-            setStatus('studentCrosswindStatus', studentCrosswindRestricted, 'Crosswind too high');
-
-            // Private Pilot Restrictions
-            const privateCeilingRestricted = cloudCeilingAGL !== null && cloudCeilingAGL < 1500;
-            const privateVisibilityRestricted = visibilitySM !== null && visibilitySM < 3;
-            const privateSurfaceWindRestricted = windSpeed !== null && windSpeed >= 25;
-            const privateCrosswindRestricted = (crosswind12 !== null && crosswind12 > 15) || (crosswind30 !== null && crosswind30 > 15);
-
-            setStatus('privateCeilingStatus', privateCeilingRestricted, 'Ceiling too low');
-            setStatus('privateVisibilityStatus', privateVisibilityRestricted, 'Visibility too low');
-            setStatus('privateSurfaceWindStatus', privateSurfaceWindRestricted, 'Surface winds too high');
-            setStatus('privateCrosswindStatus', privateCrosswindRestricted, 'Crosswind too high');
-
-            // Instrument/Commercial Pilot Restrictions
-            const instCommVisibilityRestricted = visibilitySM !== null && visibilitySM < 3;
-            const instCommSurfaceWindRestricted = windSpeed !== null && windSpeed >= 30;
-            const instCommCrosswindRestricted = (crosswind12 !== null && crosswind12 > 20) || (crosswind30 !== null && crosswind30 > 20);
-
-            setStatus('instCommVisibilityStatus', instCommVisibilityRestricted, 'Visibility too low');
-            setStatus('instCommSurfaceWindStatus', instCommSurfaceWindRestricted, 'Surface winds too high');
-            setStatus('instCommCrosswindStatus', instCommCrosswindRestricted, 'Crosswind too high');
+            const flightStatus = determineFlightStatus(weatherData);
+            const statusCard = document.getElementById('overallFlightStatus');
+            
+            statusCard.className = `flight-status-card ${flightStatus.level}`;
+            statusCard.querySelector('.status-title').textContent = flightStatus.title;
+            
+            if (flightStatus.factors.length > 0) {
+                statusCard.querySelector('.status-details').textContent = `Restricting factors: ${flightStatus.factors.join(', ')}`;
+            } else {
+                statusCard.querySelector('.status-details').textContent = 'No weather restrictions in effect';
+            }
 
             // --- Apply Heat Index/Temperature Restrictions ---
             function setHeatTempStatus(elementId, conditionMet, message, isWarning = false) {

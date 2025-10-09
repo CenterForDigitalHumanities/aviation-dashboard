@@ -1,0 +1,25 @@
+{
+  "name": "aviation-weather-fetcher",
+  "version": "1.0.0",
+  "description": "Fetches METAR data for SLU aviation dashboard every 15 minutes",
+  "main": "fetch-weather.js",
+  "scripts": {
+    "fetch": "node fetch-weather.js",
+    "test": "node fetch-weather.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YOUR-USERNAME/aviation-weather-fetcher.git"
+  },
+  "keywords": [
+    "aviation",
+    "weather",
+    "metar",
+    "noaa"
+  ],
+  "author": "SLU Aviation Science",
+  "license": "MIT",
+  "dependencies": {
+    "node-fetch": "^2.6.7"
+  }
+}
