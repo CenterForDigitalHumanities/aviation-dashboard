@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="vi    h2, h3 {
+        color: #ffa500;
+        margin: 0 0 8px 0;
+        font-size: 1.1em;
+        flex-shrink: 0;
+    }
+    
+    .metar { 
+        background-color: #2a2a2a;
+    .footer {
+        text-align: center;
+        padding: 5px 10px;
+        background-color: #2a2a2a;
+        color: #999;
+        border-top: 1px solid #444;
+        font-size: 0.7em;
+        flex-shrink: 0;
+    }
+    
+    .footer p {
+        margin: 2px 0;
+        line-height: 1.3;
+    }
+    
+    #updateTime {
+        color: #ffa500;
+        font-weight: bold;
+    }px;
+        white-space: pre-wrap;
+        font-size: 0.9em;
+        font-family: 'Courier New', monospace;
+        border-radius: 5px;
+        border: 1px solid #444;
+        flex-shrink: 0;
+        overflow: hidden;
+    }"width=device-width, initial-scale=1.0" />
+<title>SLU Aviation Weather Restrictions</title>
+<style>
+    * {
+        box-sizing: border-box;
+    }
+    
+    html, body {
+        height: 100vh;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+    
+    body { 
+        font-family: Arial, sans-serif; 
+        background-color: #1a1a1a;
+        color: #ffffff;
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+    }
+    
+    h1 { 
+        color: #ffffff;
+        font-size: 1.5em;
+        margin: 0 0 10px 0;
+        text-align: center;
+        flex-shrink: 0;
+    }
+    
+    .grid-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        gap: 10px;
+        flex: 1;
+        min-height: 0;
+        overflow: hidden;
+    }
+    
+    .flight-status-section {
+        grid-column: 1;
+        grid-row: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+    }
+    
+    .announcements-section {
+        grid-column: 2;
+        grid-row: 1;
+        background-color: #2a2a2a;
+        border: 2px solid #ffa500;
+        border-radius: 8px;
+        padding: 15px;
+        overflow-y: auto;
+        min-height: 0;
+    }
+    
+    .metar-section {
+        grid-column: 1;
+        grid-row: 2;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        overflow-y: auto;
+        min-height: 0;
+    }
+    
+    .weather-conditions-section {
+        grid-column: 2;
+        grid-row: 2;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        overflow-y: auto;
+    }
+    
+    h2, h3 {
+        color: #ffa500;
+        margin: 0 0 8px 0;
+        font-size: 1.1em;
+        flex-shrink: 0;
+    }
+    
+    .metar-time {
+        font-weight: normal;
+        font-size: 0.85em;
+        color: #999;
+    }
+    
+    .metar { 
+        background-color: #2a2a2a;
+        padding: 10px;
+        white-space: pre-wrap;
+        font-size: 0.9em;
+        font-family: 'Courier New', monospace;
+        border-radius: 5px;
+        border: 1px solid #444;
+        flex-shrink: 0;
+        overflow: hidden;
+    }
+    
+    .announcement-item {
+        margin-bottom: 12px;
+        padding: 10px;
+        border-left: 4px solid #ff6b35;
+        background-color: #1a1a1a;
+        border-radius: 4px;
+    }
+    
+    .announcement-date {
+        font-size: 0.75em;
+        color: #999;
+        font-weight: bold;
+        margin-bottom: 3px;
+    }
+    
+    .announcement-title {
+        font-weight: bold;
+        color: #ffa500;
+        margin-bottom: 5px;
+        font-size: 0.95em;
+    }
+    
+    .announcement-content {
+        margin-bottom: 0;
+        line-height: 1.3;
+        font-size: 0.85em;
+    }
+    
+    .flight-status-card {
+        background-color: #2a2a2a;
+        border: 3px solid #ddd;
+        border-radius: 10px;
+        padding: 30px;
+        text-align: center;
+        font-size: 1.2em;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .flight-status-card.all-clear {
+        background-color: #1a4d2e;
+        border-color: #28a745;
+        color: #a8e6cf;
+    }
+    
+    .flight-status-card.commercial-only {
+        background-color: #4d3d1a;
+        border-color: #ffc107;
+        color: #ffd97d;
+    }
+    
+    .flight-status-card.private-only {
+        background-color: #4d2a1a;
+        border-color: #fd7e14;
+        color: #ffb88c;
+    }
+    
+    .flight-status-card.all-restricted {
+        background-color: #4d1a1a;
+        border-color: #dc3545;
+        color: #ffb3ba;
+    }
+    
+    .status-title {
+        font-size: 1.8em;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+    
+    .status-details {
+        font-size: 0.9em;
+        margin-top: 8px;
+        line-height: 1.4;
+    }
+    
+    .weather-graphics-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        background-color: #2a2a2a;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #444;
+        flex: 1;
+        overflow-y: auto;
+        min-height: 0;
+    }
+    
+    .weather-metric {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px;
+        background-color: #1a1a1a;
+        border-radius: 6px;
+        border: 2px solid #444;
+    }
+    
+    .weather-metric.warning {
+        border-color: #ffa500;
+        background-color: #2a2000;
+    }
+    
+    .weather-metric.alert {
+        border-color: #dc3545;
+        background-color: #2a0000;
+    }
+    
+    .weather-icon {
+        font-size: 2em;
+        min-width: 40px;
+        text-align: center;
+        flex-shrink: 0;
+    }
+    
+    .weather-info {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .weather-label {
+        font-size: 0.75em;
+        color: #999;
+        margin-bottom: 2px;
+    }
+    
+    .weather-value {
+        font-size: 1.2em;
+        font-weight: bold;
+        color: #ffffff;
+    }
+    
+    .weather-value.good {
+        color: #28a745;
+    }
+    
+    .weather-value.caution {
+        color: #ffc107;
+    }
+    
+    .weather-value.danger {
+        color: #dc3545;
+    }
+</style>
+</head>
+<body>
+<h1>SLU Aviation Weather Dashboard</h1>
+
+<div class="grid-container">
+    <div class="flight-status-section">
+        <div id="overall-flight-status" class="flight-status-card">
+            <div class="status-title">Checking conditions...</div>
+            <div class="status-details"></div>
+        </div>
+    </div>
+
+    <div class="announcements-section">
+        <h3>Service Announcements</h3>
+        <div id="announcements-content">
+            <div class="announcement-item">
+                <div class="announcement-date">Loading...</div>
+                <div class="announcement-title">Loading announcements...</div>
+                <div class="announcement-content">Please wait while we fetch the latest service announcements.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="metar-section">
+        <h3>KCPS METAR <span id="kcps-time" class="metar-time"></span></h3>
+        <div class="metar" id="kcps-metar">KCPS: Loading...</div>
+        <h3>KSTL METAR <span id="kstl-time" class="metar-time"></span></h3>
+        <div class="metar" id="kstl-metar">KSTL: Loading...</div>
+    </div>
+
+    <div class="weather-conditions-section">
+        <h3>Current Weather (KCPS)</h3>
+        <div class="weather-graphics-container">
+            <div class="weather-metric" id="temp-metric">
+                <div class="weather-icon">🌡️</div>
+                <div class="weather-info">
+                    <div class="weather-label">Temperature</div>
+                    <div class="weather-value" id="temp-value">--°F</div>
+                </div>
+            </div>
+            
+            <div class="weather-metric" id="humidity-metric">
+                <div class="weather-icon">💧</div>
+                <div class="weather-info">
+                    <div class="weather-label">Humidity</div>
+                    <div class="weather-value" id="humidity-value">--%</div>
+                </div>
+            </div>
+            
+            <div class="weather-metric" id="wind-metric">
+                <div class="weather-icon">🌬️</div>
+                <div class="weather-info">
+                    <div class="weather-label">Wind</div>
+                    <div class="weather-value" id="wind-value">-- kt</div>
+                </div>
+            </div>
+            
+            <div class="weather-metric" id="visibility-metric">
+                <div class="weather-icon">👁️</div>
+                <div class="weather-info">
+                    <div class="weather-label">Visibility</div>
+                    <div class="weather-value" id="visibility-value">-- SM</div>
+                </div>
+            </div>
+            
+            <div class="weather-metric" id="clouds-metric">
+                <div class="weather-icon">☁️</div>
+                <div class="weather-info">
+                    <div class="weather-label">Ceiling</div>
+                    <div class="weather-value" id="clouds-value">-- ft</div>
+                </div>
+            </div>
+            
+            <div class="weather-metric" id="crosswind-metric">
+                <div class="weather-icon">💨</div>
+                <div class="weather-info">
+                    <div class="weather-label">Max Crosswind</div>
+                    <div class="weather-value" id="crosswind-value">-- kt</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="footer">
+    <p>Data last updated: <span id="updateTime">N/A</span></p>
+    <p>Disclaimer: This page provides general aviation weather information and restrictions for planning purposes only. Always consult official weather briefings and Air Traffic Control for actual flight operations.</p>
+</div>
+
+<!-- Shared weather utilities -->
+<script src="shared-weather.js"></script>
+
+<script>
+const kcpsElevation = 413
+const currentTime = new Date()  // current UTC time
+const twoHoursAgo = new Date(currentTime - 2 * 60 * 60 * 1000)
+
+function updateWeatherGraphics(tempF, humidity, windSpeed, visibility, ceiling, maxCrosswind) {
+    // Temperature
+    const tempValue = document.getElementById('temp-value')
+    const tempMetric = document.getElementById('temp-metric')
+    tempValue.textContent = `${tempF.toFixed(0)}°F`
+    tempMetric.classList.remove('warning', 'alert')
+    tempValue.classList.remove('good', 'caution', 'danger')
+    
+    if (tempF <= 5 || tempF >= 105) {
+        tempMetric.classList.add('alert')
+        tempValue.classList.add('danger')
+    } else if (tempF <= 23 || tempF >= 100) {
+        tempMetric.classList.add('warning')
+        tempValue.classList.add('caution')
+    } else if (tempF < 32) {
+        tempValue.classList.add('caution')
+    } else {
+        tempValue.classList.add('good')
+    }
+    
+    // Humidity
+    const humidityValue = document.getElementById('humidity-value')
+    humidityValue.textContent = `${humidity.toFixed(0)}%`
+    humidityValue.classList.remove('good', 'caution', 'danger')
+    
+    if (humidity >= 80) {
+        humidityValue.classList.add('caution')
+    } else {
+        humidityValue.classList.add('good')
+    }
+    
+    // Wind Speed
+    const windValue = document.getElementById('wind-value')
+    const windMetric = document.getElementById('wind-metric')
+    windValue.textContent = `${windSpeed.toFixed(0)} kt`
+    windMetric.classList.remove('warning', 'alert')
+    windValue.classList.remove('good', 'caution', 'danger')
+    
+    if (windSpeed >= 30) {
+        windMetric.classList.add('alert')
+        windValue.classList.add('danger')
+    } else if (windSpeed >= 25) {
+        windMetric.classList.add('warning')
+        windValue.classList.add('danger')
+    } else if (windSpeed >= 20) {
+        windMetric.classList.add('warning')
+        windValue.classList.add('caution')
+    } else {
+        windValue.classList.add('good')
+    }
+    
+    // Visibility
+    const visValue = document.getElementById('visibility-value')
+    const visMetric = document.getElementById('visibility-metric')
+    visValue.textContent = `${visibility.toFixed(1)} SM`
+    visMetric.classList.remove('warning', 'alert')
+    visValue.classList.remove('good', 'caution', 'danger')
+    
+    if (visibility < 3) {
+        visMetric.classList.add('alert')
+        visValue.classList.add('danger')
+    } else if (visibility < 5) {
+        visMetric.classList.add('warning')
+        visValue.classList.add('caution')
+    } else {
+        visValue.classList.add('good')
+    }
+    
+    // Clouds/Ceiling
+    const cloudsValue = document.getElementById('clouds-value')
+    const cloudsMetric = document.getElementById('clouds-metric')
+    cloudsMetric.classList.remove('warning', 'alert')
+    cloudsValue.classList.remove('good', 'caution', 'danger')
+    
+    if (ceiling === Infinity) {
+        cloudsValue.textContent = 'Clear'
+        cloudsValue.classList.add('good')
+    } else {
+        cloudsValue.textContent = `${ceiling.toFixed(0)} ft`
+        if (ceiling < 1500) {
+            cloudsMetric.classList.add('alert')
+            cloudsValue.classList.add('danger')
+        } else if (ceiling < 3000) {
+            cloudsMetric.classList.add('warning')
+            cloudsValue.classList.add('caution')
+        } else {
+            cloudsValue.classList.add('good')
+        }
+    }
+    
+    // Crosswind
+    const crosswindValue = document.getElementById('crosswind-value')
+    const crosswindMetric = document.getElementById('crosswind-metric')
+    crosswindValue.textContent = `${maxCrosswind.toFixed(0)} kt`
+    crosswindMetric.classList.remove('warning', 'alert')
+    crosswindValue.classList.remove('good', 'caution', 'danger')
+    
+    if (maxCrosswind > 20) {
+        crosswindMetric.classList.add('alert')
+        crosswindValue.classList.add('danger')
+    } else if (maxCrosswind > 15) {
+        crosswindMetric.classList.add('warning')
+        crosswindValue.classList.add('danger')
+    } else if (maxCrosswind > 10) {
+        crosswindMetric.classList.add('warning')
+        crosswindValue.classList.add('caution')
+    } else {
+        crosswindValue.classList.add('good')
+    }
+}
+
+function checkRestrictions(data, elevation) {
+    const ceilingCloud = (() => {
+        const clouds = data.clouds ?? []
+        const str = clouds.find(c => typeof c === 'string' && (c.startsWith('BKN') || c.startsWith('OVC')))
+        if (str) return str
+        let num = clouds.find(c => typeof c === 'number')
+        if (num == null) {
+            const numStr = clouds.find(c => typeof c === 'string' && /^\d+$/.test(c))
+            if (numStr) num = parseInt(numStr, 10)
+        }
+        if (num == null) return undefined
+        // treat sentinel like 99999 as infinite/no ceiling
+        if (num >= 99999) return undefined
+        const hundreds = Math.max(1, Math.round(num / 100))
+        return 'BKN' + String(hundreds).padStart(3, '0')
+    })()
+    const ceiling = ceilingCloud ? parseInt(ceilingCloud.substring(3)) * 100 - elevation : Infinity
+    const cross12 = calculateCrosswind(data.windDir, data.windSpeed, 122)
+    const cross30 = calculateCrosswind(data.windDir, data.windSpeed, 302)
+    const maxCrosswind = Math.max(cross12, cross30)
+    const tempF = toFahrenheit(data.temperature)
+    const rh = Math.min(calculateHumidity(data.temperature, data.dewpoint), 100)
+    const hi = calculateHeatIndex(tempF, rh)
+
+    // Update weather graphics
+    updateWeatherGraphics(tempF, rh, data.windSpeed, data.visibility, ceiling, maxCrosswind)
+
+    // Determine flight status based on concentric restrictions
+    const restrictingFactors = []
+    const tempRestrictions = []
+    let flightStatus = { level: 'all-clear', title: 'All Pilots Clear' }
+
+    // Check most restrictive conditions first
+    if (ceiling < 1500) {
+        restrictingFactors.push(`☁️ Ceiling ${ceiling} ft`)
+    }
+    if (data.visibility < 3) {
+        restrictingFactors.push(`👁️ Visibility ${data.visibility} SM`)
+    }
+    if (data.windSpeed >= 30) {
+        restrictingFactors.push(`🌬️ ${data.windSpeed} knots`)
+        flightStatus = { level: 'all-restricted', title: 'All Flights Restricted' }
+    } else if (maxCrosswind > 20) {
+        restrictingFactors.push(`🌬️ Crosswind ${maxCrosswind.toFixed(1)} knots`)
+        flightStatus = { level: 'all-restricted', title: 'All Flights Restricted' }
+    } else if (data.windSpeed >= 25) {
+        restrictingFactors.push(`🌬️ ${data.windSpeed} knots`)
+        flightStatus = { level: 'commercial-only', title: 'Commercial/Instrument Only' }
+    } else if (maxCrosswind > 15) {
+        restrictingFactors.push(`🌬️ Crosswind ${maxCrosswind.toFixed(1)} knots`)
+        flightStatus = { level: 'commercial-only', title: 'Commercial/Instrument Only' }
+    } else if (data.windSpeed >= 20) {
+        restrictingFactors.push(`🌬️ ${data.windSpeed} knots`)
+        flightStatus = { level: 'private-only', title: 'Private+ Only' }
+    } else if (maxCrosswind > 10) {
+        restrictingFactors.push(`🌬️ Crosswind ${maxCrosswind.toFixed(1)} knots`)
+        flightStatus = { level: 'private-only', title: 'Private+ Only' }
+    } else if (restrictingFactors.length > 0) {
+        flightStatus = { level: 'all-restricted', title: 'All Flights Restricted' }
+    }
+
+    // Check heat index and temperature restrictions
+    if (hi >= 105 || tempF <= 5) {
+        tempRestrictions.push(hi >= 105 ? `🌡️ Heat Index ${hi.toFixed(0)}°F` : `❄️ Temperature ${tempF.toFixed(0)}°F`)
+        if (flightStatus.level !== 'all-restricted') {
+            flightStatus = { level: 'all-restricted', title: 'All Flights Restricted' }
+        }
+    } else if (hi >= 100) {
+        tempRestrictions.push(`🌡️ Heat Index ${hi.toFixed(0)}°F - Diamond Restricted`)
+    } else if (tempF <= 14) {
+        tempRestrictions.push(`❄️ Temperature ${tempF.toFixed(0)}°F - No solos/XC`)
+    } else if (tempF <= 23) {
+        tempRestrictions.push(`❄️ Temperature ${tempF.toFixed(0)}°F - Preheat required`)
+    } else if (tempF < 32) {
+        tempRestrictions.push(`❄️ Temperature ${tempF.toFixed(0)}°F - Avoid extended power-off`)
+    }
+
+    // Update flight status display
+    const statusCard = document.getElementById('overall-flight-status')
+    statusCard.className = `flight-status-card ${flightStatus.level}`
+    statusCard.querySelector('.status-title').textContent = flightStatus.title
+
+    // Combine all restrictions for display
+    const allRestrictions = [...restrictingFactors, ...tempRestrictions]
+    if (allRestrictions.length > 0) {
+        statusCard.querySelector('.status-details').textContent = `Restricting factors: ${allRestrictions.join(', ')}`
+    } else {
+        statusCard.querySelector('.status-details').textContent = 'No weather restrictions in effect'
+    }
+}
+
+function getMinutesAgo(timestamp) {
+    if (!timestamp) return '';
+    const now = new Date();
+    const metarTime = new Date(timestamp);
+    const diffMinutes = Math.floor((now - metarTime) / (1000 * 60));
+    
+    if (diffMinutes < 1) return '(< 1 min ago)';
+    if (diffMinutes === 1) return '(1 min ago)';
+    if (diffMinutes < 60) return `(${diffMinutes} mins ago)`;
+    
+    const diffHours = Math.floor(diffMinutes / 60);
+    const remainingMins = diffMinutes % 60;
+    if (diffHours === 1 && remainingMins === 0) return '(1 hr ago)';
+    if (diffHours === 1) return `(1 hr ${remainingMins} mins ago)`;
+    if (remainingMins === 0) return `(${diffHours} hrs ago)`;
+    return `(${diffHours} hrs ${remainingMins} mins ago)`;
+}
+
+async function fetchWeatherData() {
+    try {
+        // Try to fetch from pre-parsed JSON first
+        const jsonData = await fetchWeatherDataFromJSON();
+        
+        if (jsonData) {
+            console.log("Using weather data from JSON file");
+            
+            // Update last updated time
+            const updateTime = new Date();
+            document.getElementById("updateTime").innerText = updateTime.toLocaleString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            });
+            
+            // Always display both METARs
+            if (jsonData.kcps && jsonData.kcps.metar) {
+                document.getElementById("kcps-metar").innerText = jsonData.kcps.metar
+                if (jsonData.kcps.timestamp) {
+                    document.getElementById("kcps-time").innerText = getMinutesAgo(jsonData.kcps.timestamp)
+                }
+            }
+            
+            if (jsonData.kstl && jsonData.kstl.metar) {
+                document.getElementById("kstl-metar").innerText = jsonData.kstl.metar
+                if (jsonData.kstl.timestamp) {
+                    document.getElementById("kstl-time").innerText = getMinutesAgo(jsonData.kstl.timestamp)
+                }
+            }
+            
+            // Process KCPS data for restrictions if recent
+            if (jsonData.kcps && jsonData.kcps.metar) {
+                const kcpsData = {
+                    windDir: jsonData.kcps.windDirection || 0,
+                    windSpeed: jsonData.kcps.windSpeed || 0,
+                    visibility: jsonData.kcps.visibility || 10,
+                    clouds: jsonData.kcps.cloudCeiling ? [jsonData.kcps.cloudCeiling] : [],
+                    temperature: jsonData.kcps.temperatureC || 0,
+                    dewpoint: jsonData.kcps.dewPointC || 0,
+                    timestamp: jsonData.kcps.timestamp ? new Date(jsonData.kcps.timestamp) : null
+                };
+                
+                if (kcpsData.timestamp && kcpsData.timestamp >= twoHoursAgo) {
+                    checkRestrictions(kcpsData, kcpsElevation);
+                    return; // Exit after processing KCPS
+                }
+            }
+            
+            // If KCPS is old or unavailable, use KSTL data for restrictions
+            if (jsonData.kstl && jsonData.kstl.metar) {
+                const kstlData = {
+                    windDir: jsonData.kstl.windDirection || 0,
+                    windSpeed: jsonData.kstl.windSpeed || 0,
+                    visibility: jsonData.kstl.visibility || 10,
+                    clouds: jsonData.kstl.cloudCeiling ? [jsonData.kstl.cloudCeiling] : [],
+                    temperature: jsonData.kstl.temperatureC || 0,
+                    dewpoint: jsonData.kstl.dewPointC || 0,
+                    timestamp: jsonData.kstl.timestamp ? new Date(jsonData.kstl.timestamp) : null
+                };
+                
+                if (kstlData.timestamp && kstlData.timestamp >= twoHoursAgo) {
+                    checkRestrictions(kstlData, 605);
+                }
+            }
+        } else {
+            console.warn("Could not load weather data from JSON file");
+            document.getElementById("kcps-metar").innerText = "Weather data unavailable";
+        }
+    } catch (err) {
+        console.error("Error fetching weather data:", err);
+        document.getElementById("kcps-metar").innerText = "Error loading weather data";
+    }
+}
+
+async function fetchAnnouncements() {
+    try {
+        const owner = 'CenterForDigitalHumanities';
+        const repo = 'aviation-dashboard';
+        
+        // Fetch discussions directly from GitHub API
+        // Note: This uses the public REST API endpoint for discussions
+        const discussionsUrl = `https://api.github.com/repos/${owner}/${repo}/discussions`;
+        
+        const response = await fetch(discussionsUrl, {
+            headers: {
+                'Accept': 'application/vnd.github.v3+json'
+            }
+        });
+
+        if (!response.ok) {
+            console.warn(`GitHub API returned ${response.status}, falling back to default announcement`);
+            showDefaultAnnouncement();
+            return;
+        }
+
+        const discussions = await response.json();
+        
+        // Filter for announcements (category name or label)
+        const announcements = discussions
+            .filter(d => d.category?.name === 'Announcements')
+            .filter(d => d.state === 'open')
+            .sort((a, b) => new Date(b.created_at) - new Date(a.created_at)) // Newest first
+            .slice(0, 10) // Limit to 10 most recent
+            .map(d => ({
+                title: d.title,
+                content: d.body || '',
+                date: d.created_at
+            }));
+        
+        if (announcements.length === 0) {
+            const container = document.getElementById('announcements-content');
+            container.innerHTML = `
+                <div class="announcement-item">
+                    <div class="announcement-title">No announcements at this time</div>
+                    <div class="announcement-content">Check back later for updates.</div>
+                </div>
+            `;
+            return;
+        }
+
+        displayAnnouncements(announcements);
+
+    } catch (error) {
+        console.error('Error fetching announcements:', error);
+        showDefaultAnnouncement();
+    }
+}
+
+function displayAnnouncements(announcements) {
+    const container = document.getElementById('announcements-content');
+    
+    container.innerHTML = announcements.map(announcement => {
+        const date = new Date(announcement.date || announcement.createdAt).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+        
+        // Convert markdown to basic HTML (simple implementation)
+        const content = (announcement.content || announcement.body || '')
+            .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\*(.+?)\*/g, '<em>$1</em>')
+            .replace(/\n/g, '<br>');
+
+        return `
+            <div class="announcement-item">
+                <div class="announcement-date">${date}</div>
+                <div class="announcement-title">${announcement.title}</div>
+                <div class="announcement-content">${content}</div>
+            </div>
+        `;
+    }).join('');
+}
+
+function showDefaultAnnouncement() {
+    const container = document.getElementById('announcements-content');
+    container.innerHTML = `
+        <div class="announcement-item">
+            <div class="announcement-date">October 9, 2025</div>
+            <div class="announcement-title">Welcome to the Aviation Dashboard</div>
+            <div class="announcement-content">This dashboard provides real-time weather conditions and flight
+                restrictions for SLU Aviation operations. Please check this section regularly for important updates.
+            </div>
+        </div>
+    `;
+}
+
+fetchWeatherData();
+fetchAnnouncements();
+</script>
+</body>
+</html>

@@ -68,6 +68,7 @@ Interactive demonstration showing all 11 flight restriction scenarios with live 
 ## Related Files
 
 - `dashboard.html` - Main operational dashboard
+- `quick.html` - Large-format TV display dashboard with weather graphics
 - `dashboard5.html` - Simplified dashboard with flight status card
 - `demo.html` - Demonstration page with scenario examples
 - `shared-weather.js` - Shared calculation utilities
