@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SLU Aviation Dashboard - Status Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2, h3 {
+            color: #0056b3;
+            text-align: center;
+        }
+        .demo-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background-color: #fafafa;
+        }
+        .scenario-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .weather-conditions {
+            background-color: #e9e9e9;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-family: 'Courier New', monospace;
+        }
+        .flight-status-card {
+            background-color: #f8f9fa;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            font-size: 1.1em;
+            margin: 15px 0;
+        }
+        .flight-status-card.all-clear {
+            background-color: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+        .flight-status-card.commercial-only {
+            background-color: #fff3cd;
+            border-color: #ffc107;
+            color: #856404;
+        }
+        .flight-status-card.private-only {
+            background-color: #f8d7da;
+            border-color: #fd7e14;
+            color: #721c24;
+        }
+        .flight-status-card.all-restricted {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        .status-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .status-details {
+            font-size: 0.9em;
+            margin-top: 8px;
+        }
+        .heat-index-demo {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fff8dc;
+            border: 1px solid #ffa500;
+            border-radius: 5px;
+        }
+        .heat-restrictions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .heat-item {
+            padding: 8px;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 0.9em;
+        }
+        .heat-item.restricted {
+            background-color: #ffcccc;
+            border: 1px solid #ff6666;
+        }
+        .heat-item.ok {
+            background-color: #ccffcc;
+            border: 1px solid #66cc66;
+        }
+        .heat-item.warning {
+            background-color: #fffacd;
+            border: 1px solid #ffd700;
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .legend {
+            background-color: #e7f3ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        .legend h3 {
+            margin-top: 0;
+            text-align: left;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            margin-right: 10px;
+            border: 2px solid;
+        }
+        .intro {
+            background-color: #e7f3ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .legend-all-clear {
+            background-color: #d4edda;
+            border-color: #28a745;
+        }
+        .legend-private-only {
+            background-color: #f8d7da;
+            border-color: #fd7e14;
+        }
+        .legend-commercial-only {
+            background-color: #fff3cd;
+            border-color: #ffc107;
+        }
+        .legend-all-restricted {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+        }
+        .benefits-list {
+            text-align: left;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .footer-text {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        .current-conditions {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        .current-conditions h2 {
+            color: white;
+            margin-top: 0;
+        }
+        .current-weather {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .weather-box {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 6px;
+            backdrop-filter: blur(10px);
+        }
+        .weather-box h4 {
+            margin-top: 0;
+            color: #fff;
+        }
+        .metar-raw {
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 8px;
+            border-radius: 4px;
+            margin: 8px 0;
+            word-break: break-all;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.8);
+        }
+    </style>
+</head>
+<body>
+    <script src="shared-weather.js"></script>
+    <div class="container">
+        <h1>Saint Louis University Oliver L. Parks Department of Aviation Science</h1>
+        <h2>Flight Status Dashboard - Demo Scenarios</h2>
+        
+        <!-- Current Live Conditions Section -->
+        <div class="current-conditions">
+            <h2>📡 Current Live Conditions</h2>
+            <p><em>Real-time data from KCPS (St. Louis Downtown Airport) and KSTL (Lambert Airport)</em></p>
+            <div id="liveWeatherContent" class="loading">Loading current weather data...</div>
+        </div>
+
+        <div class="intro">
+            <p><strong>Purpose:</strong> This demo page shows how the aviation dashboard displays different flight restriction levels based on weather conditions.</p>
+            <p>The system uses a <em>concentric restriction model</em> where more restrictive conditions automatically apply to all less experienced pilot categories.</p>
+        </div>
+
+        <div class="legend">
+            <h3>Status Legend</h3>
+            <div class="legend-item">
+                <div class="legend-color legend-all-clear"></div>
+                <strong>All Pilots Clear:</strong> No weather restrictions in effect
+            </div>
+            <div class="legend-item">
+                <div class="legend-color legend-private-only"></div>
+                <strong>Private+ Only:</strong> Student pilots restricted (winds ≥20kt or crosswind >10kt)
+            </div>
+            <div class="legend-item">
+                <div class="legend-color legend-commercial-only"></div>
+                <strong>Commercial/Instrument Only:</strong> Student & Private pilots restricted (winds ≥25kt or crosswind >15kt)
+            </div>
+            <div class="legend-item">
+                <div class="legend-color legend-all-restricted"></div>
+                <strong>All Flights Restricted:</strong> All pilots restricted (winds ≥30kt, crosswind >20kt, ceiling <1500ft, visibility <3SM, heat index ≥105°F, or temp ≤5°F)
+            </div>
+            <p style="margin-top: 15px; font-size: 0.95em; color: #555;">
+                <strong>Note:</strong> Temperature restrictions (heat index and cold weather) are applied in addition to wind/visibility restrictions and shown in the flight status display with 🌡️ (heat) and ❄️ (cold) indicators.
+            </p>
+        </div>
+
+        <div class="grid-container">
+            <!-- Scenario 1: Perfect Conditions -->
+            <div class="demo-section">
+                <div class="scenario-title">Scenario 1: Perfect Flying Conditions</div>
+                <div class="weather-conditions">
+                    Wind: 090° at 8 knots<br>
+                    Visibility: 10 SM<br>
+                    Ceiling: Clear<br>
+                    Temperature: 72°F<br>
+                    Crosswind RWY 12/30: 2.3 knots
+                </div>
+                <div class="flight-status-card all-clear">
+                    <div class="status-title">All Pilots Clear</div>
+                    <div class="status-details">No weather restrictions in effect</div>
+                </div>
+            </div>
+
+            <!-- Scenario 2: Moderate Wind - Student Restricted -->
+            <div class="demo-section">
+                <div class="scenario-title">Scenario 2: Moderate Surface Winds</div>
+                <div class="weather-conditions">
+                    Wind: 270° at 22 knots<br>
+                    Visibility: 10 SM<br>
+                    Ceiling: 3,500 ft AGL<br>
+                    Temperature: 68°F<br>
+                    Crosswind RWY 12/30: 8.1 knots
+                </div>
+                <div class="flight-status-card private-only">
+                    <div class="status-title">Private+ Only</div>
+                    <div class="status-details">Restricting factors: 🌬️ 22 knots</div>
+                </div>
+            </div>
+
+            <!-- Scenario 3: High Crosswind - Commercial Only -->
+            <div class="demo-section">
+                <div class="scenario-title">Scenario 3: High Crosswind Component</div>
+                <div class="weather-conditions">
+                    Wind: 180° at 24 knots<br>
+                    Visibility: 7 SM<br>
+                    Ceiling: 2,200 ft AGL<br>
+                    Temperature: 75°F<br>
+                    Crosswind RWY 12/30: 18.2 knots
+                </div>
+                <div class="flight-status-card commercial-only">
+                    <div class="status-title">Commercial/Instrument Only</div>
+                    <div class="status-details">Restricting factors: 🌬️ Crosswind 18.2 knots</div>
+                </div>
+            </div>
+
+            <!-- Scenario 4: Very High Winds - All Restricted -->
+            <div class="demo-section">
+                <div class="scenario-title">Scenario 4: Very High Surface Winds</div>
+                <div class="weather-conditions">
+                    Wind: 310° at 32 knots gusting 38<br>
+                    Visibility: 8 SM<br>
+                    Ceiling: 2,800 ft AGL<br>
+                    Temperature: 65°F<br>
+                    Crosswind RWY 12/30: 15.4 knots
+                </div>
+                <div class="flight-status-card all-restricted">
+                    <div class="status-title">All Flights Restricted</div>
+                    <div class="status-details">Restricting factors: 🌬️ 32 knots</div>
+                </div>
+            </div>
+
+            <!-- Scenario 5: Low Ceiling -->
+            <div class="demo-section">
+                <div class="scenario-title">Scenario 5: Low Cloud Ceiling</div>
+                <div class="weather-conditions">
+                    Wind: 120° at 12 knots<br>
+                    Visibility: 5 SM<br>
+                    Ceiling: 1,200 ft AGL (BKN012)<br>
+                    Temperature: 62°F<br>
+                    Crosswind RWY 12/30: 3.1 knots
+                </div>
+                <div class="flight-status-card all-restricted">
+                    <div class="status-title">All Flights Restricted</div>
+                    <div class="status-details">Restricting factors: ☁️ Ceiling 1200 ft</div>
+                </div>
+            </div>
+
+            <!-- Scenario 6: Poor Visibility -->
+            <div class="demo-section">
+                <div class="scenario-title">Scenario 6: Reduced Visibility</div>
+                <div class="weather-conditions">
+                    Wind: 090° at 15 knots<br>
+                    Visibility: 2 SM (haze)<br>
+                    Ceiling: 4,000 ft AGL<br>
+                    Temperature: 78°F<br>
+                    Crosswind RWY 12/30: 4.2 knots
+                </div>
+                <div class="flight-status-card all-restricted">
+                    <div class="status-title">All Flights Restricted</div>
+                    <div class="status-details">Restricting factors: 👁️ Visibility 2.0 SM</div>
+                </div>
+            </div>
+
+            <!-- Scenario 7: Multiple Factors -->
+            <div class="demo-section">
+                <div class="scenario-title">Scenario 7: Multiple Restricting Factors</div>
+                <div class="weather-conditions">
+                    Wind: 060° at 26 knots<br>
+                    Visibility: 4 SM<br>
+                    Ceiling: 1,800 ft AGL<br>
+                    Temperature: 58°F<br>
+                    Crosswind RWY 12/30: 16.8 knots
+                </div>
+                <div class="flight-status-card commercial-only">
+                    <div class="status-title">Commercial/Instrument Only</div>
+                    <div class="status-details">Restricting factors: 🌬️ 26 knots, 🌬️ Crosswind 16.8 knots</div>
+                </div>
+            </div>
+
+            <!-- Scenario 8: Marginal Conditions -->
+            <div class="demo-section">
+                <div class="scenario-title">Scenario 8: Marginal Student Conditions</div>
+                <div class="weather-conditions">
+                    Wind: 200° at 19 knots<br>
+                    Visibility: 6 SM<br>
+                    Ceiling: 2,500 ft AGL<br>
+                    Temperature: 70°F<br>
+                    Crosswind RWY 12/30: 11.2 knots
+                </div>
+                <div class="flight-status-card private-only">
+                    <div class="status-title">Private+ Only</div>
+                    <div class="status-details">Restricting factors: 🌬️ Crosswind 11.2 knots</div>
+                </div>
+            </div>
+
+            <!-- Scenario 9: Extreme Heat -->
+            <div class="demo-section">
+                <div class="scenario-title">Scenario 9: Extreme Heat Index</div>
+                <div class="weather-conditions">
+                    Wind: 090° at 8 knots<br>
+                    Visibility: 10 SM<br>
+                    Ceiling: Clear<br>
+                    Temperature: 96°F<br>
+                    Heat Index: 108°F<br>
+                    Crosswind RWY 12/30: 2.3 knots
+                </div>
+                <div class="flight-status-card all-restricted">
+                    <div class="status-title">All Flights Restricted</div>
+                    <div class="status-details">Restricting factors: 🌡️ Heat Index 108°F</div>
+                </div>
+            </div>
+
+            <!-- Scenario 10: Cold Weather with Winds -->
+            <div class="demo-section">
+                <div class="scenario-title">Scenario 10: Cold Weather Operations</div>
+                <div class="weather-conditions">
+                    Wind: 310° at 22 knots<br>
+                    Visibility: 10 SM<br>
+                    Ceiling: 4,000 ft AGL<br>
+                    Temperature: 18°F<br>
+                    Crosswind RWY 12/30: 10.6 knots
+                </div>
+                <div class="flight-status-card private-only">
+                    <div class="status-title">Private+ Only</div>
+                    <div class="status-details">Restricting factors: 🌬️ 22 knots, ❄️ Temperature 18°F - Preheat required</div>
+                </div>
+            </div>
+
+            <!-- Scenario 11: Extreme Cold -->
+            <div class="demo-section">
+                <div class="scenario-title">Scenario 11: Extreme Cold Temperature</div>
+                <div class="weather-conditions">
+                    Wind: 180° at 12 knots<br>
+                    Visibility: 10 SM<br>
+                    Ceiling: Clear<br>
+                    Temperature: 2°F<br>
+                    Crosswind RWY 12/30: 9.1 knots
+                </div>
+                <div class="flight-status-card all-restricted">
+                    <div class="status-title">All Flights Restricted</div>
+                    <div class="status-details">Restricting factors: ❄️ Temperature 2°F</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Heat Index Demo Section -->
+        <div class="demo-section">
+            <h3>Heat Index and Temperature Restrictions Examples</h3>
+            <p><em>These restrictions apply independently of wind/visibility restrictions above</em></p>
+            
+            <div class="grid-container">
+                <div>
+                    <h4>Summer Day (High Heat Index)</h4>
+                    <div class="weather-conditions">
+                        Temperature: 95°F<br>
+                        Humidity: 65%<br>
+                        Heat Index: 108°F
+                    </div>
+                    <div class="heat-restrictions">
+                        <div class="heat-item restricted">Heat Index ≥ 105°F: All Flights Restricted</div>
+                        <div class="heat-item restricted">Heat Index ≥ 100°F: Diamond Dual/Piper Solo Restricted</div>
+                        <div class="heat-item restricted">Heat Index ≥ 95°F: Diamond Solo Restricted</div>
+                        <div class="heat-item ok">Temperature > 32°F: OK</div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4>Winter Day (Cold Temperatures)</h4>
+                    <div class="weather-conditions">
+                        Temperature: 18°F<br>
+                        Humidity: 45%<br>
+                        Heat Index: 18°F
+                    </div>
+                    <div class="heat-restrictions">
+                        <div class="heat-item ok">Heat Index < 95°F: OK</div>
+                        <div class="heat-item restricted">Temperature < 32°F: Avoid extended power-off ops</div>
+                        <div class="heat-item restricted">Temperature ≤ 23°F: Preheat/recent flight required</div>
+                        <div class="heat-item ok">Temperature > 14°F: Solos allowed (if preheated)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h3>Key Benefits of This System</h3>
+            <ul class="benefits-list">
+                <li><strong>Clear Decision Making:</strong> One status tells everyone immediately what operations are allowed</li>
+                <li><strong>Safety-First Approach:</strong> More restrictive conditions automatically protect less experienced pilots</li>
+                <li><strong>Reduced Confusion:</strong> No need to check multiple pilot category restrictions</li>
+                <li><strong>Visual Clarity:</strong> Color-coded status cards provide instant recognition</li>
+                <li><strong>Comprehensive Information:</strong> Displays exact restricting factors including wind speeds, crosswind components, heat index, and temperature restrictions with emoji indicators (🌬️ 🌡️ ❄️ ☁️ 👁️)</li>
+                <li><strong>Real-time Updates:</strong> Status updates automatically every 5 minutes with fresh weather data</li>
+                <li><strong>Temperature Safety:</strong> Automatically accounts for both extreme heat (≥105°F heat index) and extreme cold (≤5°F) restrictions</li>
+            </ul>
+        </div>
+
+        <div class="footer-text">
+            <p>This demo shows representative weather scenarios. Actual conditions are pulled from live METAR data in the operational dashboard.</p>
+            <p><strong>Last Updated:</strong> October 9, 2025</p>
+        </div>
+    </div>
+
+    <script>
+        // Load and display current weather conditions
+        async function loadCurrentConditions() {
+            try {
+                const data = await fetchWeatherDataFromJSON();
+                
+                if (!data || !data.kcps || !data.kstl) {
+                    document.getElementById('liveWeatherContent').innerHTML = 
+                        '<p style="color: #ffcccc;">Unable to load current weather data.</p>';
+                    return;
+                }
+
+                const kcps = data.kcps;
+                const kstl = data.kstl;
+                
+                // Determine which station to use for flight operations
+                const usingKCPS = kcps.windSpeed !== null && kcps.windSpeed !== undefined;
+                const operationalData = usingKCPS ? kcps : kstl;
+                const operationalStation = usingKCPS ? 'KCPS' : 'KSTL';
+                
+                // Calculate crosswind for runway 12/30 (heading 120°)
+                const crosswind = calculateCrosswind(
+                    operationalData.windDirection,
+                    operationalData.windSpeed,
+                    120
+                );
+                
+                // Determine flight status using the concentric model
+                let status = 'all-clear';
+                let statusTitle = 'All Pilots Clear';
+                let restrictingFactors = [];
+                const tempRestrictions = [];
+                
+                // Check for All Restricted conditions (most restrictive)
+                if (operationalData.windSpeed >= 30 || 
+                    operationalData.windGust >= 30 || 
+                    Math.abs(crosswind) > 20 ||
+                    (operationalData.cloudCeiling !== null && operationalData.cloudCeiling < 1500) ||
+                    (operationalData.visibility !== null && operationalData.visibility < 3)) {
+                    status = 'all-restricted';
+                    statusTitle = 'All Flights Restricted';
+                    
+                    if (operationalData.windSpeed >= 30) restrictingFactors.push(`🌬️ ${operationalData.windSpeed} knots`);
+                    if (operationalData.windGust >= 30 && operationalData.windGust > operationalData.windSpeed) 
+                        restrictingFactors.push(`🌬️ Gusts ${operationalData.windGust} knots`);
+                    if (Math.abs(crosswind) > 20) restrictingFactors.push(`🌬️ Crosswind ${Math.abs(crosswind).toFixed(1)} knots`);
+                    if (operationalData.cloudCeiling !== null && operationalData.cloudCeiling < 1500) 
+                        restrictingFactors.push(`☁️ Ceiling ${operationalData.cloudCeiling} ft`);
+                    if (operationalData.visibility !== null && operationalData.visibility < 3) 
+                        restrictingFactors.push(`👁️ Visibility ${operationalData.visibility.toFixed(1)} SM`);
+                }
+                // Check for Commercial/Instrument Only conditions
+                else if (operationalData.windSpeed >= 25 || 
+                         operationalData.windGust >= 25 || 
+                         Math.abs(crosswind) > 15) {
+                    status = 'commercial-only';
+                    statusTitle = 'Commercial/Instrument Only';
+                    
+                    if (operationalData.windSpeed >= 25) restrictingFactors.push(`🌬️ ${operationalData.windSpeed} knots`);
+                    if (operationalData.windGust >= 25 && operationalData.windGust > operationalData.windSpeed) 
+                        restrictingFactors.push(`🌬️ Gusts ${operationalData.windGust} knots`);
+                    if (Math.abs(crosswind) > 15) restrictingFactors.push(`🌬️ Crosswind ${Math.abs(crosswind).toFixed(1)} knots`);
+                }
+                // Check for Private+ Only conditions
+                else if (operationalData.windSpeed >= 20 || 
+                         operationalData.windGust >= 20 || 
+                         Math.abs(crosswind) > 10) {
+                    status = 'private-only';
+                    statusTitle = 'Private+ Only';
+                    
+                    if (operationalData.windSpeed >= 20) restrictingFactors.push(`🌬️ ${operationalData.windSpeed} knots`);
+                    if (operationalData.windGust >= 20 && operationalData.windGust > operationalData.windSpeed) 
+                        restrictingFactors.push(`🌬️ Gusts ${operationalData.windGust} knots`);
+                    if (Math.abs(crosswind) > 10) restrictingFactors.push(`🌬️ Crosswind ${Math.abs(crosswind).toFixed(1)} knots`);
+                }
+                
+                // Calculate heat index if we have temperature and dewpoint
+                const tempF = toFahrenheit(operationalData.temperatureC);
+                const dewF = toFahrenheit(operationalData.dewPointC);
+                const humidity = calculateHumidity(tempF, dewF);
+                const heatIndex = calculateHeatIndex(tempF, humidity);
+                
+                // Check heat index and temperature restrictions
+                if (heatIndex >= 105 || tempF <= 5) {
+                    tempRestrictions.push(heatIndex >= 105 ? `🌡️ Heat Index ${heatIndex.toFixed(0)}°F` : `❄️ Temperature ${tempF.toFixed(0)}°F`);
+                    if (status !== 'all-restricted') {
+                        status = 'all-restricted';
+                        statusTitle = 'All Flights Restricted';
+                    }
+                } else if (heatIndex >= 100) {
+                    tempRestrictions.push(`🌡️ Heat Index ${heatIndex.toFixed(0)}°F - Diamond Restricted`);
+                } else if (tempF <= 14) {
+                    tempRestrictions.push(`❄️ Temperature ${tempF.toFixed(0)}°F - No solos/XC`);
+                } else if (tempF <= 23) {
+                    tempRestrictions.push(`❄️ Temperature ${tempF.toFixed(0)}°F - Preheat required`);
+                } else if (tempF < 32) {
+                    tempRestrictions.push(`❄️ Temperature ${tempF.toFixed(0)}°F - Avoid extended power-off`);
+                }
+                
+                // Combine all restrictions for display
+                const allRestrictions = [...restrictingFactors, ...tempRestrictions];
+                const restrictionText = allRestrictions.length > 0 
+                    ? allRestrictions.join(', ') 
+                    : 'No weather restrictions in effect';
+                
+                // Build the display
+                let html = `
+                    <div class="current-weather">
+                        <div class="weather-box">
+                            <h4>KCPS (St. Louis Downtown)</h4>
+                            <div class="metar-raw">${kcps.metar || 'Not available'}</div>
+                            ${kcps.windSpeed !== null ? `
+                                <p>Wind: ${kcps.windDirection}° at ${kcps.windSpeed} knots${kcps.windGust ? ` gusting ${kcps.windGust}` : ''}</p>
+                                <p>Visibility: ${kcps.visibility !== null ? kcps.visibility + ' SM' : 'N/A'}</p>
+                                <p>Ceiling: ${kcps.cloudCeiling !== null ? kcps.cloudCeiling + ' ft AGL' : 'Clear'}</p>
+                                <p>Temperature: ${toFahrenheit(kcps.temperatureC).toFixed(0)}°F (${kcps.temperatureC}°C)</p>
+                            ` : '<p style="opacity: 0.7;">Weather data not available</p>'}
+                        </div>
+                        
+                        <div class="weather-box">
+                            <h4>KSTL (Lambert Airport)</h4>
+                            <div class="metar-raw">${kstl.metar || 'Not available'}</div>
+                            ${kstl.windSpeed !== null ? `
+                                <p>Wind: ${kstl.windDirection}° at ${kstl.windSpeed} knots${kstl.windGust ? ` gusting ${kstl.windGust}` : ''}</p>
+                                <p>Visibility: ${kstl.visibility !== null ? kstl.visibility + ' SM' : 'N/A'}</p>
+                                <p>Ceiling: ${kstl.cloudCeiling !== null ? kstl.cloudCeiling + ' ft AGL' : 'Clear'}</p>
+                                <p>Temperature: ${toFahrenheit(kstl.temperatureC).toFixed(0)}°F (${kstl.temperatureC}°C)</p>
+                            ` : '<p style="opacity: 0.7;">Weather data not available</p>'}
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 20px;">
+                        <h3 style="color: white; margin-bottom: 15px;">📊 Current Flight Status (using ${operationalStation})</h3>
+                        <div class="flight-status-card ${status}">
+                            <div class="status-title">${statusTitle}</div>
+                            <div class="status-details">${restrictionText}</div>
+                        </div>
+                        
+                        <div style="background-color: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: 6px; margin-top: 15px;">
+                            <h4 style="color: white; margin-top: 0;">Calculated Values</h4>
+                            <p>Crosswind for RWY 12/30: ${Math.abs(crosswind).toFixed(1)} knots</p>
+                            <p>Humidity: ${humidity.toFixed(0)}%</p>
+                            <p>Heat Index: ${heatIndex.toFixed(0)}°F</p>
+                        </div>
+                        
+                        <p style="margin-top: 15px; font-size: 0.9em; opacity: 0.9;">
+                            <em>Data last updated: ${new Date(data.lastUpdated).toLocaleString()}</em>
+                        </p>
+                    </div>
+                `;
+                
+                document.getElementById('liveWeatherContent').innerHTML = html;
+                
+            } catch (error) {
+                console.error('Error loading current conditions:', error);
+                document.getElementById('liveWeatherContent').innerHTML = 
+                    '<p style="color: #ffcccc;">Error loading weather data. Please check the console for details.</p>';
+            }
+        }
+        
+        // Load data when page loads
+        loadCurrentConditions();
+        
+        // Refresh every 5 minutes
+        setInterval(loadCurrentConditions, 5 * 60 * 1000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+# Jekyll Configuration for Aviation Dashboard
+theme: jekyll-theme-cayman
+title: SLU Aviation Dashboard
+description: Real-time flight restrictions and weather information for Saint Louis University Aviation Science
+
+# Include documentation files
+include:
+  - documentation
+
+# Exclude from processing
+exclude:
+  - scripts/
+  - .github/
+  - .gitignore
+  - .jekyll-cache/
+  - README.md
+  - GITHUB_ACTIONS_SETUP.md
+
+# Markdown settings
+markdown: kramdown
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+
+# Collections (optional - for better organization)
+collections:
+  documentation:
+    output: true
+    permalink: /documentation/:name/
+
+# Defaults for documentation pages
+defaults:
+  - scope:
+      path: "documentation"
+      type: "pages"
+    values:
+      layout: default
