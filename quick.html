@@ -402,11 +402,10 @@ function getMinutesAgo(timestamp) {
 
 async function fetchWeatherData() {
     try {
-        const response = await fetch('data/weather-data.json');
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        const data = await fetchWeatherDataFromJSON();
+        if (!data) {
+            throw new Error('Failed to fetch weather data');
         }
-        const data = await response.json();
         
         // Update timestamp
         const updateTimeElement = document.getElementById('updateTime');
