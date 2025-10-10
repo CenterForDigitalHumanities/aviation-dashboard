@@ -18,12 +18,6 @@ Full-featured dashboard with comprehensive weather data, heat index restrictions
 ### [Quick View Dashboard](quick.html)
 Large-format TV display dashboard with weather graphics, flight status, announcements, and METAR data. Optimized for monitor viewing.
 
-### [Simplified Dashboard](dashboard5.html)
-Streamlined dashboard with prominent flight status card showing current operational status at a glance.
-
-### [Quick View Dashboard](quick.html)
-Large-format TV display dashboard with weather graphics, auto-refresh timers, and optimized two-column layout for monitor viewing.
-
 ### [Demo Page](documentation/demo.html)
 Demonstration page showing all possible status scenarios with live current conditions and 11 example scenarios.
 
