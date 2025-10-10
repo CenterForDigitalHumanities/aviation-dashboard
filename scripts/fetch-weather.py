@@ -6,22 +6,53 @@ Fetches METAR data from NOAA and parses it into JSON format
 
 import json
 import re
-from datetime import datetime, timezone
-from urllib.request import urlopen
+from datetime import datetime, timezone, timedelta
+from urllib.request import urlopen, Request
 from urllib.error import URLError
 
 KCPS_URL = 'https://tgftp.nws.noaa.gov/data/observations/metar/stations/KCPS.TXT'
 KSTL_URL = 'https://tgftp.nws.noaa.gov/data/observations/metar/stations/KSTL.TXT'
 
-def fetch_metar(url):
-    """Fetch METAR data from NOAA"""
+def fetch_metar(url, retry_on_stale=True):
+    """Fetch METAR data from NOAA
+    
+    Args:
+        url: URL to fetch METAR from
+        retry_on_stale: If True, retry once if data is older than 30 minutes
+    
+    Returns:
+        METAR text string or None if failed
+    """
     try:
         print(f"Fetching METAR from {url}...")
-        with urlopen(url, timeout=10) as response:
+        
+        # Create a request with cache-busting headers
+        request = Request(url)
+        request.add_header('Cache-Control', 'no-cache, no-store, must-revalidate')
+        request.add_header('Pragma', 'no-cache')
+        request.add_header('Expires', '0')
+        
+        with urlopen(request, timeout=10) as response:
             data = response.read().decode('utf-8')
             # Get the last line which contains the METAR
             metar = data.strip().split('\n')[-1]
             print(f"Successfully fetched: {metar}")
+            
+            # Check if METAR is stale (more than 30 minutes old)
+            if retry_on_stale:
+                metar_time = extract_metar_timestamp(metar)
+                if metar_time:
+                    now = datetime.now(timezone.utc)
+                    age_minutes = (now - metar_time).total_seconds() / 60
+                    print(f"METAR age: {age_minutes:.1f} minutes")
+                    
+                    if age_minutes > 30:
+                        print(f"Warning: METAR is {age_minutes:.1f} minutes old (>30 min). Retrying once...")
+                        # Wait a moment and retry once
+                        import time
+                        time.sleep(2)
+                        return fetch_metar(url, retry_on_stale=False)
+            
             return metar
     except URLError as e:
         print(f"Error fetching METAR from {url}: {e}")
@@ -29,6 +60,43 @@ def fetch_metar(url):
     except Exception as e:
         print(f"Unexpected error: {e}")
         return None
+
+def extract_metar_timestamp(metar_text):
+    """Extract timestamp from METAR text for staleness check
+    
+    Args:
+        metar_text: Raw METAR text
+        
+    Returns:
+        datetime object or None if timestamp cannot be extracted
+    """
+    if not metar_text:
+        return None
+    
+    # Extract observation time (UTC)
+    time_match = re.search(r'(\d{6}Z)', metar_text)
+    if time_match:
+        try:
+            day = int(time_match.group(1)[0:2])
+            hour = int(time_match.group(1)[2:4])
+            minute = int(time_match.group(1)[4:6])
+            now = datetime.now(timezone.utc)
+            
+            # Try current month first
+            metar_date = datetime(now.year, now.month, day, hour, minute, tzinfo=timezone.utc)
+            
+            # If the METAR date is in the future (e.g., at month boundary), use previous month
+            if metar_date > now:
+                if now.month == 1:
+                    metar_date = datetime(now.year - 1, 12, day, hour, minute, tzinfo=timezone.utc)
+                else:
+                    metar_date = datetime(now.year, now.month - 1, day, hour, minute, tzinfo=timezone.utc)
+            
+            return metar_date
+        except (ValueError, AttributeError):
+            return None
+    
+    return None
 
 def parse_metar(metar_text):
     """Parse METAR text into structured data"""
