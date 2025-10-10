@@ -8,7 +8,8 @@ This setup uses GitHub Actions to automatically fetch METAR weather data every 1
 aviation-dashboard/
 ├── .github/
 │   └── workflows/
-│       └── update-weather.yml       # GitHub Actions workflow
+│       ├── update-weather.yml       # GitHub Actions workflow (updates weather + triggers deployment)
+│       └── jekyll-gh-pages.yml      # Jekyll deployment workflow (triggered after weather update)
 ├── scripts/
 │   └── fetch-weather.py             # Weather fetcher script (Python)
 ├── data/
@@ -23,6 +24,7 @@ aviation-dashboard/
 - **Trigger**: Runs every 15 minutes (cron: `*/15 * * * *`)
 - **Manual Trigger**: Can be manually triggered from the Actions tab
 - **Push Trigger**: Runs when workflow or fetch-weather.js is updated
+- **Jekyll Deployment**: Automatically triggers Jekyll deployment after updating weather data to ensure GitHub Pages serves the latest data
 
 ### 2. Weather Fetcher Script (`scripts/fetch-weather.py`)
 - Fetches METAR data from NOAA for KCPS and KSTL
@@ -40,6 +42,11 @@ aviation-dashboard/
 - Dashboards read from `data/weather-data.json` first
 - Falls back to direct API calls if needed
 - Displays current weather and flight restrictions
+
+### 5. GitHub Pages Deployment
+- After weather data is updated and committed, the workflow automatically triggers the Jekyll deployment
+- This ensures GitHub Pages always serves the latest weather data
+- Uses GitHub API to trigger the `jekyll-gh-pages.yml` workflow via workflow_dispatch event
 
 ## Setup Steps
 
@@ -114,10 +121,13 @@ Each workflow run shows:
 3. Check parsing logic in fetch-weather.py
 
 ### Dashboard Not Updating
-1. Clear browser cache
-2. Check browser console for errors
-3. Verify data/weather-data.json exists and has recent timestamp
-4. Check dashboard.html is reading from correct path
+1. Check that Jekyll deployment is being triggered after weather updates
+2. View Actions tab to see both "Update Weather Data" and "Deploy Jekyll" workflow runs
+3. Clear browser cache (GitHub Pages may cache files)
+4. Check browser console for errors
+5. Verify data/weather-data.json exists and has recent timestamp
+6. Verify workflow has `actions: write` permission to trigger Jekyll deployment
+7. Check dashboard.html is reading from correct path
 
 ## Customization
 
