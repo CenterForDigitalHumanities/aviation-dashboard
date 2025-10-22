@@ -101,11 +101,14 @@ function toMPH(knots) {
  * @param {number} windDirection - Wind direction in degrees
  * @param {number} windSpeed - Wind speed in knots
  * @param {number} runwayHeading - Runway heading in degrees
+ * @param {number} windGust - Wind gust in knots (optional)
  * @returns {number|null} Crosswind component in knots
  */
-function calculateCrosswind(windDirection, windSpeed, runwayHeading) {
+function calculateCrosswind(windDirection, windSpeed, runwayHeading, windGust = null) {
     if (windDirection === null || windSpeed === null) return null
+    // Use gust value if present and greater than zero, otherwise use steady-state wind
+    const effectiveWindSpeed = (windGust !== null && windGust > 0) ? windGust : windSpeed
     const angleDiff = Math.abs(windDirection - runwayHeading)
     const effectiveAngle = angleDiff > 180 ? 360 - angleDiff : angleDiff // Smallest angle
-    return windSpeed * Math.sin(effectiveAngle * Math.PI / 180)
+    return effectiveWindSpeed * Math.sin(effectiveAngle * Math.PI / 180)
 }
