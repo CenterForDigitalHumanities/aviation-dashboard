@@ -480,8 +480,8 @@ function calculateFlightRestrictions(data, elevation) {
     
     // Crosswind restrictions
     if (data.windDirection !== undefined && data.windSpeed !== undefined) {
-        const crosswind12 = calculateCrosswind(data.windDirection, data.windSpeed, KCPS_RUNWAY_12_HDG);
-        const crosswind30 = calculateCrosswind(data.windDirection, data.windSpeed, KCPS_RUNWAY_30_HDG);
+        const crosswind12 = calculateCrosswind(data.windDirection, data.windSpeed, KCPS_RUNWAY_12_HDG, data.windGust);
+        const crosswind30 = calculateCrosswind(data.windDirection, data.windSpeed, KCPS_RUNWAY_30_HDG, data.windGust);
         const maxCrosswind = Math.max(crosswind12, crosswind30);
         
         if (maxCrosswind > 15) {

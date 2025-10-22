@@ -318,11 +318,12 @@
             const humidity = weatherData.humidity !== undefined ? weatherData.humidity : calculateHumidity(tempC, weatherData.dewPoint);
             const windSpeed = weatherData.windSpeed;
             const windDirection = weatherData.windDirection;
+            const windGust = weatherData.windGust;
             const visibilitySM = weatherData.visibility;
             const cloudCeilingAGL = weatherData.cloudCeiling; // In feet
 
-            const crosswind12 = calculateCrosswind(windDirection, windSpeed, KCPS_RUNWAY_12_HDG);
-            const crosswind30 = calculateCrosswind(windDirection, windSpeed, KCPS_RUNWAY_30_HDG);
+            const crosswind12 = calculateCrosswind(windDirection, windSpeed, KCPS_RUNWAY_12_HDG, windGust);
+            const crosswind30 = calculateCrosswind(windDirection, windSpeed, KCPS_RUNWAY_30_HDG, windGust);
 
             const heatIndex = calculateHeatIndex(tempF, humidity);
 
