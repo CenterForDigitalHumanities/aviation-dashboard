@@ -354,10 +354,12 @@
                 }
             }
 
+            const effectiveWindSpeed = getEffectiveWindSpeed(windSpeed, windGust);
+
             // Student Pilot Restrictions
             const studentCeilingRestricted = cloudCeilingAGL !== null && cloudCeilingAGL < 1500;
             const studentVisibilityRestricted = visibilitySM !== null && visibilitySM < 3;
-            const studentSurfaceWindRestricted = windSpeed !== null && windSpeed >= 20;
+            const studentSurfaceWindRestricted = effectiveWindSpeed !== null && effectiveWindSpeed >= 20;
             const studentCrosswindRestricted = (crosswind12 !== null && crosswind12 > 10) || (crosswind30 !== null && crosswind30 > 10);
 
             setStatus('studentCeilingStatus', studentCeilingRestricted, 'Ceiling too low');
@@ -368,7 +370,7 @@
             // Private Pilot Restrictions
             const privateCeilingRestricted = cloudCeilingAGL !== null && cloudCeilingAGL < 1500;
             const privateVisibilityRestricted = visibilitySM !== null && visibilitySM < 3;
-            const privateSurfaceWindRestricted = windSpeed !== null && windSpeed >= 25;
+            const privateSurfaceWindRestricted = effectiveWindSpeed !== null && effectiveWindSpeed >= 25;
             const privateCrosswindRestricted = (crosswind12 !== null && crosswind12 > 15) || (crosswind30 !== null && crosswind30 > 15);
 
             setStatus('privateCeilingStatus', privateCeilingRestricted, 'Ceiling too low');
@@ -378,7 +380,7 @@
 
             // Instrument/Commercial Pilot Restrictions
             const instCommVisibilityRestricted = visibilitySM !== null && visibilitySM < 3;
-            const instCommSurfaceWindRestricted = windSpeed !== null && windSpeed >= 30;
+            const instCommSurfaceWindRestricted = effectiveWindSpeed !== null && effectiveWindSpeed >= 30;
             const instCommCrosswindRestricted = (crosswind12 !== null && crosswind12 > 20) || (crosswind30 !== null && crosswind30 > 20);
 
             setStatus('instCommVisibilityStatus', instCommVisibilityRestricted, 'Visibility too low');
