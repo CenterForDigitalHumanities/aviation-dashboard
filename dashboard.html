@@ -329,7 +329,8 @@
 
             document.getElementById('currentTemp').textContent = tempF !== null ? `${tempF.toFixed(1)}°F (${tempC.toFixed(1)}°C)` : 'N/A';
             document.getElementById('currentHumidity').textContent = humidity !== null ? `${humidity.toFixed(1)}%` : 'N/A';
-            document.getElementById('surfaceWinds').textContent = windDirection !== null && windSpeed !== null ? `${windDirection}° at ${windSpeed} knots` : 'N/A';
+            const gustText = (windGust ?? 0) > 0 ? ` gusting ${windGust}` : '';
+            document.getElementById('surfaceWinds').textContent = windDirection !== null && windSpeed !== null ? `${windDirection}° at ${windSpeed} knots${gustText}` : 'N/A';
             document.getElementById('visibility').textContent = visibilitySM !== null ? `${visibilitySM.toFixed(1)} SM` : 'N/A';
             document.getElementById('cloudCeiling').textContent = cloudCeilingAGL !== null && cloudCeilingAGL !== 99999 ? `${cloudCeilingAGL} ft AGL` : 'Clear/No Ceiling';
             document.getElementById('crosswind12').textContent = crosswind12 !== null ? `${crosswind12.toFixed(1)} knots` : 'N/A';

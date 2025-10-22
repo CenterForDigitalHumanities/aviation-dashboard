@@ -467,14 +467,17 @@ function calculateFlightRestrictions(data, elevation) {
         all: []
     };
     
-    // Wind speed restrictions
-    if (data.windSpeed !== undefined && data.windSpeed !== null) {
-        if (data.windSpeed > 25) {
-            restrictions.all.push(`🌬️ ${data.windSpeed} knots`);
-        } else if (data.windSpeed > 20) {
-            restrictions.private.push(`🌬️ ${data.windSpeed} knots`);
-        } else if (data.windSpeed > 15) {
-            restrictions.student.push(`🌬️ ${data.windSpeed} knots`);
+    // Wind speed restrictions (use gust if higher)
+    if ((data.windSpeed !== undefined && data.windSpeed !== null) || (data.windGust !== undefined && data.windGust !== null)) {
+        const effWind = getEffectiveWindSpeed(data.windSpeed, data.windGust);
+        if (effWind !== null) {
+            if (effWind > 25) {
+                restrictions.all.push(`🌬️ ${effWind} knots`);
+            } else if (effWind > 20) {
+                restrictions.private.push(`🌬️ ${effWind} knots`);
+            } else if (effWind > 15) {
+                restrictions.student.push(`🌬️ ${effWind} knots`);
+            }
         }
     }
     
@@ -596,17 +599,23 @@ function updateWeatherGraphics(data) {
         }
     }
     
-    // Wind
-    if (data.windSpeed !== undefined && data.windSpeed !== null) {
+    // Wind (use gust if higher for thresholds)
+    if ((data.windSpeed !== undefined && data.windSpeed !== null) || (data.windGust !== undefined && data.windGust !== null)) {
         const windDir = data.windDirection || 0;
-        document.getElementById('wind-value').textContent = `${windDir}° @ ${data.windSpeed} kt`;
+        // Keep display as steady-state value; optional: append gust if present
+        const displayWind = data.windSpeed ?? '--';
+    const gustText = ((data.windGust ?? 0) > 0) ? ` G${data.windGust}` : '';
+        document.getElementById('wind-value').textContent = `${windDir}° @ ${displayWind} kt${gustText}`;
         
+        const effWind = getEffectiveWindSpeed(data.windSpeed, data.windGust);
         const windMetric = document.getElementById('wind-metric');
         windMetric.classList.remove('warning', 'alert');
-        if (data.windSpeed > 25) {
-            windMetric.classList.add('alert');
-        } else if (data.windSpeed > 20) {
-            windMetric.classList.add('warning');
+        if (effWind !== null) {
+            if (effWind > 25) {
+                windMetric.classList.add('alert');
+            } else if (effWind > 20) {
+                windMetric.classList.add('warning');
+            }
         }
     }
     
