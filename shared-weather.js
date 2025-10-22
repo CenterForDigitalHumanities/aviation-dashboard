@@ -97,6 +97,21 @@ function toMPH(knots) {
 }
 
 /**
+ * Get effective wind speed for calculations/restrictions.
+ * Uses gust if present and greater than steady wind; otherwise uses steady wind.
+ * @param {number|null|undefined} windSpeed - Steady-state wind in knots
+ * @param {number|null|undefined} windGust - Wind gust in knots
+ * @returns {number|null} Effective wind speed in knots or null if unavailable
+ */
+function getEffectiveWindSpeed(windSpeed, windGust) {
+    const hasGust = (windGust ?? 0) > 0
+    const hasSpeed = windSpeed != null // allow 0 as valid speed
+    if (!hasGust && !hasSpeed) return null
+    if (hasGust && (!hasSpeed || windGust > windSpeed)) return windGust
+    return windSpeed
+}
+
+/**
  * Calculate crosswind component
  * @param {number} windDirection - Wind direction in degrees
  * @param {number} windSpeed - Wind speed in knots
@@ -105,9 +120,9 @@ function toMPH(knots) {
  * @returns {number|null} Crosswind component in knots
  */
 function calculateCrosswind(windDirection, windSpeed, runwayHeading, windGust = null) {
-    if (windDirection === null || windSpeed === null) return null
-    // Use gust value if present and greater than zero, otherwise use steady-state wind
-    const effectiveWindSpeed = (windGust !== null && windGust > 0) ? windGust : windSpeed
+    if (windDirection == null) return null
+    const effectiveWindSpeed = getEffectiveWindSpeed(windSpeed, windGust)
+    if (effectiveWindSpeed == null) return null
     const angleDiff = Math.abs(windDirection - runwayHeading)
     const effectiveAngle = angleDiff > 180 ? 360 - angleDiff : angleDiff // Smallest angle
     return effectiveWindSpeed * Math.sin(effectiveAngle * Math.PI / 180)
