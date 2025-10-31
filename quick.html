@@ -815,6 +815,8 @@ function displayAnnouncements(announcements) {
     const overlay = document.getElementById('airportClosedOverlay');
     if (hasNoFlying && overlay) {
         overlay.classList.add('active');
+    } else if (overlay) {
+        overlay.classList.remove('active');
     }
     
     container.innerHTML = announcements.map(announcement => {
