@@ -127,3 +127,54 @@ function calculateCrosswind(windDirection, windSpeed, runwayHeading, windGust = 
     const effectiveAngle = angleDiff > 180 ? 360 - angleDiff : angleDiff // Smallest angle
     return effectiveWindSpeed * Math.sin(effectiveAngle * Math.PI / 180)
 }
+
+// --- Shared ceiling helpers (extracted to reduce duplication) ---
+// Unified restriction threshold for ceiling (AGL, feet)
+const CEILING_RESTRICTION_AGL_FT = 1500
+
+/**
+ * Compute AGL ceiling from MSL ceiling value and field elevation
+ * @param {number|null|undefined} cloudCeilingMSL - Cloud ceiling MSL (ft) or 99999 for clear
+ * @param {number} fieldElevationFt - Airport elevation (ft)
+ * @returns {number|null} Ceiling AGL in feet, or null if no ceiling
+ */
+function computeCeilingAGL(cloudCeilingMSL, fieldElevationFt) {
+    if (cloudCeilingMSL === undefined || cloudCeilingMSL === null) return null
+    if (cloudCeilingMSL >= 99999) return null // Clear/No ceiling
+    return cloudCeilingMSL - fieldElevationFt
+}
+
+/**
+ * Determine if ceiling imposes restrictions given a threshold
+ * @param {number|null|undefined} cloudCeilingMSL - Cloud ceiling MSL (ft)
+ * @param {number} fieldElevationFt - Airport elevation (ft)
+ * @param {number} [thresholdFtAGL=CEILING_RESTRICTION_AGL_FT] - Threshold in feet AGL
+ * @returns {boolean} True if restricted
+ */
+function isCeilingRestricted(cloudCeilingMSL, fieldElevationFt, thresholdFtAGL = CEILING_RESTRICTION_AGL_FT) {
+    const agl = computeCeilingAGL(cloudCeilingMSL, fieldElevationFt)
+    return agl !== null && agl < thresholdFtAGL
+}
+
+// Expose helpers to global scope for inline <script> usage
+window.CEILING_RESTRICTION_AGL_FT = CEILING_RESTRICTION_AGL_FT
+window.computeCeilingAGL = computeCeilingAGL
+window.isCeilingRestricted = isCeilingRestricted
+
+// --- Shared visibility helpers ---
+// Unified visibility restriction threshold (statute miles)
+const VISIBILITY_RESTRICTION_SM = 3
+
+/**
+ * Determine if visibility imposes restrictions
+ * @param {number|null|undefined} visibilitySM - Visibility in statute miles
+ * @param {number} [thresholdSM=VISIBILITY_RESTRICTION_SM] - Threshold in SM
+ * @returns {boolean} True if restricted
+ */
+function isVisibilityRestricted(visibilitySM, thresholdSM = VISIBILITY_RESTRICTION_SM) {
+    return visibilitySM != null && visibilitySM < thresholdSM
+}
+
+// Expose to global
+window.VISIBILITY_RESTRICTION_SM = VISIBILITY_RESTRICTION_SM
+window.isVisibilityRestricted = isVisibilityRestricted
