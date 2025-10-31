@@ -859,9 +859,6 @@
         }
 
         function updateRestrictions(data) {
-            const ceilingAGL = (data.cloudCeiling !== undefined && data.cloudCeiling < 99999) 
-                ? data.cloudCeiling - KCPS_ELEVATION 
-                : null;
             const visibilitySM = data.visibility;
             const effectiveWindSpeed = getEffectiveWindSpeed(data.windSpeed, data.windGust);
             
