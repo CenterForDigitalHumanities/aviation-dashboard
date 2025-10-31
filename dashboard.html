@@ -901,8 +901,11 @@
                 const tempF = data.temperatureC * 9/5 + 32;
                 
                 if (data.dewPointC !== undefined && tempF >= 80) {
-                    const dewpointF = data.dewPointC * 9/5 + 32;
-                    const heatIndex = calculateHeatIndex(tempF, dewpointF);
+                    const dewpointC = data.dewPointC;
+                    const tempC = data.temperatureC;
+                    // Calculate relative humidity from temperature and dewpoint
+                    const humidity = 100 * Math.exp((17.625 * dewpointC) / (243.04 + dewpointC)) / Math.exp((17.625 * tempC) / (243.04 + tempC));
+                    const heatIndex = calculateHeatIndex(tempF, humidity);
                     
                     setStatus('hi105Status', heatIndex >= 105, 'All Flights Restricted');
                     setStatus('hi100Status', heatIndex >= 100, 'Diamond Dual and Piper Solo Flights Restricted');

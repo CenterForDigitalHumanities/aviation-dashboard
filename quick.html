@@ -584,8 +584,11 @@ function calculateFlightRestrictions(data, elevation) {
         
         // Heat index for high temperatures
         if (data.dewPointC !== undefined && tempF >= 80) {
-            const dewpointF = data.dewPointC * 9/5 + 32;
-            const heatIndex = calculateHeatIndex(tempF, dewpointF);
+            const dewpointC = data.dewPointC;
+            const tempC = data.temperatureC;
+            // Calculate relative humidity from temperature and dewpoint
+            const humidity = 100 * Math.exp((17.625 * dewpointC) / (243.04 + dewpointC)) / Math.exp((17.625 * tempC) / (243.04 + tempC));
+            const heatIndex = calculateHeatIndex(tempF, humidity);
             if (heatIndex >= 105) {
                 restrictions.all.push(`🔥 ${heatIndex.toFixed(0)}°F heat index`);
             } else if (heatIndex >= 100) {
