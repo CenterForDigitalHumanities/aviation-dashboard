@@ -166,6 +166,10 @@
             text-align: left;
             transition: border-color 0.3s ease, background-color 0.3s ease;
         }
+
+        td[rowspan="4"] {
+            vertical-align: top;
+        }
         
         th {
             background-color: var(--bg-tertiary);
@@ -318,6 +322,55 @@
             font-size: 0.85em;
             margin-bottom: 10px;
         }
+        
+        /* Airport closed overlay */
+        .airport-closed-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(211, 47, 47, 0.95);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            border-radius: 8px;
+        }
+        
+        .airport-closed-overlay.active {
+            display: flex;
+        }
+        
+        .airport-closed-message {
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .airport-closed-message h2 {
+            font-size: 2em;
+            margin: 0 0 15px 0;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .airport-closed-message p {
+            font-size: 1.2em;
+            margin: 10px 0;
+            line-height: 1.5;
+        }
+        
+        .airport-closed-message .icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+        
+        /* Position overlay only over left column */
+        .column:first-child {
+            position: relative;
+        }
     </style>
 </head>
 <body>
@@ -332,6 +385,15 @@
     <div class="dashboard-container">
         <!-- Left Column: Restrictions -->
         <div class="column">
+            <!-- Airport Closed Overlay (inside left column) -->
+            <div id="airportClosedOverlay" class="airport-closed-overlay">
+                <div class="airport-closed-message">
+                    <div class="icon">🚫</div>
+                    <h2>All flights are grounded</h2>
+                    <p><strong>See service announcements for details</strong></p>
+                </div>
+            </div>
+            
             <div class="card scrollable">
                 <h2>Pilot Solo Restrictions</h2>
                 <table>
@@ -379,12 +441,12 @@
                         </tr>
                         <tr>
                             <td rowspan="4"><strong>Instrument/Commercial Pilot Solo</strong></td>
-                            <td>Visibility &lt; 3 SM</td>
-                            <td id="instCommVisibilityStatus"></td>
-                        </tr>
-                        <tr>
                             <td>Ceiling &lt; 1,500 ft AGL</td>
                             <td id="instCommCeilingStatus"></td>
+                        </tr>
+                        <tr>
+                            <td>Visibility &lt; 3 SM</td>
+                            <td id="instCommVisibilityStatus"></td>
                         </tr>
                         <tr>
                             <td>Surface winds &gt; 25 kt</td>
@@ -601,9 +663,9 @@
             toggleMetarEmbedVisibility(isDark);
         }
 
-    function scheduleNextAutoTheme(lat = KCPS_LAT, lon = KCPS_LON) {
+        function scheduleNextAutoTheme(lat = KCPS_LAT, lon = KCPS_LON) {
             const now = new Date();
-            const { sunrise, sunset } = getSunriseSunset(new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())), lat, lon);
+            const { sunrise, sunset } = getSunriseSunset(now, lat, lon);
 
             let nextSwitch;
             if (now < sunrise) {
@@ -613,7 +675,7 @@
             } else {
                 // compute tomorrow's sunrise
                 const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
-                const { sunrise: sunriseTomorrow } = getSunriseSunset(new Date(Date.UTC(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate())), lat, lon);
+                const { sunrise: sunriseTomorrow } = getSunriseSunset(tomorrow, lat, lon);
                 nextSwitch = sunriseTomorrow;
             }
 
@@ -634,7 +696,7 @@
             const isDark = !isDaylightNow(KCPS_LAT, KCPS_LON);
             applyTheme(isDark);
 
-            // Always schedule auto switches at sunrise/sunset
+            // Schedule auto switches at sunrise/sunset
             scheduleNextAutoTheme(KCPS_LAT, KCPS_LON);
             
             // Toggle theme on button click
@@ -917,6 +979,22 @@
 
         function displayAnnouncements(announcements) {
             const container = document.getElementById('announcements-content');
+            
+            // Check if any OPEN announcement contains #noflying
+            const hasNoFlying = announcements.some(a => 
+                (a.title && a.title.toLowerCase().includes('#noflying')) ||
+                (a.content && a.content.toLowerCase().includes('#noflying'))
+            );
+            
+            // Show/hide overlay based on #noflying presence (auto-dismisses when announcement closed)
+            const overlay = document.getElementById('airportClosedOverlay');
+            if (overlay) {
+                if (hasNoFlying) {
+                    overlay.classList.add('active');
+                } else {
+                    overlay.classList.remove('active');
+                }
+            }
             
             container.innerHTML = announcements.map(announcement => {
                 const date = new Date(announcement.date);

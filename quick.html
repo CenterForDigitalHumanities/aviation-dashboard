@@ -272,6 +272,55 @@
         color: #ffa500;
         font-weight: bold;
     }
+    
+    /* Airport closed overlay */
+    .airport-closed-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(211, 47, 47, 0.95);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 100;
+        border-radius: 12px;
+    }
+    
+    .airport-closed-overlay.active {
+        display: flex;
+    }
+    
+    .airport-closed-message {
+        color: white;
+        text-align: center;
+        padding: 20px;
+    }
+    
+    .airport-closed-message h2 {
+        font-size: 2em;
+        margin: 0 0 15px 0;
+        color: white;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+    
+    .airport-closed-message p {
+        font-size: 1.2em;
+        margin: 10px 0;
+        line-height: 1.5;
+    }
+    
+    .airport-closed-message .icon {
+        font-size: 3em;
+        margin-bottom: 15px;
+    }
+    
+    /* Position overlay only over flight status section */
+    .flight-status-section {
+        position: relative;
+    }
 </style>
 </head>
 <body>
@@ -283,6 +332,15 @@
 <div class="dashboard-grid">
     <!-- Flight Status Section (Top Left) -->
     <div class="flight-status-section">
+        <!-- Airport Closed Overlay (inside flight status section) -->
+        <div id="airportClosedOverlay" class="airport-closed-overlay">
+            <div class="airport-closed-message">
+                <div class="icon">🚫</div>
+                    <h2>All flights are grounded</h2>
+                    <p><strong>See service announcements for details</strong></p>
+                </div>
+        </div>
+        
         <div id="overall-flight-status" class="flight-status-card all-clear">
             <div class="status-title">Loading...</div>
             <div class="status-details">Checking weather conditions...</div>
@@ -746,6 +804,18 @@ async function fetchAnnouncements() {
 
 function displayAnnouncements(announcements) {
     const container = document.getElementById('announcements-content');
+    
+    // Check if any announcement contains #noflying
+    const hasNoFlying = announcements.some(a => 
+        (a.title && a.title.toLowerCase().includes('#noflying')) ||
+        (a.content && a.content.toLowerCase().includes('#noflying'))
+    );
+    
+    // Show overlay if #noflying is present
+    const overlay = document.getElementById('airportClosedOverlay');
+    if (hasNoFlying && overlay) {
+        overlay.classList.add('active');
+    }
     
     container.innerHTML = announcements.map(announcement => {
         const date = new Date(announcement.date);
