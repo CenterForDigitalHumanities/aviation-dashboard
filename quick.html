@@ -656,7 +656,7 @@ function updateWeatherGraphics(data) {
                 hiValueEl.textContent = `${heatIndex.toFixed(0)}°F`;
                 if (heatIndex >= 105) {
                     hiMetric.classList.add('alert');
-                } else if (heatIndex >= 100 || heatIndex >= 95) {
+                } else if (heatIndex >= 95) {
                     hiMetric.classList.add('warning');
                 }
             } else {
