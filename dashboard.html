@@ -528,19 +528,114 @@
 
     <script>
         // Theme toggle functionality
+        // KCPS approximate coordinates for sunrise/sunset estimation
+        const KCPS_LAT = 38.5707;
+        const KCPS_LON = -90.1562;
+
+        // Convert a Date to Julian Day (UTC)
+        function toJulian(date) {
+            return (date / 86400000) + 2440587.5;
+        }
+
+        // Convert Julian Day to Date (UTC)
+        function fromJulian(j) {
+            return new Date((j - 2440587.5) * 86400000);
+        }
+
+        // Normalize angle to [0, 2π)
+        function norm2pi(x) {
+            const t = 2 * Math.PI;
+            return x - t * Math.floor(x / t);
+        }
+
+        // Compute sunrise and sunset times (SunCalc/NOAA-style) for the provided Date
+        function getSunriseSunset(date, lat, lon) {
+            const J2000 = 2451545;
+            const deg2rad = Math.PI / 180;
+            const e = 23.4397 * deg2rad; // obliquity
+
+            const lw = -lon / 360; // note the sign
+            const phi = lat * deg2rad;
+
+            const d = toJulian(date) - J2000;
+
+            const n = Math.round(d - 0.0009 - lw);
+            const ds = n + 0.0009 + lw;
+
+            const M = (357.5291 + 0.98560028 * (ds)) * deg2rad;
+            const C = (1.9148 * Math.sin(M)) + (0.02 * Math.sin(2 * M)) + (0.0003 * Math.sin(3 * M));
+            const L = (M + C + (102.9372 * deg2rad) + Math.PI); // ecliptic longitude
+
+            const dec = Math.asin(Math.sin(e) * Math.sin(L));
+            const Jnoon = J2000 + ds + (0.0053 * Math.sin(M)) - (0.0069 * Math.sin(2 * L));
+
+            const h0 = -0.83 * deg2rad; // atmospheric refraction
+            const cosOmega = (Math.sin(h0) - Math.sin(phi) * Math.sin(dec)) / (Math.cos(phi) * Math.cos(dec));
+
+            if (cosOmega < -1) {
+                // Always above horizon
+                return { sunrise: fromJulian(Jnoon - 0.5), sunset: fromJulian(Jnoon + 0.5) };
+            }
+            if (cosOmega > 1) {
+                // Always below horizon
+                return { sunrise: fromJulian(Jnoon + 0.5), sunset: fromJulian(Jnoon - 0.5) };
+            }
+
+            const omega = Math.acos(cosOmega);
+            const Jrise = Jnoon - omega / (2 * Math.PI);
+            const Jset = Jnoon + omega / (2 * Math.PI);
+            return { sunrise: fromJulian(Jrise), sunset: fromJulian(Jset) };
+        }
+
+        function isDaylightNow(lat = KCPS_LAT, lon = KCPS_LON) {
+            const now = new Date();
+            // Compute for the actual current time (library handles day selection)
+            const { sunrise, sunset } = getSunriseSunset(now, lat, lon);
+            return now >= sunrise && now < sunset;
+        }
+
+        function applyTheme(isDark) {
+            const body = document.body;
+            const changed = isDark ? body.classList.add('dark-theme') : body.classList.remove('dark-theme');
+            updateThemeButton(isDark);
+            toggleMetarEmbedVisibility(isDark);
+        }
+
+    function scheduleNextAutoTheme(lat = KCPS_LAT, lon = KCPS_LON) {
+            const now = new Date();
+            const { sunrise, sunset } = getSunriseSunset(new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())), lat, lon);
+
+            let nextSwitch;
+            if (now < sunrise) {
+                nextSwitch = sunrise;
+            } else if (now < sunset) {
+                nextSwitch = sunset;
+            } else {
+                // compute tomorrow's sunrise
+                const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+                const { sunrise: sunriseTomorrow } = getSunriseSunset(new Date(Date.UTC(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate())), lat, lon);
+                nextSwitch = sunriseTomorrow;
+            }
+
+            const delay = Math.max(1000, nextSwitch.getTime() - now.getTime());
+            setTimeout(() => {
+                const isDark = !isDaylightNow(lat, lon);
+                applyTheme(isDark);
+                // Schedule the subsequent switch
+                scheduleNextAutoTheme(lat, lon);
+            }, delay);
+        }
+
         function initThemeToggle() {
             const themeToggle = document.getElementById('themeToggle');
             const body = document.body;
             
-            // Check for saved theme preference or default to classic
-            const savedTheme = localStorage.getItem('aviationDashboardTheme') || 'classic';
-            if (savedTheme === 'dark') {
-                body.classList.add('dark-theme');
-                updateThemeButton(true);
-                toggleMetarEmbedVisibility(true);
-            } else {
-                toggleMetarEmbedVisibility(false);
-            }
+            // Determine initial theme purely by sun times (no saved preference)
+            const isDark = !isDaylightNow(KCPS_LAT, KCPS_LON);
+            applyTheme(isDark);
+
+            // Always schedule auto switches at sunrise/sunset
+            scheduleNextAutoTheme(KCPS_LAT, KCPS_LON);
             
             // Toggle theme on button click
             themeToggle.addEventListener('click', toggleTheme);
@@ -570,9 +665,6 @@
         function toggleTheme() {
             const body = document.body;
             const isDark = body.classList.toggle('dark-theme');
-            
-            // Save preference
-            localStorage.setItem('aviationDashboardTheme', isDark ? 'dark' : 'classic');
             
             // Update button text
             updateThemeButton(isDark);
