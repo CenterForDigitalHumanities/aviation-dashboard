@@ -3,414 +3,870 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SLU Parks Aviation Science - Pilot Flight Restrictions</title>
+    <title>SLU Aviation Weather Dashboard</title>
     <style>
+        :root {
+            /* Classic light theme (default) */
+            --bg-primary: #f4f4f4;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #e9e9e9;
+            --text-primary: #333;
+            --text-secondary: #666;
+            --accent-primary: transparent /* #0056b3; */
+            --border-color: transparent;
+            --highlight-bg: #ffdddd;
+            --highlight-text: #d32f2f;
+            --success-bg: #ddffdd;
+            --success-text: #2e7d32;
+            --warning-bg: #fffacd;
+            --warning-text: #f57c00;
+        }
+        
+        body.dark-theme {
+            /* Dark theme */
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2a2a2a;
+            --bg-tertiary: #1a1a1a;
+            --text-primary: #e0e0e0;
+            --text-secondary: #999;
+            --accent-primary: #ffa500;
+            --border-color: #444;
+            --highlight-bg: rgba(244, 67, 54, 0.3);
+            --highlight-text: #ff6b6b;
+            --success-bg: rgba(76, 175, 80, 0.3);
+            --success-text: #81c784;
+            --warning-bg: rgba(255, 152, 0, 0.3);
+            --warning-text: #ffb74d;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f4f4f4;
-            color: #333;
+            display: flex;
+            flex-direction: column;
         }
-        .container {
-            max-width: 900px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        
+        header {
+            background-color: var(--bg-secondary);
+            padding: 10px 20px;
+            border-bottom: 3px solid var(--accent-primary);
+            flex-shrink: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        h1, h2, h3 {
-            color: #0056b3;
+        
+        h1 {
+            color: var(--accent-primary);
+            font-size: 1.5em;
             text-align: center;
+            margin: 0;
+            flex: 1;
         }
-        .metar-section, .restrictions-section, .heat-index-section {
-            margin-bottom: 30px;
-            padding: 15px;
-            border: 1px solid #ddd;
+        
+        .theme-toggle {
+            display: none;
+            background-color: var(--accent-primary);
+            color: var(--bg-secondary);
+            border: none;
+            padding: 8px 15px;
             border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: bold;
+            transition: opacity 0.2s ease;
+            position: relative;
         }
-        .metar-data {
-            font-family: 'Courier New', monospace;
-            background-color: #e9e9e9;
+        
+        .theme-toggle:hover {
+            opacity: 0.8;
+        }
+        
+        .theme-toggle::after {
+            content: " (Space)";
+            font-size: 0.75em;
+            opacity: 0.7;
+        }
+        
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
             padding: 10px;
-            border-radius: 4px;
-            white-space: pre-wrap;
-            word-wrap: break-word;
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
         }
+        
+        .column {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-height: 0;
+            overflow-y: auto;
+        }
+        
+        .card {
+            background-color: var(--bg-secondary);
+            border: 2px solid var(--accent-primary);
+            border-radius: 8px;
+            padding: 15px;
+            flex-shrink: 0;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        
+        .card.scrollable {
+            overflow-y: auto;
+            flex: 1;
+            min-height: 0;
+        }
+        
+        h2, h3 {
+            color: var(--accent-primary);
+            margin: 0 0 10px 0;
+            font-size: 1.1em;
+            transition: color 0.3s ease;
+        }
+        
+        .metar-data {
+            background-color: var(--bg-tertiary);
+            padding: 10px;
+            white-space: pre-wrap;
+            font-size: 1.2em;
+            font-family: 'Courier New', monospace;
+            border-radius: 5px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 10px;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
+            font-size: 0.85em;
         }
+        
         th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
+            border: 1px solid var(--border-color);
+            padding: 6px 8px;
             text-align: left;
+            transition: border-color 0.3s ease, background-color 0.3s ease;
         }
+        
         th {
-            background-color: #f2f2f2;
-        }
-        .highlight {
-            background-color: #ffdddd; /* Light red for restrictions */
+            background-color: var(--bg-tertiary);
+            color: var(--accent-primary);
             font-weight: bold;
         }
+        
+        .highlight {
+            background-color: var(--highlight-bg);
+            color: var(--highlight-text);
+            font-weight: bold;
+        }
+        
         .success {
-            background-color: #ddffdd; /* Light green for no restrictions */
+            background-color: var(--success-bg);
+            color: var(--success-text);
         }
+        
         .warning {
-            background-color: #fffacd; /* Lemon Chiffon for warnings */
+            background-color: var(--warning-bg);
+            color: var(--warning-text);
         }
+        
+        .embed-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 300px;
+            background-color: var(--bg-tertiary);
+            border-radius: 5px;
+            padding: 10px;
+            transition: background-color 0.3s ease;
+        }
+        
+        /* METAR embed wrapper */
+        #metar-embed-wrapper {
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* Override embed colors based on theme */
+        body.dark-theme #metartaf-JepVhm08 {
+            background-color: #333333 !important;
+            color: #fff !important;
+        }
+        
+        body.dark-theme #metartaf-JepVhm08:hover,
+        body.dark-theme #metartaf-JepVhm08:active,
+        body.dark-theme #metartaf-JepVhm08:focus {
+            background-color: #444444 !important;
+        }
+        
+        .weather-stat {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+        
+        .weather-stat:last-child {
+            border-bottom: none;
+        }
+        
+        .weather-stat strong {
+            color: var(--accent-primary);
+        }
+        
         .footer {
             text-align: center;
-            margin-top: 20px;
-            font-size: 0.8em;
-            color: #666;
+            padding: 5px 10px;
+            background-color: var(--bg-secondary);
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border-color);
+            font-size: 0.7em;
+            flex-shrink: 0;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+        
+        .footer p {
+            margin: 2px 0;
+            line-height: 1.3;
+        }
+        
+        #updateTime {
+            color: var(--accent-primary);
+            font-weight: bold;
+        }
+        
+        /* Scrollbar styling */
+        .column::-webkit-scrollbar,
+        .card.scrollable::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .column::-webkit-scrollbar-track,
+        .card.scrollable::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+        
+        .column::-webkit-scrollbar-thumb,
+        .card.scrollable::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+        
+        .column::-webkit-scrollbar-thumb:hover,
+        .card.scrollable::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-primary);
+        }
+        
+        /* Announcement styles */
+        .announcement-item {
+            padding: 10px;
+            background-color: var(--bg-tertiary);
+            border-radius: 4px;
+            margin-bottom: 10px;
+            border-left: 4px solid #ff6b35;
+            transition: background-color 0.3s ease;
+        }
+        
+        .announcement-date {
+            font-size: 0.75em;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+        }
+        
+        .announcement-title {
+            font-weight: bold;
+            color: var(--accent-primary);
+            margin-bottom: 5px;
+            font-size: 0.95em;
+        }
+        
+        .announcement-content {
+            font-size: 0.85em;
+            line-height: 1.3;
+        }
+        
+        .metar-heading {
+            font-size: 0.95em;
+        }
+        
+        .metar-heading.spaced {
+            margin-top: 15px;
+        }
+        
+        .heat-note {
+            font-size: 0.85em;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Saint Louis University Oliver L. Parks Department of Aviation Science</h1>
-        <h2>Pilot Wind and Visibility Restrictions</h2>
+    <header>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+            🌙 Dark
+        </button>
+        <h1>SLU Aviation Weather Dashboard</h1>
+        <div style="width: 100px;"></div> <!-- Spacer for centering -->
+    </header>
 
-        <div class="metar-section">
-            <h3>Latest Weather METARs</h3>
-            <p><strong>St. Louis Downtown Airport (KCPS):</strong></p>
-            <div id="metarKCPS" class="metar-data">Loading KCPS METAR...</div>
-            <p><strong>St. Louis Lambert International Airport (KSTL):</strong></p>
-            <div id="metarKSTL" class="metar-data">Loading KSTL METAR...</div>
+    <div class="dashboard-container">
+        <!-- Left Column: Restrictions -->
+        <div class="column">
+            <div class="card scrollable">
+                <h2>Pilot Solo Restrictions</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Restriction Type</th>
+                            <th>Condition</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td rowspan="4"><strong>Student Pilot Solo</strong></td>
+                            <td>Ceiling &lt; 1,500 ft AGL</td>
+                            <td id="studentCeilingStatus"></td>
+                        </tr>
+                        <tr>
+                            <td>Visibility &lt; 3 SM</td>
+                            <td id="studentVisibilityStatus"></td>
+                        </tr>
+                        <tr>
+                            <td>Surface winds &gt; 15 kt</td>
+                            <td id="studentSurfaceWindStatus"></td>
+                        </tr>
+                        <tr>
+                            <td>Crosswind &gt; 10 kt (RWY 12 or 30)</td>
+                            <td id="studentCrosswindStatus"></td>
+                        </tr>
+                        <tr>
+                            <td rowspan="4"><strong>Private Pilot Solo</strong></td>
+                            <td>Ceiling &lt; 1,500 ft AGL</td>
+                            <td id="privateCeilingStatus"></td>
+                        </tr>
+                        <tr>
+                            <td>Visibility &lt; 3 SM</td>
+                            <td id="privateVisibilityStatus"></td>
+                        </tr>
+                        <tr>
+                            <td>Surface winds &gt; 20 kt</td>
+                            <td id="privateSurfaceWindStatus"></td>
+                        </tr>
+                        <tr>
+                            <td>Crosswind &gt; 15 kt (RWY 12 or 30)</td>
+                            <td id="privateCrosswindStatus"></td>
+                        </tr>
+                        <tr>
+                            <td rowspan="4"><strong>Instrument/Commercial Pilot Solo</strong></td>
+                            <td>Visibility &lt; 3 SM</td>
+                            <td id="instCommVisibilityStatus"></td>
+                        </tr>
+                        <tr>
+                            <td>Ceiling &lt; 1,500 ft AGL</td>
+                            <td id="instCommCeilingStatus"></td>
+                        </tr>
+                        <tr>
+                            <td>Surface winds &gt; 25 kt</td>
+                            <td id="instCommSurfaceWindStatus"></td>
+                        </tr>
+                        <tr>
+                            <td>Crosswind &gt; 20 kt (RWY 12 or 30)</td>
+                            <td id="instCommCrosswindStatus"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="card scrollable">
+                <h2>Heat Index and Temperature Flight Restrictions</h2>
+                <p class="heat-note"><em>Based on KCPS METAR</em></p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Restriction</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Heat index ≥ 105°F: "All Flights Restricted"</td>
+                            <td id="hi105Status"></td>
+                        </tr>
+                        <tr>
+                            <td>Heat index ≥ 100°F: "Diamond Dual and Piper Solo Flights Restricted"</td>
+                            <td id="hi100Status"></td>
+                        </tr>
+                        <tr>
+                            <td>Heat index ≥ 95°F: "Diamond Solo Flights Restricted"</td>
+                            <td id="hi95Status"></td>
+                        </tr>
+                        <tr>
+                            <td>Temperature ≤ 23°F: "All aircraft must be pre-heated"</td>
+                            <td id="temp23Status"></td>
+                        </tr>
+                        <tr>
+                            <td>Temperature ≤ 14°F: "No solos or cross-countries"</td>
+                            <td id="temp14Status"></td>
+                        </tr>
+                        <tr>
+                            <td>Temperature ≤ 5°F: "All Flights Restricted"</td>
+                            <td id="temp5Status"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
-        <div class="restrictions-section">
-            <h3>Current Flight Conditions and Restrictions (Based on KCPS METAR)</h3>
-            <p><em>(If KCPS METAR older than 2 hours or unavailable, KSTL data will be used. If neither, OpenWeatherMap estimate.)</em></p>
-            <p><strong>Current Temperature:</strong> <span id="currentTemp">N/A</span></p>
-            <p><strong>Current Humidity:</strong> <span id="currentHumidity">N/A</span></p>
-            <p><strong>Surface Winds:</strong> <span id="surfaceWinds">N/A</span></p>
-            <p><strong>Visibility:</strong> <span id="visibility">N/A</span></p>
-            <p><strong>Cloud Ceiling:</strong> <span id="cloudCeiling">N/A</span></p>
-            <p><strong>Crosswind for Runway 12 (122° True):</strong> <span id="crosswind12">N/A</span></p>
-            <p><strong>Crosswind for Runway 30 (302° True):</strong> <span id="crosswind30">N/A</span></p>
-
-            <h3>Pilot Solo Restrictions</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Restriction Type</th>
-                        <th>Condition</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td rowspan="4"><strong>Student Pilot Solo</strong></td>
-                        <td>Cloud ceiling &lt; 1,500 ft AGL</td>
-                        <td id="studentCeilingStatus"></td>
-                    </tr>
-                    <tr>
-                        <td>Visibility &lt; 3 SM</td>
-                        <td id="studentVisibilityStatus"></td>
-                    </tr>
-                    <tr>
-                        <td>Surface winds &ge; 20 knots</td>
-                        <td id="studentSurfaceWindStatus"></td>
-                    </tr>
-                    <tr>
-                        <td>Crosswind &gt; 10 knots (RWY 12 or 30)</td>
-                        <td id="studentCrosswindStatus"></td>
-                    </tr>
-                    <tr>
-                        <td rowspan="4"><strong>Private Pilot Solo</strong></td>
-                        <td>Cloud ceiling &lt; 1,500 ft AGL</td>
-                        <td id="privateCeilingStatus"></td>
-                    </tr>
-                    <tr>
-                        <td>Visibility &lt; 3 SM</td>
-                        <td id="privateVisibilityStatus"></td>
-                    </tr>
-                    <tr>
-                        <td>Surface winds &ge; 25 knots</td>
-                        <td id="privateSurfaceWindStatus"></td>
-                    </tr>
-                    <tr>
-                        <td>Crosswind &gt; 15 knots (RWY 12 or 30)</td>
-                        <td id="privateCrosswindStatus"></td>
-                    </tr>
-                    <tr>
-                        <td rowspan="3"><strong>Instrument/Commercial Pilot Solo</strong></td>
-                        <td>Visibility &lt; 3 SM</td>
-                        <td id="instCommVisibilityStatus"></td>
-                    </tr>
-                    <tr>
-                        <td>Surface winds &ge; 30 knots</td>
-                        <td id="instCommSurfaceWindStatus"></td>
-                    </tr>
-                    <tr>
-                        <td>Crosswind &gt; 20 knots (RWY 12 or 30)</td>
-                        <td id="instCommCrosswindStatus"></td>
-                    </tr>
-                </tbody>
-            </table>
+        <!-- Middle Column: METAR Data -->
+        <div class="column">
+            <div class="card">
+                <h2>METAR Data</h2>
+                <h3 class="metar-heading">KCPS METAR</h3>
+                <div id="metarKCPS" class="metar-data">Loading KCPS METAR...</div>
+                
+                <h3 class="metar-heading spaced">KSTL METAR</h3>
+                <div id="metarKSTL" class="metar-data">Loading KSTL METAR...</div>
+            </div>
+            
+            <div class="card">
+                <h2>Current Conditions (KCPS)</h2>
+                <div class="weather-stat">
+                    <strong>Temperature:</strong>
+                    <span id="currentTemp">N/A</span>
+                </div>
+                <div class="weather-stat">
+                    <strong>Humidity:</strong>
+                    <span id="currentHumidity">N/A</span>
+                </div>
+                <div class="weather-stat">
+                    <strong>Heat Index:</strong>
+                    <span id="heatIndexValue">N/A</span>
+                </div>
+                <div class="weather-stat">
+                    <strong>Surface Winds:</strong>
+                    <span id="surfaceWinds">N/A</span>
+                </div>
+                <div class="weather-stat">
+                    <strong>Visibility:</strong>
+                    <span id="visibility">N/A</span>
+                </div>
+                <div class="weather-stat">
+                    <strong>Cloud Ceiling:</strong>
+                    <span id="cloudCeiling">N/A</span>
+                </div>
+                <div class="weather-stat">
+                    <strong>Crosswind RWY 12 (122°):</strong>
+                    <span id="crosswind12">N/A</span>
+                </div>
+                <div class="weather-stat">
+                    <strong>Crosswind RWY 30 (302°):</strong>
+                    <span id="crosswind30">N/A</span>
+                </div>
+            </div>
         </div>
 
-        <div class="heat-index-section">
-            <h3>Heat Index and Temperature Flight Restrictions (Based on KCPS METAR)</h3>
-            <p><strong>Current Temperature:</strong> <span id="displayTempHI">N/A</span></p>
-            <p><strong>Current Humidity:</strong> <span id="displayHumidityHI">N/A</span></p>
-            <p><strong>Calculated Heat Index:</strong> <span id="heatIndexValue">N/A</span></p>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Restriction</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Heat index &ge; 105&deg;F: "All Flights Restricted"</td>
-                        <td id="hi105Status"></td>
-                    </tr>
-                    <tr>
-                        <td>Heat index &ge; 100&deg;F: "Diamond Dual and Piper Solo Flights Restricted"</td>
-                        <td id="hi100Status"></td>
-                    </tr>
-                    <tr>
-                        <td>Heat index &ge; 95&deg;F: "Diamond Solo Flights Restricted"</td>
-                        <td id="hi95Status"></td>
-                    </tr>
-                    <tr>
-                        <td>Temperature &lt; 32&deg;F: "Avoid extended power-off operations."</td>
-                        <td id="temp32Status"></td>
-                    </tr>
-                    <tr>
-                        <td>Temperature &le; 23&deg;F: "All aircraft to be operated must either be pre-heated, have flown within the previous hour, or have been removed from a heated hangar within the previous hour."</td>
-                        <td id="temp23Status"></td>
-                    </tr>
-                    <tr>
-                        <td>Temperature &le; 14&deg;F: "No solos or cross-countries allowed. All aircraft to be operated must have either flown within the previous hour or have been removed from a heated hangar within the previous hour."</td>
-                        <td id="temp14Status"></td>
-                    </tr>
-                    <tr>
-                        <td>Temperature &le; 5&deg;F: "All Flights Restricted"</td>
-                        <td id="temp5Status"></td>
-                    </tr>
-                </tbody>
-            </table>
+        <!-- Right Column: Service Announcements & Weather Widget -->
+        <div class="column">
+            <div class="card scrollable" style="flex: 1;">
+                <h2>Service Announcements</h2>
+                <div id="announcements-content">
+                    <div class="announcement-item">
+                        <div class="announcement-date">Loading...</div>
+                        <div class="announcement-title">Please wait</div>
+                        <div class="announcement-content">Fetching announcements...</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card" style="flex-shrink: 0;">
+                <h2>St. Louis Downtown Airport</h2>
+                <div id="metar-embed-container" class="embed-container">
+                    <!-- Dark theme embed (default visible) -->
+                    <div id="metar-embed-dark" class="metar-embed-theme">
+                        <a href="https://metar-taf.com/metar/KCPS" id="metartaf-dark" style="font-size:18px; font-weight:500; color:#000; width:100%; height:100%; display:block">METAR St. Louis Downtown Airport</a>
+                        <script async src="https://metar-taf.com/embed-js/KCPS?bg_color=333333&layout=landscape&visibility=mi&qnh=inHg&rh=dp&target=dark"></script>
+                    </div>
+                    
+                    <!-- Light theme embed (hidden by default) -->
+                    <div id="metar-embed-light" class="metar-embed-theme" style="display: none;">
+                        <a href="https://metar-taf.com/metar/KCPS" id="metartaf-light" style="font-size:18px; font-weight:500; color:#000; width:100%; height:100%; display:block">METAR St. Louis Downtown Airport</a>
+                        <script async src="https://metar-taf.com/embed-js/KCPS?bg_color=ffffff&layout=landscape&visibility=mi&qnh=inHg&rh=dp&target=light"></script>
+                    </div>
+                </div>
+            </div>
         </div>
+    </div>
 
-        <div class="footer">
-            <p>Data last updated: <span id="updateTime">N/A</span></p>
-            <p>Disclaimer: This page provides general aviation weather information and restrictions for planning purposes only. Always consult official weather briefings and Air Traffic Control for actual flight operations.</p>
-        </div>
+    <div class="footer">
+        <p>Data last updated: <span id="updateTime">N/A</span></p>
+        <p>Disclaimer: This page provides general aviation weather information and restrictions for planning purposes only. Always consult official weather briefings and Air Traffic Control for actual flight operations.</p>
     </div>
 
     <!-- Shared weather utilities -->
     <script src="shared-weather.js"></script>
 
     <script>
-        const OPENWEATHER_API_KEY = "5961a427c0046352f815238c583582d7"
-        const KCPS_RUNWAY_12_HDG = 122 // True heading for KCPS Runway 12
-        const KCPS_RUNWAY_30_HDG = 302 // True heading for KCPS Runway 30
+        // Theme toggle functionality
+        function initThemeToggle() {
+            const themeToggle = document.getElementById('themeToggle');
+            const body = document.body;
+            
+            // Check for saved theme preference or default to classic
+            const savedTheme = localStorage.getItem('aviationDashboardTheme') || 'classic';
+            if (savedTheme === 'dark') {
+                body.classList.add('dark-theme');
+                updateThemeButton(true);
+                toggleMetarEmbedVisibility(true);
+            } else {
+                toggleMetarEmbedVisibility(false);
+            }
+            
+            // Toggle theme on button click
+            themeToggle.addEventListener('click', toggleTheme);
+            
+            // Toggle theme on spacebar press
+            document.addEventListener('keydown', (e) => {
+                if (e.code === 'Space' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+                    e.preventDefault();
+                    toggleTheme();
+                }
+            });
+        }
+        
+        function toggleMetarEmbedVisibility(isDark) {
+            const darkEmbed = document.getElementById('metar-embed-dark');
+            const lightEmbed = document.getElementById('metar-embed-light');
+            
+            if (isDark) {
+                darkEmbed.style.display = 'block';
+                lightEmbed.style.display = 'none';
+            } else {
+                darkEmbed.style.display = 'none';
+                lightEmbed.style.display = 'block';
+            }
+        }
+        
+        function toggleTheme() {
+            const body = document.body;
+            const isDark = body.classList.toggle('dark-theme');
+            
+            // Save preference
+            localStorage.setItem('aviationDashboardTheme', isDark ? 'dark' : 'classic');
+            
+            // Update button text
+            updateThemeButton(isDark);
+            
+            // Toggle METAR embed visibility
+            toggleMetarEmbedVisibility(isDark);
+        }
+        
+        function updateThemeButton(isDark) {
+            const themeToggle = document.getElementById('themeToggle');
+            if (isDark) {
+                themeToggle.innerHTML = '🌙 Dark';
+            } else {
+                themeToggle.innerHTML = '☀️ Classic';
+            }
+        }
+        
+        // Initialize theme toggle
+        document.addEventListener('DOMContentLoaded', initThemeToggle);
+        
+        const KCPS_RUNWAY_12_HDG = 122;
+        const KCPS_RUNWAY_30_HDG = 302;
+        const KCPS_ELEVATION = 413;
 
         async function getWeatherData() {
-            // Try to fetch from pre-parsed JSON first
-            const jsonData = await fetchWeatherDataFromJSON();
-            
-            let kcpsMetarText = null;
-            let kstlMetarText = null;
-            let kcpsData = null;
-            let kstlData = null;
-
-            if (jsonData) {
-                // Use data from JSON file
-                console.log("Using weather data from JSON file");
-                
-                if (jsonData.kcps && jsonData.kcps.metar) {
-                    kcpsMetarText = jsonData.kcps.metar;
-                    // Convert JSON data to format expected by rest of code
-                    kcpsData = {
-                        time: jsonData.kcps.timestamp ? new Date(jsonData.kcps.timestamp) : null,
-                        windDirection: jsonData.kcps.windDirection,
-                        windSpeed: jsonData.kcps.windSpeed,
-                        windGust: jsonData.kcps.windGust,
-                        visibility: jsonData.kcps.visibility,
-                        cloudCeiling: jsonData.kcps.cloudCeiling,
-                        temperature: jsonData.kcps.temperatureC,
-                        dewPoint: jsonData.kcps.dewPointC,
-                        altimeter: jsonData.kcps.altimeter
-                    };
+            try {
+                const data = await fetchWeatherDataFromJSON();
+                if (!data) {
+                    throw new Error('Failed to fetch weather data');
                 }
                 
-                if (jsonData.kstl && jsonData.kstl.metar) {
-                    kstlMetarText = jsonData.kstl.metar;
-                    // Convert JSON data to format expected by rest of code
-                    kstlData = {
-                        time: jsonData.kstl.timestamp ? new Date(jsonData.kstl.timestamp) : null,
-                        windDirection: jsonData.kstl.windDirection,
-                        windSpeed: jsonData.kstl.windSpeed,
-                        windGust: jsonData.kstl.windGust,
-                        visibility: jsonData.kstl.visibility,
-                        cloudCeiling: jsonData.kstl.cloudCeiling,
-                        temperature: jsonData.kstl.temperatureC,
-                        dewPoint: jsonData.kstl.dewPointC,
-                        altimeter: jsonData.kstl.altimeter
-                    };
+                // Update timestamp
+                const updateTimeElement = document.getElementById('updateTime');
+                if (updateTimeElement) {
+                    updateTimeElement.textContent = new Date().toLocaleString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                        hour: 'numeric',
+                        minute: '2-digit',
+                        hour12: true
+                    });
                 }
-            }
-
-            document.getElementById('metarKCPS').textContent = kcpsMetarText || 'N/A';
-            document.getElementById('metarKSTL').textContent = kstlMetarText || 'N/A';
-
-            let weatherData = null;
-            const now = new Date();
-
-            if (kcpsData && kcpsData.time && (now.getTime() - kcpsData.time.getTime()) / (1000 * 60 * 60) < 2) {
-                weatherData = kcpsData;
-                console.log("Using KCPS METAR as it is recent.");
-            } else if (kstlData && kstlData.time && (now.getTime() - kstlData.time.getTime()) / (1000 * 60 * 60) < 2) {
-                weatherData = kstlData;
-                console.log("Using KSTL METAR as KCPS is not recent or unavailable.");
-            } else {
-                console.warn("Both KCPS and KSTL METARs are older than 2 hours or unavailable. Attempting OpenWeatherMap.");
-                // Fallback to OpenWeatherMap
-                try {
-                    const openWeatherResponse = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=St. Louis,US&appid=${OPENWEATHER_API_KEY}&units=metric`);
-                    const openWeatherData = await openWeatherResponse.json();
-                    
-                    if (openWeatherData && openWeatherData.main && openWeatherData.wind) {
-                        weatherData = {
-                            windDirection: openWeatherData.wind.deg,
-                            windSpeed: toKnots(openWeatherData.wind.speed), // OpenWeatherMap 'speed' is m/s by default, converting to knots
-                            visibility: openWeatherData.visibility ? openWeatherData.visibility / 1000 * 0.621371 : null, // meters to miles
-                            temperature: openWeatherData.main.temp,
-                            dewPoint: null, // OpenWeatherMap current API usually doesn't provide dew point directly in main response
-                            cloudCeiling: openWeatherData.clouds.all ? openWeatherData.clouds.all * 100 : null, // Simple estimation if available, assuming cloud percentage maps to a 'ceiling' which isn't ideal but best with limited data
-                            time: new Date(openWeatherData.dt * 1000)
-                        };
-                         // Try to get humidity if dew point isn't available
-                        if (openWeatherData.main.humidity) {
-                            weatherData.humidity = openWeatherData.main.humidity;
-                        }
-                        console.log("Using OpenWeatherMap data.");
-                    } else {
-                         console.error("Failed to get valid data from OpenWeatherMap.");
-                    }
-                } catch (owmError) {
-                    console.error("Error fetching from OpenWeatherMap:", owmError);
-                }
-            }
-
-            if (!weatherData) {
-                console.error("No valid weather data could be retrieved from any source.");
-                document.getElementById('currentTemp').textContent = "Unavailable";
-                document.getElementById('currentHumidity').textContent = "Unavailable";
-                document.getElementById('surfaceWinds').textContent = "Unavailable";
-                document.getElementById('visibility').textContent = "Unavailable";
-                document.getElementById('cloudCeiling').textContent = "Unavailable";
-                document.getElementById('crosswind12').textContent = "Unavailable";
-                document.getElementById('crosswind30').textContent = "Unavailable";
-                document.getElementById('updateTime').textContent = new Date().toLocaleString();
-                return;
-            }
-
-            const tempC = weatherData.temperature;
-            const tempF = toFahrenheit(tempC);
-            const humidity = weatherData.humidity !== undefined ? weatherData.humidity : calculateHumidity(tempC, weatherData.dewPoint);
-            const windSpeed = weatherData.windSpeed;
-            const windDirection = weatherData.windDirection;
-            const windGust = weatherData.windGust;
-            const visibilitySM = weatherData.visibility;
-            const cloudCeilingAGL = weatherData.cloudCeiling; // In feet
-
-            const crosswind12 = calculateCrosswind(windDirection, windSpeed, KCPS_RUNWAY_12_HDG, windGust);
-            const crosswind30 = calculateCrosswind(windDirection, windSpeed, KCPS_RUNWAY_30_HDG, windGust);
-
-            const heatIndex = calculateHeatIndex(tempF, humidity);
-
-            document.getElementById('currentTemp').textContent = tempF !== null ? `${tempF.toFixed(1)}°F (${tempC.toFixed(1)}°C)` : 'N/A';
-            document.getElementById('currentHumidity').textContent = humidity !== null ? `${humidity.toFixed(1)}%` : 'N/A';
-            const gustText = (windGust ?? 0) > 0 ? ` gusting ${windGust}` : '';
-            document.getElementById('surfaceWinds').textContent = windDirection !== null && windSpeed !== null ? `${windDirection}° at ${windSpeed} knots${gustText}` : 'N/A';
-            document.getElementById('visibility').textContent = visibilitySM !== null ? `${visibilitySM.toFixed(1)} SM` : 'N/A';
-            document.getElementById('cloudCeiling').textContent = cloudCeilingAGL !== null && cloudCeilingAGL !== 99999 ? `${cloudCeilingAGL} ft AGL` : 'Clear/No Ceiling';
-            document.getElementById('crosswind12').textContent = crosswind12 !== null ? `${crosswind12.toFixed(1)} knots` : 'N/A';
-            document.getElementById('crosswind30').textContent = crosswind30 !== null ? `${crosswind30.toFixed(1)} knots` : 'N/A';
-            document.getElementById('updateTime').textContent = weatherData.time.toLocaleString();
-
-            document.getElementById('displayTempHI').textContent = tempF !== null ? `${tempF.toFixed(1)}°F (${tempC.toFixed(1)}°C)` : 'N/A';
-            document.getElementById('displayHumidityHI').textContent = humidity !== null ? `${humidity.toFixed(1)}%` : 'N/A';
-            document.getElementById('heatIndexValue').textContent = heatIndex !== null ? `${heatIndex.toFixed(1)}°F` : 'N/A';
-
-
-            // --- Apply Pilot Restrictions ---
-            function setStatus(elementId, conditionMet, restrictionText) {
-                const element = document.getElementById(elementId);
-                if (conditionMet) {
-                    element.className = 'highlight';
-                    element.textContent = `RESTRICTED: ${restrictionText}`;
+                
+                // Display METAR data
+                if (data.kcps && data.kcps.metar) {
+                    document.getElementById("metarKCPS").innerText = data.kcps.metar;
                 } else {
-                    element.className = 'success';
-                    element.textContent = 'OK';
+                    document.getElementById("metarKCPS").innerText = "KCPS METAR unavailable";
                 }
-            }
-
-            const effectiveWindSpeed = getEffectiveWindSpeed(windSpeed, windGust);
-
-            // Student Pilot Restrictions
-            const studentCeilingRestricted = cloudCeilingAGL !== null && cloudCeilingAGL < 1500;
-            const studentVisibilityRestricted = visibilitySM !== null && visibilitySM < 3;
-            const studentSurfaceWindRestricted = effectiveWindSpeed !== null && effectiveWindSpeed >= 20;
-            const studentCrosswindRestricted = (crosswind12 !== null && crosswind12 > 10) || (crosswind30 !== null && crosswind30 > 10);
-
-            setStatus('studentCeilingStatus', studentCeilingRestricted, 'Ceiling too low');
-            setStatus('studentVisibilityStatus', studentVisibilityRestricted, 'Visibility too low');
-            setStatus('studentSurfaceWindStatus', studentSurfaceWindRestricted, 'Surface winds too high');
-            setStatus('studentCrosswindStatus', studentCrosswindRestricted, 'Crosswind too high');
-
-            // Private Pilot Restrictions
-            const privateCeilingRestricted = cloudCeilingAGL !== null && cloudCeilingAGL < 1500;
-            const privateVisibilityRestricted = visibilitySM !== null && visibilitySM < 3;
-            const privateSurfaceWindRestricted = effectiveWindSpeed !== null && effectiveWindSpeed >= 25;
-            const privateCrosswindRestricted = (crosswind12 !== null && crosswind12 > 15) || (crosswind30 !== null && crosswind30 > 15);
-
-            setStatus('privateCeilingStatus', privateCeilingRestricted, 'Ceiling too low');
-            setStatus('privateVisibilityStatus', privateVisibilityRestricted, 'Visibility too low');
-            setStatus('privateSurfaceWindStatus', privateSurfaceWindRestricted, 'Surface winds too high');
-            setStatus('privateCrosswindStatus', privateCrosswindRestricted, 'Crosswind too high');
-
-            // Instrument/Commercial Pilot Restrictions
-            const instCommVisibilityRestricted = visibilitySM !== null && visibilitySM < 3;
-            const instCommSurfaceWindRestricted = effectiveWindSpeed !== null && effectiveWindSpeed >= 30;
-            const instCommCrosswindRestricted = (crosswind12 !== null && crosswind12 > 20) || (crosswind30 !== null && crosswind30 > 20);
-
-            setStatus('instCommVisibilityStatus', instCommVisibilityRestricted, 'Visibility too low');
-            setStatus('instCommSurfaceWindStatus', instCommSurfaceWindRestricted, 'Surface winds too high');
-            setStatus('instCommCrosswindStatus', instCommCrosswindRestricted, 'Crosswind too high');
-
-            // --- Apply Heat Index/Temperature Restrictions ---
-            function setHeatTempStatus(elementId, conditionMet, message, isWarning = false) {
-                const element = document.getElementById(elementId);
-                if (conditionMet) {
-                    element.className = isWarning ? 'warning' : 'highlight';
-                    element.textContent = message;
+                
+                if (data.kstl && data.kstl.metar) {
+                    document.getElementById("metarKSTL").innerText = data.kstl.metar;
                 } else {
-                    element.className = 'success';
-                    element.textContent = 'OK';
+                    document.getElementById("metarKSTL").innerText = "KSTL METAR unavailable";
                 }
+                
+                // Use KCPS data preferentially
+                const weatherData = data.kcps || data.kstl;
+                
+                if (!weatherData) {
+                    console.error("No valid weather data available");
+                    return;
+                }
+                
+                // Update current conditions display
+                updateCurrentConditions(weatherData);
+                
+                // Calculate and update restrictions
+                updateRestrictions(weatherData);
+                
+            } catch (err) {
+                console.error("Error fetching weather data:", err);
+                document.getElementById("metarKCPS").innerText = "Error loading weather data";
+                document.getElementById("metarKSTL").innerText = "Error loading weather data";
             }
-
-            setHeatTempStatus('hi105Status', heatIndex !== null && heatIndex >= 105, "All Flights Restricted");
-            setHeatTempStatus('hi100Status', heatIndex !== null && heatIndex >= 100, "Diamond Dual and Piper Solo Flights Restricted");
-            setHeatTempStatus('hi95Status', heatIndex !== null && heatIndex >= 95, "Diamond Solo Flights Restricted");
-            setHeatTempStatus('temp32Status', tempF !== null && tempF < 32, "Avoid extended power-off operations.", true);
-            setHeatTempStatus('temp23Status', tempF !== null && tempF <= 23, "All aircraft to be operated must either be pre-heated, have flown within the previous hour, or have been removed from a heated hangar within the previous hour.");
-            setHeatTempStatus('temp14Status', tempF !== null && tempF <= 14, "No solos or cross-countries allowed. All aircraft to be operated must have either flown within the previous hour or have been removed from a heated hangar within the previous hour.");
-            setHeatTempStatus('temp5Status', tempF !== null && tempF <= 5, "All Flights Restricted");
         }
 
-        document.addEventListener('DOMContentLoaded', getWeatherData);
-        // Refresh data every 5 minutes (300000 milliseconds)
-        setInterval(getWeatherData, 300000);
+        function updateCurrentConditions(data) {
+            // Temperature
+            if (data.temperatureC !== undefined && data.temperatureC !== null) {
+                const tempF = data.temperatureC * 9/5 + 32;
+                document.getElementById('currentTemp').textContent = `${tempF.toFixed(1)}°F (${data.temperatureC.toFixed(1)}°C)`;
+            }
+            
+            // Humidity and Heat Index
+            if (data.temperatureC !== undefined && data.dewPointC !== undefined) {
+                const tempC = data.temperatureC;
+                const dewpointC = data.dewPointC;
+                const tempF = tempC * 9/5 + 32;
+                const dewpointF = dewpointC * 9/5 + 32;
+                
+                const humidity = 100 * Math.exp((17.625 * dewpointC) / (243.04 + dewpointC)) / Math.exp((17.625 * tempC) / (243.04 + tempC));
+                document.getElementById('currentHumidity').textContent = `${humidity.toFixed(0)}%`;
+                
+                const heatIndex = calculateHeatIndex(tempF, dewpointF);
+                document.getElementById('heatIndexValue').textContent = heatIndex !== null ? `${heatIndex.toFixed(1)}°F` : 'N/A';
+            }
+            
+            // Wind
+            if (data.windSpeed !== undefined && data.windSpeed !== null) {
+                const windDir = data.windDirection || 0;
+                const gustText = ((data.windGust ?? 0) > 0) ? ` G${data.windGust}` : '';
+                document.getElementById('surfaceWinds').textContent = `${windDir}° @ ${data.windSpeed} kt${gustText}`;
+            }
+            
+            // Visibility
+            if (data.visibility !== undefined && data.visibility !== null) {
+                document.getElementById('visibility').textContent = `${data.visibility} SM`;
+            }
+            
+            // Ceiling
+            if (data.cloudCeiling !== undefined && data.cloudCeiling !== null) {
+                if (data.cloudCeiling >= 99999) {
+                    document.getElementById('cloudCeiling').textContent = 'Clear/No Ceiling';
+                } else {
+                    const ceilingAGL = data.cloudCeiling - KCPS_ELEVATION;
+                    document.getElementById('cloudCeiling').textContent = `${ceilingAGL} ft AGL`;
+                }
+            }
+            
+            // Crosswind
+            if (data.windDirection !== undefined && data.windSpeed !== undefined) {
+                const crosswind12 = calculateCrosswind(data.windDirection, data.windSpeed, KCPS_RUNWAY_12_HDG, data.windGust);
+                const crosswind30 = calculateCrosswind(data.windDirection, data.windSpeed, KCPS_RUNWAY_30_HDG, data.windGust);
+                
+                document.getElementById('crosswind12').textContent = `${crosswind12.toFixed(1)} kt`;
+                document.getElementById('crosswind30').textContent = `${crosswind30.toFixed(1)} kt`;
+            }
+        }
+
+        function updateRestrictions(data) {
+            const ceilingAGL = (data.cloudCeiling !== undefined && data.cloudCeiling < 99999) 
+                ? data.cloudCeiling - KCPS_ELEVATION 
+                : null;
+            const visibilitySM = data.visibility;
+            const effectiveWindSpeed = getEffectiveWindSpeed(data.windSpeed, data.windGust);
+            
+            let crosswind12 = null;
+            let crosswind30 = null;
+            if (data.windDirection !== undefined && data.windSpeed !== undefined) {
+                crosswind12 = calculateCrosswind(data.windDirection, data.windSpeed, KCPS_RUNWAY_12_HDG, data.windGust);
+                crosswind30 = calculateCrosswind(data.windDirection, data.windSpeed, KCPS_RUNWAY_30_HDG, data.windGust);
+            }
+            
+            // Student Pilot Restrictions (Ceiling unified to 1,500 ft AGL)
+            setStatus('studentCeilingStatus', isCeilingRestricted(data.cloudCeiling, KCPS_ELEVATION), 'RESTRICTED: Ceiling too low');
+            setStatus('studentVisibilityStatus', isVisibilityRestricted(visibilitySM), 'RESTRICTED: Visibility too low');
+            setStatus('studentSurfaceWindStatus', effectiveWindSpeed !== null && effectiveWindSpeed > 15, 'RESTRICTED: Surface winds too high');
+            setStatus('studentCrosswindStatus', 
+                (crosswind12 !== null && crosswind12 > 10) || (crosswind30 !== null && crosswind30 > 10), 
+                'RESTRICTED: Crosswind too high');
+            
+            // Private Pilot Restrictions (Ceiling unified to 1,500 ft AGL)
+            setStatus('privateCeilingStatus', isCeilingRestricted(data.cloudCeiling, KCPS_ELEVATION), 'RESTRICTED: Ceiling too low');
+            setStatus('privateVisibilityStatus', isVisibilityRestricted(visibilitySM), 'RESTRICTED: Visibility too low');
+            setStatus('privateSurfaceWindStatus', effectiveWindSpeed !== null && effectiveWindSpeed > 20, 'RESTRICTED: Surface winds too high');
+            setStatus('privateCrosswindStatus', 
+                (crosswind12 !== null && crosswind12 > 15) || (crosswind30 !== null && crosswind30 > 15), 
+                'RESTRICTED: Crosswind too high');
+            
+            // Instrument/Commercial Pilot Restrictions
+            setStatus('instCommVisibilityStatus', isVisibilityRestricted(visibilitySM), 'RESTRICTED: Visibility too low');
+            setStatus('instCommCeilingStatus', isCeilingRestricted(data.cloudCeiling, KCPS_ELEVATION), 'RESTRICTED: Ceiling too low');
+            setStatus('instCommSurfaceWindStatus', effectiveWindSpeed !== null && effectiveWindSpeed > 25, 'RESTRICTED: Surface winds too high');
+            setStatus('instCommCrosswindStatus', 
+                (crosswind12 !== null && crosswind12 > 20) || (crosswind30 !== null && crosswind30 > 20), 
+                'RESTRICTED: Crosswind too high');
+            
+            // Heat Index / Temperature Restrictions
+            if (data.temperatureC !== undefined && data.temperatureC !== null) {
+                const tempF = data.temperatureC * 9/5 + 32;
+                
+                if (data.dewPointC !== undefined && tempF >= 80) {
+                    const dewpointF = data.dewPointC * 9/5 + 32;
+                    const heatIndex = calculateHeatIndex(tempF, dewpointF);
+                    
+                    setStatus('hi105Status', heatIndex >= 105, 'All Flights Restricted');
+                    setStatus('hi100Status', heatIndex >= 100, 'Diamond Dual and Piper Solo Flights Restricted');
+                    setStatus('hi95Status', heatIndex >= 95, 'Diamond Solo Flights Restricted');
+                } else {
+                    setStatus('hi105Status', false, 'OK');
+                    setStatus('hi100Status', false, 'OK');
+                    setStatus('hi95Status', false, 'OK');
+                }
+                
+                setStatus('temp23Status', tempF <= 23, 'All aircraft must be pre-heated');
+                setStatus('temp14Status', tempF <= 14, 'No solos or cross-countries');
+                setStatus('temp5Status', tempF <= 5, 'All Flights Restricted');
+            }
+        }
+
+        function setStatus(elementId, conditionMet, restrictionText) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
+            if (conditionMet) {
+                element.className = 'highlight';
+                element.textContent = restrictionText;
+            } else {
+                element.className = 'success';
+                element.textContent = 'OK';
+            }
+        }
+
+        async function fetchAnnouncements() {
+            try {
+                const owner = 'CenterForDigitalHumanities';
+                const repo = 'aviation-dashboard';
+                
+                const discussionsUrl = `https://api.github.com/repos/${owner}/${repo}/discussions`;
+                
+                const response = await fetch(discussionsUrl, {
+                    headers: {
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+
+                if (!response.ok) {
+                    console.warn(`GitHub API returned ${response.status}, falling back to default announcement`);
+                    showDefaultAnnouncement();
+                    return;
+                }
+
+                const discussions = await response.json();
+                
+                const announcements = discussions
+                    .filter(d => d.category?.name === 'Announcements')
+                    .filter(d => d.state === 'open')
+                    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+                    .slice(0, 10)
+                    .map(d => ({
+                        title: d.title,
+                        content: d.body || '',
+                        date: d.created_at
+                    }));
+                
+                if (announcements.length === 0) {
+                    showDefaultAnnouncement();
+                    return;
+                }
+
+                displayAnnouncements(announcements);
+
+            } catch (error) {
+                console.error('Error fetching announcements:', error);
+                showDefaultAnnouncement();
+            }
+        }
+
+        function displayAnnouncements(announcements) {
+            const container = document.getElementById('announcements-content');
+            
+            container.innerHTML = announcements.map(announcement => {
+                const date = new Date(announcement.date);
+                const formattedDate = date.toLocaleDateString('en-US', { 
+                    month: 'short', 
+                    day: 'numeric', 
+                    year: 'numeric' 
+                });
+                
+                const strippedContent = announcement.content.replace(/<[^>]*>/g, '');
+                const truncatedContent = strippedContent.length > 200 
+                    ? strippedContent.substring(0, 200) + '...' 
+                    : strippedContent;
+                
+                return `
+                    <div class="announcement-item">
+                        <div class="announcement-date">${formattedDate}</div>
+                        <div class="announcement-title">${announcement.title}</div>
+                        <div class="announcement-content">${truncatedContent}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function showDefaultAnnouncement() {
+            const container = document.getElementById('announcements-content');
+            container.innerHTML = `
+                <div class="announcement-item">
+                    <div class="announcement-date">October 9, 2025</div>
+                    <div class="announcement-title">Welcome to the Aviation Dashboard</div>
+                    <div class="announcement-content">This dashboard provides real-time weather conditions and flight restrictions for SLU Aviation operations. Please check this section regularly for important updates.</div>
+                </div>
+            `;
+        }
+
+        // Initial fetch on page load
+        getWeatherData();
+        fetchAnnouncements();
+
+        // Set up auto-refresh timers
+        setInterval(getWeatherData, 300000); // Refresh weather every 5 minutes
+        setInterval(fetchAnnouncements, 900000); // Refresh announcements every 15 minutes
     </script>
 </body>
 </html>
