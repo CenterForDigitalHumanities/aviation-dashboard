@@ -822,7 +822,7 @@
                 const humidity = 100 * Math.exp((17.625 * dewpointC) / (243.04 + dewpointC)) / Math.exp((17.625 * tempC) / (243.04 + tempC));
                 document.getElementById('currentHumidity').textContent = `${humidity.toFixed(0)}%`;
                 
-                const heatIndex = calculateHeatIndex(tempF, dewpointF);
+                const heatIndex = calculateHeatIndex(tempF, humidity);
                 document.getElementById('heatIndexValue').textContent = heatIndex !== null ? `${heatIndex.toFixed(1)}°F` : 'N/A';
             }
             
