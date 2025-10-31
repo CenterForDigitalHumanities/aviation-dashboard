@@ -658,7 +658,7 @@
 
         function applyTheme(isDark) {
             const body = document.body;
-            const changed = isDark ? body.classList.add('dark-theme') : body.classList.remove('dark-theme');
+            body.classList[`${isDark ? 'add' : 'remove'}`]('dark-theme');
             updateThemeButton(isDark);
             toggleMetarEmbedVisibility(isDark);
         }
