@@ -388,7 +388,7 @@
                 </div>
                 
                 <div class="weather-metric" id="heatindex-metric">
-                    <div class="weather-icon">�</div>
+                    <div class="weather-icon">🔥</div>
                     <div class="weather-info">
                         <div class="weather-label">Heat Index</div>
                         <div class="weather-value" id="heatindex-value">-- °F</div>
@@ -634,7 +634,7 @@ function updateWeatherGraphics(data) {
         tempMetric.classList.remove('warning', 'alert');
         if (tempF <= 5) {
             tempMetric.classList.add('alert');
-        } else if (tempF <= 14 || tempF <= 23) {
+        } else if (tempF <= 23) {
             tempMetric.classList.add('warning');
         }
     }
@@ -656,7 +656,7 @@ function updateWeatherGraphics(data) {
                 hiValueEl.textContent = `${heatIndex.toFixed(0)}°F`;
                 if (heatIndex >= 105) {
                     hiMetric.classList.add('alert');
-                } else if (heatIndex >= 100 || heatIndex >= 95) {
+                } else if (heatIndex >= 95) {
                     hiMetric.classList.add('warning');
                 }
             } else {
@@ -815,6 +815,8 @@ function displayAnnouncements(announcements) {
     const overlay = document.getElementById('airportClosedOverlay');
     if (hasNoFlying && overlay) {
         overlay.classList.add('active');
+    } else if (overlay) {
+        overlay.classList.remove('active');
     }
     
     container.innerHTML = announcements.map(announcement => {
