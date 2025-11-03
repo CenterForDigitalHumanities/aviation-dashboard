@@ -849,7 +849,7 @@
             }
             
             // Crosswind
-            if (data.windDirection !== undefined && data.windSpeed !== undefined) {
+            if (data.windDirection != null && data.windSpeed != null) {
                 const crosswind12 = calculateCrosswind(data.windDirection, data.windSpeed, KCPS_RUNWAY_12_HDG, data.windGust);
                 const crosswind30 = calculateCrosswind(data.windDirection, data.windSpeed, KCPS_RUNWAY_30_HDG, data.windGust);
                 
@@ -867,7 +867,7 @@
             
             let crosswind12 = null;
             let crosswind30 = null;
-            if (data.windDirection !== undefined && data.windSpeed !== undefined) {
+            if (data.windDirection != null && data.windSpeed != null) {
                 crosswind12 = calculateCrosswind(data.windDirection, data.windSpeed, KCPS_RUNWAY_12_HDG, data.windGust);
                 crosswind30 = calculateCrosswind(data.windDirection, data.windSpeed, KCPS_RUNWAY_30_HDG, data.windGust);
             }
