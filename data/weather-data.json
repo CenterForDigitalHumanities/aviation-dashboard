@@ -1,29 +1,29 @@
 {
-  "lastUpdated": "2025-11-09T14:46:13.227575+00:00",
+  "lastUpdated": "2025-11-09T15:02:20.873541+00:00",
   "kcps": {
-    "metar": "KCPS 091429Z 31020G32KT 10SM SCT028 BKN036 OVC065 04/M03 A3018 RMK AO2 PK WND 33032/1420 T00391028 $",
+    "metar": "KCPS 091453Z 31020G27KT 10SM OVC034 04/M03 A3019 RMK AO2 PK WND 33032/1420 SLP226 T00391033 51036 $",
     "windDirection": 310,
     "windSpeed": 20,
-    "windGust": 32,
+    "windGust": 27,
     "visibility": 10,
     "temperatureC": 4,
     "dewPointC": -3,
-    "cloudCeiling": 3600,
-    "altimeter": "A3018",
-    "timestamp": "2025-11-09T14:29:00+00:00",
+    "cloudCeiling": 3400,
+    "altimeter": "A3019",
+    "timestamp": "2025-11-09T14:53:00+00:00",
     "station": "KCPS"
   },
   "kstl": {
-    "metar": "KSTL 091351Z 33017G25KT 10SM BKN026 OVC033 03/M03 A3017 RMK AO2 PK WND 33032/1341 SLP218 T00281033 $",
-    "windDirection": 330,
-    "windSpeed": 17,
-    "windGust": 25,
+    "metar": "KSTL 091451Z 31020G28KT 10SM SCT027 SCT034 BKN055 03/M04 A3020 RMK AO2 PK WND 31030/1437 SLP229 T00281039 51019 $",
+    "windDirection": 310,
+    "windSpeed": 20,
+    "windGust": 28,
     "visibility": 10,
     "temperatureC": 3,
-    "dewPointC": -3,
-    "cloudCeiling": 2600,
-    "altimeter": "A3017",
-    "timestamp": "2025-11-09T13:51:00+00:00",
+    "dewPointC": -4,
+    "cloudCeiling": 5500,
+    "altimeter": "A3020",
+    "timestamp": "2025-11-09T14:51:00+00:00",
     "station": "KSTL"
   }
 }
