@@ -756,31 +756,34 @@
          * This ensures the widget displays the latest METAR/TAF data
          */
         function refreshMetarTafWidget() {
-            // Get the current theme
-            const isDarkTheme = document.body.classList.contains('dark-theme');
-            const activeTheme = isDarkTheme ? 'dark' : 'light';
-            const inactiveTheme = isDarkTheme ? 'light' : 'dark';
-            
             // Function to reload a specific theme's embed
             function reloadEmbed(theme) {
                 const container = document.getElementById(`metar-embed-${theme}`);
                 if (!container) return;
                 
-                // Find and remove the old script
-                const oldScript = container.querySelector('script');
-                if (oldScript) {
-                    oldScript.remove();
-                }
+                // Store the current display state
+                const displayState = container.style.display;
                 
-                // Create and append a new script with the same source
-                const newScript = document.createElement('script');
-                newScript.async = true;
-                
-                // Set the appropriate background color and target based on theme
+                // Set the appropriate background color based on theme
                 const bgColor = theme === 'dark' ? '333333' : 'ffffff';
-                newScript.src = `https://metar-taf.com/embed-js/KCPS?bg_color=${bgColor}&layout=landscape&visibility=mi&qnh=inHg&rh=dp&target=${theme}`;
                 
-                container.appendChild(newScript);
+                // Completely rebuild the container content
+                container.innerHTML = `
+                    <a href="https://metar-taf.com/metar/KCPS" id="metartaf-${theme}" style="font-size:18px; font-weight:500; color:#000; width:100%; height:100%; display:block">METAR St. Louis Downtown Airport</a>
+                    <script async src="https://metar-taf.com/embed-js/KCPS?bg_color=${bgColor}&layout=landscape&visibility=mi&qnh=inHg&rh=dp&target=${theme}"></script>
+                `;
+                
+                // Restore the display state
+                container.style.display = displayState;
+                
+                // Execute the script manually since innerHTML doesn't auto-execute scripts
+                const script = container.querySelector('script');
+                if (script) {
+                    const newScript = document.createElement('script');
+                    newScript.async = true;
+                    newScript.src = script.src;
+                    script.parentNode.replaceChild(newScript, script);
+                }
             }
             
             // Reload both embeds (active one will be visible, inactive one hidden but ready)
