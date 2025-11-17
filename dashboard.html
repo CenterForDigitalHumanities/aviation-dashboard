@@ -751,6 +751,34 @@
         const KCPS_RUNWAY_30_HDG = 302;
         const KCPS_ELEVATION = 413;
 
+        /**
+         * Refresh the METAR-TAF widget by reloading the embed containers
+         * This forces the external widget to fetch fresh data
+         */
+        function refreshMetarTafWidget() {
+            const isDarkTheme = document.body.classList.contains('dark-theme');
+            
+            // Get both containers
+            const darkContainer = document.getElementById('metar-embed-dark');
+            const lightContainer = document.getElementById('metar-embed-light');
+            
+            if (!darkContainer || !lightContainer) return;
+            
+            // Store current display states
+            const darkDisplay = darkContainer.style.display;
+            const lightDisplay = lightContainer.style.display;
+            
+            // Clone and replace dark theme container
+            const darkClone = darkContainer.cloneNode(true);
+            darkClone.style.display = darkDisplay;
+            darkContainer.parentNode.replaceChild(darkClone, darkContainer);
+            
+            // Clone and replace light theme container
+            const lightClone = lightContainer.cloneNode(true);
+            lightClone.style.display = lightDisplay;
+            lightContainer.parentNode.replaceChild(lightClone, lightContainer);
+        }
+
         async function getWeatherData() {
             try {
                 const data = await fetchWeatherDataFromJSON();
@@ -797,6 +825,9 @@
                 
                 // Calculate and update restrictions
                 updateRestrictions(weatherData);
+                
+                // Refresh the METAR-TAF widget to get latest data
+                refreshMetarTafWidget();
                 
             } catch (err) {
                 console.error("Error fetching weather data:", err);
