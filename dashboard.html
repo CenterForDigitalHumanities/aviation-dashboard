@@ -751,6 +751,43 @@
         const KCPS_RUNWAY_30_HDG = 302;
         const KCPS_ELEVATION = 413;
 
+        /**
+         * Refresh the METAR-TAF widget by reloading the embed scripts
+         * This ensures the widget displays the latest METAR/TAF data
+         */
+        function refreshMetarTafWidget() {
+            // Get the current theme
+            const isDarkTheme = document.body.classList.contains('dark-theme');
+            const activeTheme = isDarkTheme ? 'dark' : 'light';
+            const inactiveTheme = isDarkTheme ? 'light' : 'dark';
+            
+            // Function to reload a specific theme's embed
+            function reloadEmbed(theme) {
+                const container = document.getElementById(`metar-embed-${theme}`);
+                if (!container) return;
+                
+                // Find and remove the old script
+                const oldScript = container.querySelector('script');
+                if (oldScript) {
+                    oldScript.remove();
+                }
+                
+                // Create and append a new script with the same source
+                const newScript = document.createElement('script');
+                newScript.async = true;
+                
+                // Set the appropriate background color and target based on theme
+                const bgColor = theme === 'dark' ? '333333' : 'ffffff';
+                newScript.src = `https://metar-taf.com/embed-js/KCPS?bg_color=${bgColor}&layout=landscape&visibility=mi&qnh=inHg&rh=dp&target=${theme}`;
+                
+                container.appendChild(newScript);
+            }
+            
+            // Reload both embeds (active one will be visible, inactive one hidden but ready)
+            reloadEmbed('dark');
+            reloadEmbed('light');
+        }
+
         async function getWeatherData() {
             try {
                 const data = await fetchWeatherDataFromJSON();
@@ -797,6 +834,9 @@
                 
                 // Calculate and update restrictions
                 updateRestrictions(weatherData);
+                
+                // Refresh the METAR-TAF widget to get latest data
+                refreshMetarTafWidget();
                 
             } catch (err) {
                 console.error("Error fetching weather data:", err);
