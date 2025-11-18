@@ -752,31 +752,29 @@
         const KCPS_ELEVATION = 413;
 
         /**
-         * Refresh the METAR-TAF widget by reloading the embed containers
-         * This forces the external widget to fetch fresh data
+         * Refresh the METAR-TAF widget by re-running the vendor script
+         * Only refresh the currently visible theme to avoid widget-limit errors
          */
         function refreshMetarTafWidget() {
-            const isDarkTheme = document.body.classList.contains('dark-theme');
-            
-            // Get both containers
-            const darkContainer = document.getElementById('metar-embed-dark');
-            const lightContainer = document.getElementById('metar-embed-light');
-            
-            if (!darkContainer || !lightContainer) return;
-            
-            // Store current display states
-            const darkDisplay = darkContainer.style.display;
-            const lightDisplay = lightContainer.style.display;
-            
-            // Clone and replace dark theme container
-            const darkClone = darkContainer.cloneNode(true);
-            darkClone.style.display = darkDisplay;
-            darkContainer.parentNode.replaceChild(darkClone, darkContainer);
-            
-            // Clone and replace light theme container
-            const lightClone = lightContainer.cloneNode(true);
-            lightClone.style.display = lightDisplay;
-            lightContainer.parentNode.replaceChild(lightClone, lightContainer);
+            const isDark = document.body.classList.contains('dark-theme');
+            const theme = isDark ? 'dark' : 'light';
+            const container = document.getElementById(`metar-embed-${theme}`);
+            if (!container) return;
+
+            // Reset the anchor back to its initial text so the vendor script runs
+            const anchor = container.querySelector(`#metartaf-${theme}`);
+            if (!anchor) return;
+            anchor.innerHTML = 'METAR St. Louis Downtown Airport';
+
+            // Remove any previous vendor script under this container
+            container.querySelectorAll('script[src*="metar-taf.com/embed-js"]').forEach(s => s.remove());
+
+            // Re-inject a fresh vendor script for this theme
+            const script = document.createElement('script');
+            script.async = true;
+            const bgColor = theme === 'dark' ? '333333' : 'ffffff';
+            script.src = `https://metar-taf.com/embed-js/KCPS?bg_color=${bgColor}&layout=landscape&visibility=mi&qnh=inHg&rh=dp&target=${theme}`;
+            container.appendChild(script);
         }
 
         async function getWeatherData() {
