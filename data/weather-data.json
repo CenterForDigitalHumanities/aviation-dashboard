@@ -1,29 +1,28 @@
 {
-  "lastUpdated": "2025-11-18T11:46:37.184371+00:00",
+  "lastUpdated": "2025-11-18T12:03:00.218029+00:00",
   "kcps": {
-    "metar": "KCPS 181132Z 26003KT 10SM VCTS -RA OVC100 13/03 A2987 RMK AO2 LTG DSNT SW-N RAB02 PRESRR P0001 T01280033",
-    "windDirection": 260,
-    "windSpeed": 3,
+    "metar": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+    "windDirection": null,
+    "windSpeed": null,
     "windGust": null,
-    "visibility": 10,
-    "temperatureC": 13,
-    "dewPointC": 3,
-    "cloudCeiling": 10000,
-    "altimeter": "A2987",
-    "timestamp": "2025-11-18T11:32:00+00:00",
-    "station": "KCPS"
+    "visibility": null,
+    "temperatureC": null,
+    "dewPointC": null,
+    "cloudCeiling": null,
+    "altimeter": null,
+    "timestamp": null
   },
   "kstl": {
-    "metar": "KSTL 181140Z 22005KT 5SM +TSRA SCT047CB BKN080 OVC100 11/08 A2985 RMK AO2 RAB13 TSB06 FRQ LTGICCG ALQDS TS ALQDS MOV SE P0009 T01110078 $",
-    "windDirection": 220,
-    "windSpeed": 5,
+    "metar": "KSTL 181151Z 17008KT 5SM -TSRA SCT047CB BKN080 OVC100 11/08 A2983 RMK AO2 RAB13 TSB06 SLP100 OCNL LTGICCCCG N-E TS N-E MOV NE P0013 60013 70031 T01110083 10117 20100 55005 $",
+    "windDirection": 170,
+    "windSpeed": 8,
     "windGust": null,
     "visibility": 5,
     "temperatureC": 11,
     "dewPointC": 8,
     "cloudCeiling": 8000,
-    "altimeter": "A2985",
-    "timestamp": "2025-11-18T11:40:00+00:00",
+    "altimeter": "A2983",
+    "timestamp": "2025-11-18T11:51:00+00:00",
     "station": "KSTL"
   }
 }
