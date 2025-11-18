@@ -1,28 +1,29 @@
 {
-  "lastUpdated": "2025-11-18T12:03:00.218029+00:00",
+  "lastUpdated": "2025-11-18T12:23:50.990388+00:00",
   "kcps": {
-    "metar": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
-    "windDirection": null,
-    "windSpeed": null,
+    "metar": "KCPS 181201Z 14005KT 10SM -RA OVC090 10/08 A2985 RMK AO2 LTG DSNT N-SE P0001 T01000078",
+    "windDirection": 140,
+    "windSpeed": 5,
     "windGust": null,
-    "visibility": null,
-    "temperatureC": null,
-    "dewPointC": null,
-    "cloudCeiling": null,
-    "altimeter": null,
-    "timestamp": null
+    "visibility": 10,
+    "temperatureC": 10,
+    "dewPointC": 8,
+    "cloudCeiling": 9000,
+    "altimeter": "A2985",
+    "timestamp": "2025-11-18T12:01:00+00:00",
+    "station": "KCPS"
   },
   "kstl": {
-    "metar": "KSTL 181151Z 17008KT 5SM -TSRA SCT047CB BKN080 OVC100 11/08 A2983 RMK AO2 RAB13 TSB06 SLP100 OCNL LTGICCCCG N-E TS N-E MOV NE P0013 60013 70031 T01110083 10117 20100 55005 $",
-    "windDirection": 170,
-    "windSpeed": 8,
+    "metar": "KSTL 181202Z 16006KT 10SM -RA SCT047 OVC100 12/08 A2981 RMK AO2 LTG DSNT N-E TSE02 PRESFR OCNL LTGIC DSNT N-E CB DSNT N-E MOV NE P0000 T01220083 $",
+    "windDirection": 160,
+    "windSpeed": 6,
     "windGust": null,
-    "visibility": 5,
-    "temperatureC": 11,
+    "visibility": 10,
+    "temperatureC": 12,
     "dewPointC": 8,
-    "cloudCeiling": 8000,
-    "altimeter": "A2983",
-    "timestamp": "2025-11-18T11:51:00+00:00",
+    "cloudCeiling": 10000,
+    "altimeter": "A2981",
+    "timestamp": "2025-11-18T12:02:00+00:00",
     "station": "KSTL"
   }
 }
