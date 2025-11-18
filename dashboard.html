@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,8 +13,9 @@
             --bg-tertiary: #e9e9e9;
             --text-primary: #333;
             --text-secondary: #666;
-            --accent-primary: transparent /* #0056b3; */
-            --border-color: transparent;
+            --accent-primary: transparent
+                /* #0056b3; */
+                --border-color: transparent;
             --highlight-bg: #ffdddd;
             --highlight-text: #d32f2f;
             --success-bg: #ddffdd;
@@ -21,7 +23,7 @@
             --warning-bg: #fffacd;
             --warning-text: #f57c00;
         }
-        
+
         body.dark-theme {
             /* Dark theme */
             --bg-primary: #1a1a1a;
@@ -38,14 +40,15 @@
             --warning-bg: rgba(255, 152, 0, 0.3);
             --warning-text: #ffb74d;
         }
-        
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
-        html, body {
+
+        html,
+        body {
             height: 100vh;
             overflow: hidden;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -53,12 +56,12 @@
             color: var(--text-primary);
             transition: background-color 0.3s ease, color 0.3s ease;
         }
-        
+
         body {
             display: flex;
             flex-direction: column;
         }
-        
+
         header {
             background-color: var(--bg-secondary);
             padding: 10px 20px;
@@ -68,7 +71,7 @@
             justify-content: space-between;
             align-items: center;
         }
-        
+
         h1 {
             color: var(--accent-primary);
             font-size: 1.5em;
@@ -76,7 +79,7 @@
             margin: 0;
             flex: 1;
         }
-        
+
         .theme-toggle {
             display: none;
             background-color: var(--accent-primary);
@@ -90,17 +93,17 @@
             transition: opacity 0.2s ease;
             position: relative;
         }
-        
+
         .theme-toggle:hover {
             opacity: 0.8;
         }
-        
+
         .theme-toggle::after {
             content: " (Space)";
             font-size: 0.75em;
             opacity: 0.7;
         }
-        
+
         .dashboard-container {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -110,7 +113,7 @@
             min-height: 0;
             overflow: hidden;
         }
-        
+
         .column {
             display: flex;
             flex-direction: column;
@@ -118,7 +121,7 @@
             min-height: 0;
             overflow-y: auto;
         }
-        
+
         .card {
             background-color: var(--bg-secondary);
             border: 2px solid var(--accent-primary);
@@ -127,20 +130,21 @@
             flex-shrink: 0;
             transition: background-color 0.3s ease, border-color 0.3s ease;
         }
-        
+
         .card.scrollable {
             overflow-y: auto;
             flex: 1;
             min-height: 0;
         }
-        
-        h2, h3 {
+
+        h2,
+        h3 {
             color: var(--accent-primary);
             margin: 0 0 10px 0;
             font-size: 1.1em;
             transition: color 0.3s ease;
         }
-        
+
         .metar-data {
             background-color: var(--bg-tertiary);
             padding: 10px;
@@ -152,15 +156,16 @@
             margin-bottom: 10px;
             transition: background-color 0.3s ease, border-color 0.3s ease;
         }
-        
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
             font-size: 0.85em;
         }
-        
-        th, td {
+
+        th,
+        td {
             border: 1px solid var(--border-color);
             padding: 6px 8px;
             text-align: left;
@@ -170,29 +175,29 @@
         td[rowspan="4"] {
             vertical-align: top;
         }
-        
+
         th {
             background-color: var(--bg-tertiary);
             color: var(--accent-primary);
             font-weight: bold;
         }
-        
+
         .highlight {
             background-color: var(--highlight-bg);
             color: var(--highlight-text);
             font-weight: bold;
         }
-        
+
         .success {
             background-color: var(--success-bg);
             color: var(--success-text);
         }
-        
+
         .warning {
             background-color: var(--warning-bg);
             color: var(--warning-text);
         }
-        
+
         .embed-container {
             display: flex;
             justify-content: center;
@@ -203,25 +208,25 @@
             padding: 10px;
             transition: background-color 0.3s ease;
         }
-        
+
         /* METAR embed wrapper */
         #metar-embed-wrapper {
             width: 100%;
             height: 100%;
         }
-        
+
         /* Override embed colors based on theme */
         body.dark-theme #metartaf-JepVhm08 {
             background-color: #333333 !important;
             color: #fff !important;
         }
-        
+
         body.dark-theme #metartaf-JepVhm08:hover,
         body.dark-theme #metartaf-JepVhm08:active,
         body.dark-theme #metartaf-JepVhm08:focus {
             background-color: #444444 !important;
         }
-        
+
         .weather-stat {
             display: flex;
             justify-content: space-between;
@@ -230,15 +235,15 @@
             font-size: 1em;
             transition: border-color 0.3s ease;
         }
-        
+
         .weather-stat:last-child {
             border-bottom: none;
         }
-        
+
         .weather-stat strong {
             color: var(--accent-primary);
         }
-        
+
         .footer {
             text-align: center;
             padding: 5px 10px;
@@ -249,39 +254,39 @@
             flex-shrink: 0;
             transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
         }
-        
+
         .footer p {
             margin: 2px 0;
             line-height: 1.3;
         }
-        
+
         #updateTime {
             color: var(--accent-primary);
             font-weight: bold;
         }
-        
+
         /* Scrollbar styling */
         .column::-webkit-scrollbar,
         .card.scrollable::-webkit-scrollbar {
             width: 8px;
         }
-        
+
         .column::-webkit-scrollbar-track,
         .card.scrollable::-webkit-scrollbar-track {
             background: var(--bg-primary);
         }
-        
+
         .column::-webkit-scrollbar-thumb,
         .card.scrollable::-webkit-scrollbar-thumb {
             background: var(--border-color);
             border-radius: 4px;
         }
-        
+
         .column::-webkit-scrollbar-thumb:hover,
         .card.scrollable::-webkit-scrollbar-thumb:hover {
             background: var(--accent-primary);
         }
-        
+
         /* Announcement styles */
         .announcement-item {
             padding: 10px;
@@ -291,38 +296,38 @@
             border-left: 4px solid #ff6b35;
             transition: background-color 0.3s ease;
         }
-        
+
         .announcement-date {
             font-size: 0.75em;
             color: var(--text-secondary);
             margin-bottom: 5px;
         }
-        
+
         .announcement-title {
             font-weight: bold;
             color: var(--accent-primary);
             margin-bottom: 5px;
             font-size: 0.95em;
         }
-        
+
         .announcement-content {
             font-size: 0.85em;
             line-height: 1.3;
         }
-        
+
         .metar-heading {
             font-size: 0.95em;
         }
-        
+
         .metar-heading.spaced {
             margin-top: 15px;
         }
-        
+
         .heat-note {
             font-size: 0.85em;
             margin-bottom: 10px;
         }
-        
+
         /* Airport closed overlay */
         .airport-closed-overlay {
             position: absolute;
@@ -337,17 +342,17 @@
             z-index: 100;
             border-radius: 8px;
         }
-        
+
         .airport-closed-overlay.active {
             display: flex;
         }
-        
+
         .airport-closed-message {
             color: white;
             text-align: center;
             padding: 20px;
         }
-        
+
         .airport-closed-message h2 {
             font-size: 2em;
             margin: 0 0 15px 0;
@@ -355,24 +360,25 @@
             text-transform: uppercase;
             letter-spacing: 2px;
         }
-        
+
         .airport-closed-message p {
             font-size: 1.2em;
             margin: 10px 0;
             line-height: 1.5;
         }
-        
+
         .airport-closed-message .icon {
             font-size: 3em;
             margin-bottom: 15px;
         }
-        
+
         /* Position overlay only over left column */
         .column:first-child {
             position: relative;
         }
     </style>
 </head>
+
 <body>
     <header>
         <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
@@ -393,7 +399,7 @@
                     <p><strong>See airport announcements for details</strong></p>
                 </div>
             </div>
-            
+
             <div class="card scrollable">
                 <h2>Pilot Solo Restrictions</h2>
                 <table>
@@ -459,7 +465,7 @@
                     </tbody>
                 </table>
             </div>
-            
+
             <div class="card scrollable">
                 <h2>Heat Index and Temperature Flight Restrictions</h2>
                 <p class="heat-note"><em>Based on KCPS METAR</em></p>
@@ -506,11 +512,11 @@
                 <h2>METAR Data</h2>
                 <h3 class="metar-heading">KCPS METAR</h3>
                 <div id="metarKCPS" class="metar-data">Loading KCPS METAR...</div>
-                
+
                 <h3 class="metar-heading spaced">KSTL METAR</h3>
                 <div id="metarKSTL" class="metar-data">Loading KSTL METAR...</div>
             </div>
-            
+
             <div class="card">
                 <h2>Current Conditions (KCPS)</h2>
                 <div class="weather-stat">
@@ -560,20 +566,26 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="card" style="flex-shrink: 0;">
                 <h2>St. Louis Downtown Airport</h2>
                 <div id="metar-embed-container" class="embed-container">
                     <!-- Dark theme embed (default visible) -->
                     <div id="metar-embed-dark" class="metar-embed-theme">
-                        <a href="https://metar-taf.com/metar/KCPS" id="metartaf-dark" style="font-size:18px; font-weight:500; color:#000; width:100%; height:100%; display:block">METAR St. Louis Downtown Airport</a>
-                        <script async src="https://metar-taf.com/embed-js/KCPS?bg_color=333333&layout=landscape&visibility=mi&qnh=inHg&rh=dp&target=dark"></script>
+                        <a href="https://metar-taf.com/metar/KCPS" id="metartaf-dark"
+                            style="font-size:18px; font-weight:500; color:#000; width:100%; height:100%; display:block">METAR
+                            St. Louis Downtown Airport</a>
+                        <script async
+                            src="https://metar-taf.com/embed-js/KCPS?bg_color=333333&layout=landscape&visibility=mi&qnh=inHg&rh=dp&target=dark"></script>
                     </div>
-                    
+
                     <!-- Light theme embed (hidden by default) -->
                     <div id="metar-embed-light" class="metar-embed-theme" style="display: none;">
-                        <a href="https://metar-taf.com/metar/KCPS" id="metartaf-light" style="font-size:18px; font-weight:500; color:#000; width:100%; height:100%; display:block">METAR St. Louis Downtown Airport</a>
-                        <script async src="https://metar-taf.com/embed-js/KCPS?bg_color=ffffff&layout=landscape&visibility=mi&qnh=inHg&rh=dp&target=light"></script>
+                        <a href="https://metar-taf.com/metar/KCPS" id="metartaf-light"
+                            style="font-size:18px; font-weight:500; color:#000; width:100%; height:100%; display:block">METAR
+                            St. Louis Downtown Airport</a>
+                        <script async
+                            src="https://metar-taf.com/embed-js/KCPS?bg_color=ffffff&layout=landscape&visibility=mi&qnh=inHg&rh=dp&target=light"></script>
                     </div>
                 </div>
             </div>
@@ -582,7 +594,8 @@
 
     <div class="footer">
         <p>Data last updated: <span id="updateTime">N/A</span></p>
-        <p>Disclaimer: This page provides general aviation weather information and restrictions for planning purposes only. Always consult official weather briefings and Air Traffic Control for actual flight operations.</p>
+        <p>Disclaimer: This page provides general aviation weather information and restrictions for planning purposes
+            only. Always consult official weather briefings and Air Traffic Control for actual flight operations.</p>
     </div>
 
     <!-- Shared weather utilities -->
@@ -691,17 +704,17 @@
         function initThemeToggle() {
             const themeToggle = document.getElementById('themeToggle');
             const body = document.body;
-            
+
             // Determine initial theme purely by sun times (no saved preference)
             const isDark = !isDaylightNow(KCPS_LAT, KCPS_LON);
             applyTheme(isDark);
 
             // Schedule auto switches at sunrise/sunset
             scheduleNextAutoTheme(KCPS_LAT, KCPS_LON);
-            
+
             // Toggle theme on button click
             themeToggle.addEventListener('click', toggleTheme);
-            
+
             // Toggle theme on spacebar press
             document.addEventListener('keydown', (e) => {
                 if (e.code === 'Space' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
@@ -710,11 +723,11 @@
                 }
             });
         }
-        
+
         function toggleMetarEmbedVisibility(isDark) {
             const darkEmbed = document.getElementById('metar-embed-dark');
             const lightEmbed = document.getElementById('metar-embed-light');
-            
+
             if (isDark) {
                 darkEmbed.style.display = 'block';
                 lightEmbed.style.display = 'none';
@@ -722,19 +735,20 @@
                 darkEmbed.style.display = 'none';
                 lightEmbed.style.display = 'block';
             }
+            refreshMetarTafWidget();
         }
-        
+
         function toggleTheme() {
             const body = document.body;
             const isDark = body.classList.toggle('dark-theme');
-            
+
             // Update button text
             updateThemeButton(isDark);
-            
+
             // Toggle METAR embed visibility
             toggleMetarEmbedVisibility(isDark);
         }
-        
+
         function updateThemeButton(isDark) {
             const themeToggle = document.getElementById('themeToggle');
             if (isDark) {
@@ -743,10 +757,10 @@
                 themeToggle.innerHTML = '☀️ Classic';
             }
         }
-        
+
         // Initialize theme toggle
         document.addEventListener('DOMContentLoaded', initThemeToggle);
-        
+
         const KCPS_RUNWAY_12_HDG = 122;
         const KCPS_RUNWAY_30_HDG = 302;
         const KCPS_ELEVATION = 413;
@@ -783,7 +797,7 @@
                 if (!data) {
                     throw new Error('Failed to fetch weather data');
                 }
-                
+
                 // Update timestamp
                 const updateTimeElement = document.getElementById('updateTime');
                 if (updateTimeElement) {
@@ -796,37 +810,37 @@
                         hour12: true
                     });
                 }
-                
+
                 // Display METAR data
                 if (data.kcps && data.kcps.metar) {
                     document.getElementById("metarKCPS").innerText = data.kcps.metar;
                 } else {
                     document.getElementById("metarKCPS").innerText = "KCPS METAR unavailable";
                 }
-                
+
                 if (data.kstl && data.kstl.metar) {
                     document.getElementById("metarKSTL").innerText = data.kstl.metar;
                 } else {
                     document.getElementById("metarKSTL").innerText = "KSTL METAR unavailable";
                 }
-                
+
                 // Use KCPS data preferentially
                 const weatherData = data.kcps || data.kstl;
-                
+
                 if (!weatherData) {
                     console.error("No valid weather data available");
                     return;
                 }
-                
+
                 // Update current conditions display
                 updateCurrentConditions(weatherData);
-                
+
                 // Calculate and update restrictions
                 updateRestrictions(weatherData);
-                
+
                 // Refresh the METAR-TAF widget to get latest data
                 refreshMetarTafWidget();
-                
+
             } catch (err) {
                 console.error("Error fetching weather data:", err);
                 document.getElementById("metarKCPS").innerText = "Error loading weather data";
@@ -837,36 +851,36 @@
         function updateCurrentConditions(data) {
             // Temperature
             if (data.temperatureC !== undefined && data.temperatureC !== null) {
-                const tempF = data.temperatureC * 9/5 + 32;
+                const tempF = data.temperatureC * 9 / 5 + 32;
                 document.getElementById('currentTemp').textContent = `${tempF.toFixed(1)}°F (${data.temperatureC.toFixed(1)}°C)`;
             }
-            
+
             // Humidity and Heat Index
             if (data.temperatureC !== undefined && data.dewPointC !== undefined) {
                 const tempC = data.temperatureC;
                 const dewpointC = data.dewPointC;
-                const tempF = tempC * 9/5 + 32;
-                const dewpointF = dewpointC * 9/5 + 32;
-                
+                const tempF = tempC * 9 / 5 + 32;
+                const dewpointF = dewpointC * 9 / 5 + 32;
+
                 const humidity = 100 * Math.exp((17.625 * dewpointC) / (243.04 + dewpointC)) / Math.exp((17.625 * tempC) / (243.04 + tempC));
                 document.getElementById('currentHumidity').textContent = `${humidity.toFixed(0)}%`;
-                
+
                 const heatIndex = calculateHeatIndex(tempF, humidity);
                 document.getElementById('heatIndexValue').textContent = heatIndex !== null ? `${heatIndex.toFixed(1)}°F` : 'N/A';
             }
-            
+
             // Wind
             if (data.windSpeed !== undefined && data.windSpeed !== null) {
                 const windDir = data.windDirection || 0;
                 const gustText = ((data.windGust ?? 0) > 0) ? ` G${data.windGust}` : '';
                 document.getElementById('surfaceWinds').textContent = `${windDir}° @ ${data.windSpeed} kt${gustText}`;
             }
-            
+
             // Visibility
             if (data.visibility !== undefined && data.visibility !== null) {
                 document.getElementById('visibility').textContent = `${data.visibility} SM`;
             }
-            
+
             // Ceiling
             if (data.cloudCeiling !== undefined && data.cloudCeiling !== null) {
                 if (data.cloudCeiling >= 99999) {
@@ -876,63 +890,63 @@
                     document.getElementById('cloudCeiling').textContent = `${ceilingAGL} ft AGL`;
                 }
             }
-            
+
             // Crosswind
             if (data.windDirection != null && data.windSpeed != null) {
                 const crosswind12 = calculateCrosswind(data.windDirection, data.windSpeed, KCPS_RUNWAY_12_HDG, data.windGust);
                 const crosswind30 = calculateCrosswind(data.windDirection, data.windSpeed, KCPS_RUNWAY_30_HDG, data.windGust);
-                
+
                 document.getElementById('crosswind12').textContent = `${crosswind12.toFixed(1)} kt`;
                 document.getElementById('crosswind30').textContent = `${crosswind30.toFixed(1)} kt`;
             }
         }
 
         function updateRestrictions(data) {
-            const ceilingAGL = (data.cloudCeiling !== undefined && data.cloudCeiling < 99999) 
-                ? data.cloudCeiling - KCPS_ELEVATION 
+            const ceilingAGL = (data.cloudCeiling !== undefined && data.cloudCeiling < 99999)
+                ? data.cloudCeiling - KCPS_ELEVATION
                 : null;
             const visibilitySM = data.visibility;
             const effectiveWindSpeed = getEffectiveWindSpeed(data.windSpeed, data.windGust);
-            
+
             let crosswind12 = null;
             let crosswind30 = null;
             if (data.windDirection != null && data.windSpeed != null) {
                 crosswind12 = calculateCrosswind(data.windDirection, data.windSpeed, KCPS_RUNWAY_12_HDG, data.windGust);
                 crosswind30 = calculateCrosswind(data.windDirection, data.windSpeed, KCPS_RUNWAY_30_HDG, data.windGust);
             }
-            
+
             // Student Pilot Restrictions (Ceiling unified to 1,500 ft AGL)
             setStatus('studentCeilingStatus', isCeilingRestricted(data.cloudCeiling, KCPS_ELEVATION), 'RESTRICTED: Ceiling too low');
             setStatus('studentVisibilityStatus', isVisibilityRestricted(visibilitySM), 'RESTRICTED: Visibility too low');
             setStatus('studentSurfaceWindStatus', effectiveWindSpeed !== null && effectiveWindSpeed > 15, 'RESTRICTED: Surface winds too high');
-            setStatus('studentCrosswindStatus', 
-                (crosswind12 !== null && crosswind12 > 10) || (crosswind30 !== null && crosswind30 > 10), 
+            setStatus('studentCrosswindStatus',
+                (crosswind12 !== null && crosswind12 > 10) || (crosswind30 !== null && crosswind30 > 10),
                 'RESTRICTED: Crosswind too high');
-            
+
             // Private Pilot Restrictions (Ceiling unified to 1,500 ft AGL)
             setStatus('privateCeilingStatus', isCeilingRestricted(data.cloudCeiling, KCPS_ELEVATION), 'RESTRICTED: Ceiling too low');
             setStatus('privateVisibilityStatus', isVisibilityRestricted(visibilitySM), 'RESTRICTED: Visibility too low');
             setStatus('privateSurfaceWindStatus', effectiveWindSpeed !== null && effectiveWindSpeed > 20, 'RESTRICTED: Surface winds too high');
-            setStatus('privateCrosswindStatus', 
-                (crosswind12 !== null && crosswind12 > 15) || (crosswind30 !== null && crosswind30 > 15), 
+            setStatus('privateCrosswindStatus',
+                (crosswind12 !== null && crosswind12 > 15) || (crosswind30 !== null && crosswind30 > 15),
                 'RESTRICTED: Crosswind too high');
-            
+
             // Instrument/Commercial Pilot Restrictions
             setStatus('instCommVisibilityStatus', isVisibilityRestricted(visibilitySM), 'RESTRICTED: Visibility too low');
             setStatus('instCommCeilingStatus', isCeilingRestricted(data.cloudCeiling, KCPS_ELEVATION), 'RESTRICTED: Ceiling too low');
             setStatus('instCommSurfaceWindStatus', effectiveWindSpeed !== null && effectiveWindSpeed > 25, 'RESTRICTED: Surface winds too high');
-            setStatus('instCommCrosswindStatus', 
-                (crosswind12 !== null && crosswind12 > 20) || (crosswind30 !== null && crosswind30 > 20), 
+            setStatus('instCommCrosswindStatus',
+                (crosswind12 !== null && crosswind12 > 20) || (crosswind30 !== null && crosswind30 > 20),
                 'RESTRICTED: Crosswind too high');
-            
+
             // Heat Index / Temperature Restrictions
             if (data.temperatureC !== undefined && data.temperatureC !== null) {
-                const tempF = data.temperatureC * 9/5 + 32;
-                
+                const tempF = data.temperatureC * 9 / 5 + 32;
+
                 if (data.dewPointC !== undefined && tempF >= 80) {
-                    const dewpointF = data.dewPointC * 9/5 + 32;
+                    const dewpointF = data.dewPointC * 9 / 5 + 32;
                     const heatIndex = calculateHeatIndex(tempF, dewpointF);
-                    
+
                     setStatus('hi105Status', heatIndex >= 105, 'All Flights Restricted');
                     setStatus('hi100Status', heatIndex >= 100, 'Diamond Dual and Piper Solo Flights Restricted');
                     setStatus('hi95Status', heatIndex >= 95, 'Diamond Solo Flights Restricted');
@@ -941,7 +955,7 @@
                     setStatus('hi100Status', false, 'OK');
                     setStatus('hi95Status', false, 'OK');
                 }
-                
+
                 setStatus('temp23Status', tempF <= 23, 'All aircraft must be pre-heated');
                 setStatus('temp14Status', tempF <= 14, 'No solos or cross-countries');
                 setStatus('temp5Status', tempF <= 5, 'All Flights Restricted');
@@ -951,7 +965,7 @@
         function setStatus(elementId, conditionMet, restrictionText) {
             const element = document.getElementById(elementId);
             if (!element) return;
-            
+
             if (conditionMet) {
                 element.className = 'highlight';
                 element.textContent = restrictionText;
@@ -965,9 +979,9 @@
             try {
                 const owner = 'CenterForDigitalHumanities';
                 const repo = 'aviation-dashboard';
-                
+
                 const discussionsUrl = `https://api.github.com/repos/${owner}/${repo}/discussions`;
-                
+
                 const response = await fetch(discussionsUrl, {
                     headers: {
                         'Accept': 'application/vnd.github.v3+json'
@@ -981,7 +995,7 @@
                 }
 
                 const discussions = await response.json();
-                
+
                 const announcements = discussions
                     .filter(d => d.category?.name === 'Announcements')
                     .filter(d => d.state === 'open')
@@ -992,7 +1006,7 @@
                         content: d.body || '',
                         date: d.created_at
                     }));
-                
+
                 if (announcements.length === 0) {
                     showDefaultAnnouncement();
                     return;
@@ -1008,13 +1022,13 @@
 
         function displayAnnouncements(announcements) {
             const container = document.getElementById('announcements-content');
-            
+
             // Check if any OPEN announcement contains #noflying
-            const hasNoFlying = announcements.some(a => 
+            const hasNoFlying = announcements.some(a =>
                 (a.title && a.title.toLowerCase().includes('#noflying')) ||
                 (a.content && a.content.toLowerCase().includes('#noflying'))
             );
-            
+
             // Show/hide overlay based on #noflying presence (auto-dismisses when announcement closed)
             const overlay = document.getElementById('airportClosedOverlay');
             if (overlay) {
@@ -1024,20 +1038,20 @@
                     overlay.classList.remove('active');
                 }
             }
-            
+
             container.innerHTML = announcements.map(announcement => {
                 const date = new Date(announcement.date);
-                const formattedDate = date.toLocaleDateString('en-US', { 
-                    month: 'short', 
-                    day: 'numeric', 
-                    year: 'numeric' 
+                const formattedDate = date.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric'
                 });
-                
+
                 const strippedContent = announcement.content.replace(/<[^>]*>/g, '');
-                const truncatedContent = strippedContent.length > 200 
-                    ? strippedContent.substring(0, 200) + '...' 
+                const truncatedContent = strippedContent.length > 200
+                    ? strippedContent.substring(0, 200) + '...'
                     : strippedContent;
-                
+
                 return `
                     <div class="announcement-item">
                         <div class="announcement-date">${formattedDate}</div>
@@ -1068,4 +1082,5 @@
         setInterval(fetchAnnouncements, 900000); // Refresh announcements every 15 minutes
     </script>
 </body>
+
 </html>
