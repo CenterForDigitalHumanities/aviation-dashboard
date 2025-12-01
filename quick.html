@@ -391,7 +391,7 @@
         <div class="weather-conditions-card">
             <h3>Current Weather Conditions <span id="fallbackBadgeQuick" class="fallback-badge" title="KCPS unavailable — using KSTL conditions">Using KSTL</span></h3>
             <div id="metar-embed-container" style="display: flex; justify-content: center; align-items: center; height: calc(100% - 35px);">
-                <a href="https://metar-taf.com/metar/KCPS" id="metartaf" style="font-size:18px; font-weight:500; color:#000; width:100%; height:100%; display:block">METAR St. Louis Downtown Airport</a>
+                <a href="https://metar-taf.com/metar/KCPS" id="metartaf-quick" style="font-size:18px; font-weight:500; color:#000; width:100%; height:100%; display:block">METAR St. Louis Downtown Airport</a>
             </div>
             <div id="weather-metrics-fallback" class="weather-metrics" style="display: none;">
                 <div class="weather-metric" id="temp-metric">
@@ -485,7 +485,7 @@ function refreshMetarTafWidget() {
 
     if (metarRefreshTimer) clearTimeout(metarRefreshTimer);
     metarRefreshTimer = setTimeout(() => {
-        const anchorId = 'metartaf';
+        const anchorId = 'metartaf-quick';
         let anchor = document.getElementById(anchorId);
         if (!anchor) {
             anchor = document.createElement('a');
@@ -505,7 +505,8 @@ function refreshMetarTafWidget() {
         const script = document.createElement('script');
         script.async = true;
         const bgColor = '333333'; // Quick view is dark-themed
-        script.src = `https://metar-taf.com/embed-js/KCPS?bg_color=${bgColor}&layout=landscape&visibility=mi&qnh=inHg&rh=dp&target=metartaf`;
+        // Vendor expects anchor id 'metartaf-' + target
+        script.src = `https://metar-taf.com/embed-js/KCPS?bg_color=${bgColor}&layout=landscape&visibility=mi&qnh=inHg&rh=dp&target=quick`;
         metarScriptEl = script;
         container.appendChild(script);
     }, 250);
@@ -699,7 +700,7 @@ function checkMetarEmbedLoad() {
     // Wait a few seconds for the embed to load
     setTimeout(() => {
         const embedContainer = document.getElementById('metar-embed-container');
-        const embedTarget = document.getElementById('metartaf');
+        const embedTarget = document.getElementById('metartaf-quick');
         const fallback = document.getElementById('weather-metrics-fallback');
         
         // Check if embed loaded successfully by checking if content was replaced
