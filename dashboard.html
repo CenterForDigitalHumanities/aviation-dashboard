@@ -773,17 +773,15 @@
 
             if (metarRefreshTimer) clearTimeout(metarRefreshTimer);
             metarRefreshTimer = setTimeout(() => {
+                // Always reset container and rebuild a fresh required anchor
                 const anchorId = 'metartaf-dashboard';
-                let anchor = document.getElementById(anchorId);
-                if (!anchor) {
-                    anchor = document.createElement('a');
-                    anchor.href = 'https://metar-taf.com/metar/KCPS';
-                    anchor.id = anchorId;
-                    anchor.style.cssText = 'font-size:18px; font-weight:500; color:#000; width:100%; height:100%; display:block';
-                    anchor.textContent = 'METAR St. Louis Downtown Airport';
-                    container.innerHTML = '';
-                    container.appendChild(anchor);
-                }
+                container.innerHTML = '';
+                const anchor = document.createElement('a');
+                anchor.href = 'https://metar-taf.com/metar/KCPS';
+                anchor.id = anchorId;
+                anchor.style.cssText = 'font-size:18px; font-weight:500; color:#000; width:100%; height:100%; display:block';
+                anchor.textContent = 'METAR St. Louis Downtown Airport';
+                container.appendChild(anchor);
 
                 if (metarScriptEl && metarScriptEl.parentNode) {
                     metarScriptEl.parentNode.removeChild(metarScriptEl);
