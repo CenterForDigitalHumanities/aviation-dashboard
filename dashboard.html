@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SLU Aviation Weather Dashboard</title>
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+    <link rel="shortcut icon" href="/assets/favicon.svg" type="image/svg+xml">
     <style>
         :root {
             /* Classic light theme (default) */
@@ -778,8 +780,9 @@
         const KCPS_RUNWAY_12_HDG = 122;
         const KCPS_RUNWAY_30_HDG = 302;
 
-        // Debounce timers for widget refresh per theme
+        // Debounce timers for widget refresh per theme and last injected script refs
         const metarRefreshTimers = { dark: null, light: null };
+        const metarScriptEls = { dark: null, light: null };
 
         /**
          * Refresh the METAR-TAF widget by re-running the vendor script.
@@ -799,20 +802,37 @@
                 const container = document.getElementById(`metar-embed-${theme}`);
                 if (!container) return;
 
-                const uniqueId = 'metartaf-' + theme + '-' + Date.now();
+                // Always use a stable anchor id per theme to avoid null-target races
+                const anchorId = `metartaf-${theme}`;
+                let anchor = document.getElementById(anchorId);
+                if (!anchor) {
+                    // Try to reuse any existing anchor in the container
+                    anchor = container.querySelector('a');
+                    if (anchor) {
+                        anchor.id = anchorId;
+                    } else {
+                        anchor = document.createElement('a');
+                        anchor.href = 'https://metar-taf.com/metar/KCPS';
+                        anchor.id = anchorId;
+                        anchor.style.cssText = 'font-size:18px; font-weight:500; color:#000; width:100%; height:100%; display:block';
+                        anchor.textContent = 'METAR St. Louis Downtown Airport';
+                        container.appendChild(anchor);
+                    }
+                }
 
-                // Replace container contents with fresh anchor
-                container.innerHTML = `
-                    <a href="https://metar-taf.com/metar/KCPS" id="${uniqueId}" style="font-size:18px; font-weight:500; color:#000; width:100%; height:100%; display:block">METAR St. Louis Downtown Airport</a>
-                `;
+                // Remove any prior vendor script for this theme before injecting a new one
+                if (metarScriptEls[theme] && metarScriptEls[theme].parentNode) {
+                    metarScriptEls[theme].parentNode.removeChild(metarScriptEls[theme]);
+                    metarScriptEls[theme] = null;
+                }
 
-                // Inject vendor script targeting the new anchor
                 const script = document.createElement('script');
                 script.async = true;
                 const bgColor = theme === 'dark' ? '333333' : 'ffffff';
-                script.src = `https://metar-taf.com/embed-js/KCPS?bg_color=${bgColor}&layout=landscape&visibility=mi&qnh=inHg&rh=dp&target=${uniqueId}`;
+                script.src = `https://metar-taf.com/embed-js/KCPS?bg_color=${bgColor}&layout=landscape&visibility=mi&qnh=inHg&rh=dp&target=${anchorId}`;
+                metarScriptEls[theme] = script;
                 container.appendChild(script);
-            }, 250);
+            }, 300);
         }
 
         async function getWeatherData() {
