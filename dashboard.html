@@ -774,19 +774,20 @@
             const container = document.getElementById(`metar-embed-${theme}`);
             if (!container) return;
 
-            // Reset the anchor back to its initial text so the vendor script runs
-            const anchor = container.querySelector(`#metartaf-${theme}`);
-            if (!anchor) return;
-            anchor.innerHTML = 'METAR St. Louis Downtown Airport';
+            // Generate a unique ID for this widget instance
+            const uniqueId = 'metartaf-' + theme + '-' + Date.now();
 
-            // Remove any previous vendor script under this container
-            container.querySelectorAll('script[src*="metar-taf.com/embed-js"]').forEach(s => s.remove());
+            // Completely replace the container contents with fresh anchor and script
+            container.innerHTML = `
+                <a href="https://metar-taf.com/metar/KCPS" id="${uniqueId}" style="font-size:18px; font-weight:500; color:#000; width:100%; height:100%; display:block">METAR St. Louis Downtown Airport</a>
+            `;
 
-            // Re-inject a fresh vendor script for this theme
+            // Create and inject a fresh script tag with the new target ID
             const script = document.createElement('script');
             script.async = true;
             const bgColor = theme === 'dark' ? '333333' : 'ffffff';
-            script.src = `https://metar-taf.com/embed-js/KCPS?bg_color=${bgColor}&layout=landscape&visibility=mi&qnh=inHg&rh=dp&target=${theme}`;
+            script.src = `https://metar-taf.com/embed-js/KCPS?bg_color=${bgColor}&layout=landscape&visibility=mi&qnh=inHg&rh=dp&target=${uniqueId}`;
+            
             container.appendChild(script);
         }
 
