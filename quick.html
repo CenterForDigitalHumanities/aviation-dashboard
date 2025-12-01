@@ -391,7 +391,7 @@
         <div class="weather-conditions-card">
             <h3>Current Weather Conditions <span id="fallbackBadgeQuick" class="fallback-badge" title="KCPS unavailable — using KSTL conditions">Using KSTL</span></h3>
             <div id="metar-embed-container" style="display: flex; justify-content: center; align-items: center; height: calc(100% - 35px);">
-                <a href="https://metar-taf.com/metar/KCPS" id="metartaf-JepVhm08" style="font-size:18px; font-weight:500; color:#000; width:100%; height:100%; display:block">METAR St. Louis Downtown Airport</a>
+                <a href="https://metar-taf.com/metar/KCPS" id="metartaf" style="font-size:18px; font-weight:500; color:#000; width:100%; height:100%; display:block">METAR St. Louis Downtown Airport</a>
             </div>
             <div id="weather-metrics-fallback" class="weather-metrics" style="display: none;">
                 <div class="weather-metric" id="temp-metric">
@@ -477,30 +477,38 @@ function getMinutesAgo(timestamp) {
     return `(${hours} hr${hours > 1 ? 's' : ''} ${mins} min${mins > 1 ? 's' : ''} ago)`;
 }
 
+let metarRefreshTimer = null;
+let metarScriptEl = null;
 function refreshMetarTafWidget() {
     const container = document.getElementById('metar-embed-container');
     if (!container) return;
-    // Use stable target name 'quick' per vendor spec: anchor id must be 'metartaf-' + target
-    const targetValue = 'quick';
-    const anchorId = 'metartaf-' + targetValue;
-    let anchor = document.getElementById(anchorId);
-    if (!anchor) {
-        anchor = document.createElement('a');
-        anchor.href = 'https://metar-taf.com/metar/KCPS';
-        anchor.id = anchorId;
-        anchor.style.cssText = 'font-size:18px; font-weight:500; color:#000; width:100%; height:100%; display:block';
-        anchor.textContent = 'METAR St. Louis Downtown Airport';
-        container.innerHTML = '';
-        container.appendChild(anchor);
-    }
-    // Remove any prior script
-    const prior = container.querySelector('script[data-metar-taf="quick"]');
-    if (prior) prior.remove();
-    const script = document.createElement('script');
-    script.async = true;
-    script.dataset.metarTaf = 'quick';
-    script.src = `https://metar-taf.com/embed-js/KCPS?bg_color=333333&layout=landscape&visibility=mi&qnh=inHg&rh=dp&target=${targetValue}`;
-    container.appendChild(script);
+
+    if (metarRefreshTimer) clearTimeout(metarRefreshTimer);
+    metarRefreshTimer = setTimeout(() => {
+        const anchorId = 'metartaf';
+        let anchor = document.getElementById(anchorId);
+        if (!anchor) {
+            anchor = document.createElement('a');
+            anchor.href = 'https://metar-taf.com/metar/KCPS';
+            anchor.id = anchorId;
+            anchor.style.cssText = 'font-size:18px; font-weight:500; color:#000; width:100%; height:100%; display:block';
+            anchor.textContent = 'METAR St. Louis Downtown Airport';
+            container.innerHTML = '';
+            container.appendChild(anchor);
+        }
+
+        if (metarScriptEl && metarScriptEl.parentNode) {
+            metarScriptEl.parentNode.removeChild(metarScriptEl);
+            metarScriptEl = null;
+        }
+
+        const script = document.createElement('script');
+        script.async = true;
+        const bgColor = '333333'; // Quick view is dark-themed
+        script.src = `https://metar-taf.com/embed-js/KCPS?bg_color=${bgColor}&layout=landscape&visibility=mi&qnh=inHg&rh=dp&target=metartaf`;
+        metarScriptEl = script;
+        container.appendChild(script);
+    }, 250);
 }
 
 async function fetchWeatherData() {
@@ -569,113 +577,14 @@ async function fetchWeatherData() {
             updateWeatherGraphics(weatherData);
             
             // Refresh the METAR-TAF widget with new data
-                function refreshMetarTafWidget() {
-                    const isDark = document.body.classList.contains('dark-theme');
-                    const container = document.getElementById('metar-embed');
-                    if (!container) return;
-
-                    if (metarRefreshTimer) clearTimeout(metarRefreshTimer);
-                    metarRefreshTimer = setTimeout(() => {
-                        const anchorId = 'metartaf';
-                        let anchor = document.getElementById(anchorId);
-                        if (!anchor) {
-                            anchor = document.createElement('a');
-                            anchor.href = 'https://metar-taf.com/metar/KCPS';
-                            anchor.id = anchorId;
-                            anchor.style.cssText = 'font-size:18px; font-weight:500; color:#000; width:100%; height:100%; display:block';
-                            anchor.textContent = 'METAR St. Louis Downtown Airport';
-                            container.innerHTML = '';
-                            container.appendChild(anchor);
-                        }
-
-                        if (metarScriptEl && metarScriptEl.parentNode) {
-                            metarScriptEl.parentNode.removeChild(metarScriptEl);
-                            metarScriptEl = null;
-                        }
-
-                        const script = document.createElement('script');
-                        script.async = true;
-                        const bgColor = isDark ? '333333' : 'ffffff';
-                        // Use canonical target 'metartaf' matching the anchor id
-                        script.src = `https://metar-taf.com/embed-js/KCPS?bg_color=${bgColor}&layout=landscape&visibility=mi&qnh=inHg&rh=dp&target=metartaf`;
-                        metarScriptEl = script;
-                        container.appendChild(script);
-                    }, 250);
-                }
-        const maxCrosswind = Math.max(crosswind12, crosswind30);
-        
-        if (maxCrosswind > 15) {
-            restrictions.private.push(`💨 ${maxCrosswind.toFixed(1)} kt crosswind`);
-        } else if (maxCrosswind > 10) {
-            restrictions.student.push(`💨 ${maxCrosswind.toFixed(1)} kt crosswind`);
+            refreshMetarTafWidget();
         }
-    }
-    
-    // Visibility restrictions (Unified 3 SM for all categories)
-    if (data.visibility !== undefined && data.visibility !== null) {
-        if (isVisibilityRestricted(data.visibility)) {
-            restrictions.all.push(`👁️ ${data.visibility} SM vis`);
-        }
-    }
-    
-    // Ceiling restrictions (Unified threshold 1,500 ft AGL for all categories)
-    // METAR cloudCeiling is already in AGL format
-    if (data.cloudCeiling !== undefined && data.cloudCeiling !== null && data.cloudCeiling < 99999) {
-        if (isCeilingRestricted(data.cloudCeiling)) {
-            restrictions.all.push(`☁️ ${data.cloudCeiling} ft ceiling`);
-        }
-    }
-    
-    // Temperature restrictions
-    if (data.temperatureC !== undefined && data.temperatureC !== null) {
-        const tempF = data.temperatureC * 9/5 + 32;
-        if (tempF <= 5) {
-            restrictions.all.push(`🌡️ ${tempF.toFixed(0)}°F`);
-        } else if (tempF <= 14) {
-            restrictions.private.push(`🌡️ ${tempF.toFixed(0)}°F`);
-        } else if (tempF <= 23) {
-            restrictions.student.push(`🌡️ ${tempF.toFixed(0)}°F`);
-        }
-        
-        // Heat index for high temperatures
-        if (data.dewPointC !== undefined && tempF >= 80) {
-            const dewpointF = data.dewPointC * 9/5 + 32;
-            const heatIndex = calculateHeatIndex(tempF, dewpointF);
-            if (heatIndex >= 105) {
-                restrictions.all.push(`🔥 ${heatIndex.toFixed(0)}°F heat index`);
-            } else if (heatIndex >= 100) {
-                restrictions.private.push(`🔥 ${heatIndex.toFixed(0)}°F heat index`);
-            } else if (heatIndex >= 95) {
-                restrictions.student.push(`🔥 ${heatIndex.toFixed(0)}°F heat index`);
-            }
-        }
-    }
-    
-    // Determine overall status
-    if (restrictions.all.length > 0) {
-        return {
-            class: 'all-restricted',
-            title: 'All Flights Restricted',
-            details: 'Restricting factors: ' + restrictions.all.join(', ')
-        };
-    } else if (restrictions.private.length > 0) {
-        return {
-            class: 'private-only',
-            title: 'Private+ Only',
-            details: 'Restricting factors: ' + restrictions.private.join(', ')
-        };
-    } else if (restrictions.student.length > 0) {
-        return {
-            class: 'student-restricted',
-            title: 'Students Restricted',
-            details: 'Restricting factors: ' + restrictions.student.join(', ')
-        };
-    } else {
-        return {
-            class: 'all-clear',
-            title: 'All Pilots Clear',
-            details: 'No weather restrictions in effect'
-        };
+    } catch (err) {
+        console.error('Error fetching weather data:', err);
+        const kcpsEl = document.getElementById('kcps-metar');
+        const kstlEl = document.getElementById('kstl-metar');
+        if (kcpsEl) kcpsEl.innerText = 'Error loading weather data';
+        if (kstlEl) kstlEl.innerText = 'Error loading weather data';
     }
 }
 
@@ -790,7 +699,7 @@ function checkMetarEmbedLoad() {
     // Wait a few seconds for the embed to load
     setTimeout(() => {
         const embedContainer = document.getElementById('metar-embed-container');
-        const embedTarget = document.getElementById('metartaf-JepVhm08');
+        const embedTarget = document.getElementById('metartaf');
         const fallback = document.getElementById('weather-metrics-fallback');
         
         // Check if embed loaded successfully by checking if content was replaced
