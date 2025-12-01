@@ -480,23 +480,27 @@ function getMinutesAgo(timestamp) {
 function refreshMetarTafWidget() {
     const container = document.getElementById('metar-embed-container');
     if (!container) return;
-    
-    // Generate a unique ID for this widget instance
-    const uniqueId = 'metartaf-' + Date.now();
-    
-    // Completely replace the container contents with fresh anchor and script
-    container.innerHTML = `
-        <a href="https://metar-taf.com/metar/KCPS" id="${uniqueId}" style="font-size:18px; font-weight:500; color:#000; width:100%; height:100%; display:block">METAR St. Louis Downtown Airport</a>
-    `;
-    
-    // Create and inject a fresh script tag with the new target ID
-    const newScript = document.createElement('script');
-    newScript.async = true;
-    newScript.defer = true;
-    newScript.crossOrigin = 'anonymous';
-    newScript.src = `https://metar-taf.com/embed-js/KCPS?bg_color=333333&layout=landscape&visibility=mi&qnh=inHg&rh=dp&target=${uniqueId}`;
-    
-    container.appendChild(newScript);
+    // Use stable target name 'quick' per vendor spec: anchor id must be 'metartaf-' + target
+    const targetValue = 'quick';
+    const anchorId = 'metartaf-' + targetValue;
+    let anchor = document.getElementById(anchorId);
+    if (!anchor) {
+        anchor = document.createElement('a');
+        anchor.href = 'https://metar-taf.com/metar/KCPS';
+        anchor.id = anchorId;
+        anchor.style.cssText = 'font-size:18px; font-weight:500; color:#000; width:100%; height:100%; display:block';
+        anchor.textContent = 'METAR St. Louis Downtown Airport';
+        container.innerHTML = '';
+        container.appendChild(anchor);
+    }
+    // Remove any prior script
+    const prior = container.querySelector('script[data-metar-taf="quick"]');
+    if (prior) prior.remove();
+    const script = document.createElement('script');
+    script.async = true;
+    script.dataset.metarTaf = 'quick';
+    script.src = `https://metar-taf.com/embed-js/KCPS?bg_color=333333&layout=landscape&visibility=mi&qnh=inHg&rh=dp&target=${targetValue}`;
+    container.appendChild(script);
 }
 
 async function fetchWeatherData() {

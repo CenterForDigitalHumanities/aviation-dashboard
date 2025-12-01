@@ -218,14 +218,14 @@
         }
 
         /* Override embed colors based on theme */
-        body.dark-theme #metartaf-JepVhm08 {
+        /* Dark theme tweak for embedded widget anchor */
+        body.dark-theme #metartaf-dark {
             background-color: #333333 !important;
             color: #fff !important;
         }
-
-        body.dark-theme #metartaf-JepVhm08:hover,
-        body.dark-theme #metartaf-JepVhm08:active,
-        body.dark-theme #metartaf-JepVhm08:focus {
+        body.dark-theme #metartaf-dark:hover,
+        body.dark-theme #metartaf-dark:active,
+        body.dark-theme #metartaf-dark:focus {
             background-color: #444444 !important;
         }
 
@@ -803,7 +803,8 @@
                 if (!container) return;
 
                 // Always use a stable anchor id per theme to avoid null-target races
-                const anchorId = `metartaf-${theme}`;
+                const targetValue = theme; // vendor script expects anchor id 'metartaf-' + target
+                const anchorId = `metartaf-${targetValue}`;
                 let anchor = document.getElementById(anchorId);
                 if (!anchor) {
                     // Try to reuse any existing anchor in the container
@@ -829,7 +830,8 @@
                 const script = document.createElement('script');
                 script.async = true;
                 const bgColor = theme === 'dark' ? '333333' : 'ffffff';
-                script.src = `https://metar-taf.com/embed-js/KCPS?bg_color=${bgColor}&layout=landscape&visibility=mi&qnh=inHg&rh=dp&target=${anchorId}`;
+                // Pass target WITHOUT the 'metartaf-' prefix; vendor looks up element id 'metartaf-' + target
+                script.src = `https://metar-taf.com/embed-js/KCPS?bg_color=${bgColor}&layout=landscape&visibility=mi&qnh=inHg&rh=dp&target=${targetValue}`;
                 metarScriptEls[theme] = script;
                 container.appendChild(script);
             }, 300);
