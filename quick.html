@@ -504,19 +504,23 @@ async function fetchWeatherData() {
         }
         
         // Display KCPS METAR
-        if (data.kcps && data.kcps.metar) {
-            document.getElementById("kcps-metar").innerText = data.kcps.metar;
+        if (data.kcps && data.kcps.metar && data.kcps.metar.trim().replace(/\0/g, '').length > 0) {
+            document.getElementById("kcps-metar").innerText = data.kcps.metar.replace(/\0/g, '');
             if (data.kcps.timestamp) {
                 document.getElementById("kcps-time").innerText = getMinutesAgo(data.kcps.timestamp);
             }
+        } else {
+            document.getElementById("kcps-metar").innerText = "KCPS METAR unavailable";
         }
         
         // Display KSTL METAR
-        if (data.kstl && data.kstl.metar) {
-            document.getElementById("kstl-metar").innerText = data.kstl.metar;
+        if (data.kstl && data.kstl.metar && data.kstl.metar.trim().replace(/\0/g, '').length > 0) {
+            document.getElementById("kstl-metar").innerText = data.kstl.metar.replace(/\0/g, '');
             if (data.kstl.timestamp) {
                 document.getElementById("kstl-time").innerText = getMinutesAgo(data.kstl.timestamp);
             }
+        } else {
+            document.getElementById("kstl-metar").innerText = "KSTL METAR unavailable";
         }
         
         // Use KCPS data preferentially

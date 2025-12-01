@@ -812,14 +812,14 @@
                 }
 
                 // Display METAR data
-                if (data.kcps && data.kcps.metar) {
-                    document.getElementById("metarKCPS").innerText = data.kcps.metar;
+                if (data.kcps && data.kcps.metar && data.kcps.metar.trim().replace(/\0/g, '').length > 0) {
+                    document.getElementById("metarKCPS").innerText = data.kcps.metar.replace(/\0/g, '');
                 } else {
                     document.getElementById("metarKCPS").innerText = "KCPS METAR unavailable";
                 }
 
-                if (data.kstl && data.kstl.metar) {
-                    document.getElementById("metarKSTL").innerText = data.kstl.metar;
+                if (data.kstl && data.kstl.metar && data.kstl.metar.trim().replace(/\0/g, '').length > 0) {
+                    document.getElementById("metarKSTL").innerText = data.kstl.metar.replace(/\0/g, '');
                 } else {
                     document.getElementById("metarKSTL").innerText = "KSTL METAR unavailable";
                 }
