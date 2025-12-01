@@ -219,13 +219,13 @@
 
         /* Override embed colors based on theme */
         /* Dark theme tweak for embedded widget anchor */
-        body.dark-theme #metartaf-dark {
+        body.dark-theme #metartaf {
             background-color: #333333 !important;
             color: #fff !important;
         }
-        body.dark-theme #metartaf-dark:hover,
-        body.dark-theme #metartaf-dark:active,
-        body.dark-theme #metartaf-dark:focus {
+        body.dark-theme #metartaf:hover,
+        body.dark-theme #metartaf:active,
+        body.dark-theme #metartaf:focus {
             background-color: #444444 !important;
         }
 
@@ -590,18 +590,10 @@
             <div class="card" style="flex-shrink: 0;">
                 <h2>St. Louis Downtown Airport</h2>
                 <div id="metar-embed-container" class="embed-container">
-                    <!-- Dark theme embed (default visible) -->
-                    <div id="metar-embed-dark" class="metar-embed-theme">
-                        <a href="https://metar-taf.com/metar/KCPS" id="metartaf-dark"
-                            style="font-size:18px; font-weight:500; color:#000; width:100%; height:100%; display:block">METAR
-                            St. Louis Downtown Airport</a>
-                    </div>
-
-                    <!-- Light theme embed (hidden by default) -->
-                    <div id="metar-embed-light" class="metar-embed-theme" style="display: none;">
-                        <a href="https://metar-taf.com/metar/KCPS" id="metartaf-light"
-                            style="font-size:18px; font-weight:500; color:#000; width:100%; height:100%; display:block">METAR
-                            St. Louis Downtown Airport</a>
+                    <div id="metar-embed" class="metar-embed-theme">
+                        <a href="https://metar-taf.com/metar/KCPS" id="metartaf" style="font-size:18px; font-weight:500; color:#000; width:100%; height:100%; display:block">
+                            METAR St. Louis Downtown Airport
+                        </a>
                     </div>
                 </div>
             </div>
@@ -689,7 +681,7 @@
             const body = document.body;
             body.classList[`${isDark ? 'add' : 'remove'}`]('dark-theme');
             updateThemeButton(isDark);
-            toggleMetarEmbedVisibility(isDark);
+            refreshMetarTafWidget();
         }
 
         function scheduleNextAutoTheme(lat = KCPS_LAT, lon = KCPS_LON) {
@@ -740,19 +732,8 @@
             });
         }
 
-        function toggleMetarEmbedVisibility(isDark) {
-            const darkEmbed = document.getElementById('metar-embed-dark');
-            const lightEmbed = document.getElementById('metar-embed-light');
-
-            if (isDark) {
-                darkEmbed.style.display = 'block';
-                lightEmbed.style.display = 'none';
-            } else {
-                darkEmbed.style.display = 'none';
-                lightEmbed.style.display = 'block';
-            }
-            refreshMetarTafWidget();
-        }
+        // No-op retained for compatibility; single embed now
+        function toggleMetarEmbedVisibility() { refreshMetarTafWidget(); }
 
         function toggleTheme() {
             const body = document.body;
@@ -781,8 +762,8 @@
         const KCPS_RUNWAY_30_HDG = 302;
 
         // Debounce timers for widget refresh per theme and last injected script refs
-        const metarRefreshTimers = { dark: null, light: null };
-        const metarScriptEls = { dark: null, light: null };
+        let metarRefreshTimer = null;
+        let metarScriptEl = null;
 
         /**
          * Refresh the METAR-TAF widget by re-running the vendor script.
@@ -791,50 +772,36 @@
          */
         function refreshMetarTafWidget() {
             const isDark = document.body.classList.contains('dark-theme');
-            const theme = isDark ? 'dark' : 'light';
+            const container = document.getElementById('metar-embed');
+            if (!container) return;
 
-            // Debounce per theme to coalesce rapid calls
-            if (metarRefreshTimers[theme]) {
-                clearTimeout(metarRefreshTimers[theme]);
-            }
-
-            metarRefreshTimers[theme] = setTimeout(() => {
-                const container = document.getElementById(`metar-embed-${theme}`);
-                if (!container) return;
-
-                // Always use a stable anchor id per theme to avoid null-target races
-                const targetValue = theme; // vendor script expects anchor id 'metartaf-' + target
-                const anchorId = `metartaf-${targetValue}`;
+            if (metarRefreshTimer) clearTimeout(metarRefreshTimer);
+            metarRefreshTimer = setTimeout(() => {
+                const anchorId = 'metartaf';
                 let anchor = document.getElementById(anchorId);
                 if (!anchor) {
-                    // Try to reuse any existing anchor in the container
-                    anchor = container.querySelector('a');
-                    if (anchor) {
-                        anchor.id = anchorId;
-                    } else {
-                        anchor = document.createElement('a');
-                        anchor.href = 'https://metar-taf.com/metar/KCPS';
-                        anchor.id = anchorId;
-                        anchor.style.cssText = 'font-size:18px; font-weight:500; color:#000; width:100%; height:100%; display:block';
-                        anchor.textContent = 'METAR St. Louis Downtown Airport';
-                        container.appendChild(anchor);
-                    }
+                    anchor = document.createElement('a');
+                    anchor.href = 'https://metar-taf.com/metar/KCPS';
+                    anchor.id = anchorId;
+                    anchor.style.cssText = 'font-size:18px; font-weight:500; color:#000; width:100%; height:100%; display:block';
+                    anchor.textContent = 'METAR St. Louis Downtown Airport';
+                    container.innerHTML = '';
+                    container.appendChild(anchor);
                 }
 
-                // Remove any prior vendor script for this theme before injecting a new one
-                if (metarScriptEls[theme] && metarScriptEls[theme].parentNode) {
-                    metarScriptEls[theme].parentNode.removeChild(metarScriptEls[theme]);
-                    metarScriptEls[theme] = null;
+                if (metarScriptEl && metarScriptEl.parentNode) {
+                    metarScriptEl.parentNode.removeChild(metarScriptEl);
+                    metarScriptEl = null;
                 }
 
                 const script = document.createElement('script');
                 script.async = true;
-                const bgColor = theme === 'dark' ? '333333' : 'ffffff';
-                // Pass target WITHOUT the 'metartaf-' prefix; vendor looks up element id 'metartaf-' + target
-                script.src = `https://metar-taf.com/embed-js/KCPS?bg_color=${bgColor}&layout=landscape&visibility=mi&qnh=inHg&rh=dp&target=${targetValue}`;
-                metarScriptEls[theme] = script;
+                const bgColor = isDark ? '333333' : 'ffffff';
+                // Use canonical target 'metartaf' matching the anchor id
+                script.src = `https://metar-taf.com/embed-js/KCPS?bg_color=${bgColor}&layout=landscape&visibility=mi&qnh=inHg&rh=dp&target=metartaf`;
+                metarScriptEl = script;
                 container.appendChild(script);
-            }, 300);
+            }, 250);
         }
 
         async function getWeatherData() {
