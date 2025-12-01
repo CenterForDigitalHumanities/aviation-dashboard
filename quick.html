@@ -564,10 +564,10 @@ function calculateFlightRestrictions(data, elevation) {
     }
     
     // Ceiling restrictions (Unified threshold 1,500 ft AGL for all categories)
+    // METAR cloudCeiling is already in AGL format
     if (data.cloudCeiling !== undefined && data.cloudCeiling !== null && data.cloudCeiling < 99999) {
-        const ceilingAGL = data.cloudCeiling - elevation;
-        if (isCeilingRestricted(data.cloudCeiling, elevation)) {
-            restrictions.all.push(`☁️ ${ceilingAGL} ft ceiling`);
+        if (isCeilingRestricted(data.cloudCeiling)) {
+            restrictions.all.push(`☁️ ${data.cloudCeiling} ft ceiling`);
         }
     }
     
@@ -698,16 +698,16 @@ function updateWeatherGraphics(data) {
     }
     
     // Clouds/Ceiling (Unified: alert when AGL < 1,500 ft)
+    // METAR cloudCeiling is already in AGL format
     if (data.cloudCeiling !== undefined && data.cloudCeiling !== null) {
         if (data.cloudCeiling >= 99999) {
             document.getElementById('clouds-value').textContent = 'Clear';
         } else {
-            const ceilingAGL = data.cloudCeiling - kcpsElevation;
-            document.getElementById('clouds-value').textContent = `${ceilingAGL} ft`;
+            document.getElementById('clouds-value').textContent = `${data.cloudCeiling} ft AGL`;
             
             const cloudsMetric = document.getElementById('clouds-metric');
             cloudsMetric.classList.remove('warning', 'alert');
-            if (isCeilingRestricted(data.cloudCeiling, kcpsElevation)) {
+            if (isCeilingRestricted(data.cloudCeiling)) {
                 cloudsMetric.classList.add('alert');
             }
         }

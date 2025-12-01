@@ -133,32 +133,32 @@ function calculateCrosswind(windDirection, windSpeed, runwayHeading, windGust = 
 const CEILING_RESTRICTION_AGL_FT = 1500
 
 /**
- * Compute AGL ceiling from MSL ceiling value and field elevation
- * @param {number|null|undefined} cloudCeilingMSL - Cloud ceiling MSL (ft) or 99999 for clear
- * @param {number} fieldElevationFt - Airport elevation (ft)
+ * Get ceiling in AGL format
+ * Note: METAR cloud ceilings are already reported in AGL (Above Ground Level), not MSL
+ * @param {number|null|undefined} cloudCeilingAGL - Cloud ceiling AGL (ft) or 99999 for clear
  * @returns {number|null} Ceiling AGL in feet, or null if no ceiling
  */
-function computeCeilingAGL(cloudCeilingMSL, fieldElevationFt) {
-    if (cloudCeilingMSL === undefined || cloudCeilingMSL === null) return null
-    if (cloudCeilingMSL >= 99999) return null // Clear/No ceiling
-    return cloudCeilingMSL - fieldElevationFt
+function getCeilingAGL(cloudCeilingAGL) {
+    if (cloudCeilingAGL === undefined || cloudCeilingAGL === null) return null
+    if (cloudCeilingAGL >= 99999) return null // Clear/No ceiling
+    return cloudCeilingAGL
 }
 
 /**
  * Determine if ceiling imposes restrictions given a threshold
- * @param {number|null|undefined} cloudCeilingMSL - Cloud ceiling MSL (ft)
- * @param {number} fieldElevationFt - Airport elevation (ft)
+ * Note: METAR cloud ceilings are already in AGL, no elevation adjustment needed
+ * @param {number|null|undefined} cloudCeilingAGL - Cloud ceiling AGL (ft)
  * @param {number} [thresholdFtAGL=CEILING_RESTRICTION_AGL_FT] - Threshold in feet AGL
  * @returns {boolean} True if restricted
  */
-function isCeilingRestricted(cloudCeilingMSL, fieldElevationFt, thresholdFtAGL = CEILING_RESTRICTION_AGL_FT) {
-    const agl = computeCeilingAGL(cloudCeilingMSL, fieldElevationFt)
+function isCeilingRestricted(cloudCeilingAGL, thresholdFtAGL = CEILING_RESTRICTION_AGL_FT) {
+    const agl = getCeilingAGL(cloudCeilingAGL)
     return agl !== null && agl < thresholdFtAGL
 }
 
 // Expose helpers to global scope for inline <script> usage
 window.CEILING_RESTRICTION_AGL_FT = CEILING_RESTRICTION_AGL_FT
-window.computeCeilingAGL = computeCeilingAGL
+window.getCeilingAGL = getCeilingAGL
 window.isCeilingRestricted = isCeilingRestricted
 
 // --- Shared visibility helpers ---

@@ -763,7 +763,6 @@
 
         const KCPS_RUNWAY_12_HDG = 122;
         const KCPS_RUNWAY_30_HDG = 302;
-        const KCPS_ELEVATION = 413;
 
         /**
          * Refresh the METAR-TAF widget by re-running the vendor script
@@ -881,13 +880,12 @@
                 document.getElementById('visibility').textContent = `${data.visibility} SM`;
             }
 
-            // Ceiling
+            // Ceiling (METAR reports ceiling in AGL, not MSL)
             if (data.cloudCeiling !== undefined && data.cloudCeiling !== null) {
                 if (data.cloudCeiling >= 99999) {
                     document.getElementById('cloudCeiling').textContent = 'Clear/No Ceiling';
                 } else {
-                    const ceilingAGL = data.cloudCeiling - KCPS_ELEVATION;
-                    document.getElementById('cloudCeiling').textContent = `${ceilingAGL} ft AGL`;
+                    document.getElementById('cloudCeiling').textContent = `${data.cloudCeiling} ft AGL`;
                 }
             }
 
@@ -902,44 +900,40 @@
         }
 
         function updateRestrictions(data) {
-            const ceilingAGL = (data.cloudCeiling !== undefined && data.cloudCeiling < 99999)
-                ? data.cloudCeiling - KCPS_ELEVATION
-                : null;
+            // Note: METAR cloudCeiling is already in AGL (Above Ground Level)
             const visibilitySM = data.visibility;
             const effectiveWindSpeed = getEffectiveWindSpeed(data.windSpeed, data.windGust);
-
+            
             let crosswind12 = null;
             let crosswind30 = null;
             if (data.windDirection != null && data.windSpeed != null) {
                 crosswind12 = calculateCrosswind(data.windDirection, data.windSpeed, KCPS_RUNWAY_12_HDG, data.windGust);
                 crosswind30 = calculateCrosswind(data.windDirection, data.windSpeed, KCPS_RUNWAY_30_HDG, data.windGust);
             }
-
+            
             // Student Pilot Restrictions (Ceiling unified to 1,500 ft AGL)
-            setStatus('studentCeilingStatus', isCeilingRestricted(data.cloudCeiling, KCPS_ELEVATION), 'RESTRICTED: Ceiling too low');
+            setStatus('studentCeilingStatus', isCeilingRestricted(data.cloudCeiling), 'RESTRICTED: Ceiling too low');
             setStatus('studentVisibilityStatus', isVisibilityRestricted(visibilitySM), 'RESTRICTED: Visibility too low');
             setStatus('studentSurfaceWindStatus', effectiveWindSpeed !== null && effectiveWindSpeed > 15, 'RESTRICTED: Surface winds too high');
-            setStatus('studentCrosswindStatus',
-                (crosswind12 !== null && crosswind12 > 10) || (crosswind30 !== null && crosswind30 > 10),
+            setStatus('studentCrosswindStatus', 
+                (crosswind12 !== null && crosswind12 > 10) || (crosswind30 !== null && crosswind30 > 10), 
                 'RESTRICTED: Crosswind too high');
-
+            
             // Private Pilot Restrictions (Ceiling unified to 1,500 ft AGL)
-            setStatus('privateCeilingStatus', isCeilingRestricted(data.cloudCeiling, KCPS_ELEVATION), 'RESTRICTED: Ceiling too low');
+            setStatus('privateCeilingStatus', isCeilingRestricted(data.cloudCeiling), 'RESTRICTED: Ceiling too low');
             setStatus('privateVisibilityStatus', isVisibilityRestricted(visibilitySM), 'RESTRICTED: Visibility too low');
             setStatus('privateSurfaceWindStatus', effectiveWindSpeed !== null && effectiveWindSpeed > 20, 'RESTRICTED: Surface winds too high');
-            setStatus('privateCrosswindStatus',
-                (crosswind12 !== null && crosswind12 > 15) || (crosswind30 !== null && crosswind30 > 15),
+            setStatus('privateCrosswindStatus', 
+                (crosswind12 !== null && crosswind12 > 15) || (crosswind30 !== null && crosswind30 > 15), 
                 'RESTRICTED: Crosswind too high');
-
+            
             // Instrument/Commercial Pilot Restrictions
             setStatus('instCommVisibilityStatus', isVisibilityRestricted(visibilitySM), 'RESTRICTED: Visibility too low');
-            setStatus('instCommCeilingStatus', isCeilingRestricted(data.cloudCeiling, KCPS_ELEVATION), 'RESTRICTED: Ceiling too low');
+            setStatus('instCommCeilingStatus', isCeilingRestricted(data.cloudCeiling), 'RESTRICTED: Ceiling too low');
             setStatus('instCommSurfaceWindStatus', effectiveWindSpeed !== null && effectiveWindSpeed > 25, 'RESTRICTED: Surface winds too high');
-            setStatus('instCommCrosswindStatus',
-                (crosswind12 !== null && crosswind12 > 20) || (crosswind30 !== null && crosswind30 > 20),
-                'RESTRICTED: Crosswind too high');
-
-            // Heat Index / Temperature Restrictions
+            setStatus('instCommCrosswindStatus', 
+                (crosswind12 !== null && crosswind12 > 20) || (crosswind30 !== null && crosswind30 > 20), 
+                'RESTRICTED: Crosswind too high');            // Heat Index / Temperature Restrictions
             if (data.temperatureC !== undefined && data.temperatureC !== null) {
                 const tempF = data.temperatureC * 9 / 5 + 32;
 
