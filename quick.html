@@ -477,6 +477,90 @@ function getMinutesAgo(timestamp) {
     return `(${hours} hr${hours > 1 ? 's' : ''} ${mins} min${mins > 1 ? 's' : ''} ago)`;
 }
 
+// Determine overall flight restrictions summary for quick view
+function calculateFlightRestrictions(data) {
+    const restrictions = { all: [], private: [], student: [] };
+
+    // Crosswind
+    if (data.windDirection != null && data.windSpeed != null) {
+        const cw12 = calculateCrosswind(data.windDirection, data.windSpeed, KCPS_RUNWAY_12_HDG, data.windGust);
+        const cw30 = calculateCrosswind(data.windDirection, data.windSpeed, KCPS_RUNWAY_30_HDG, data.windGust);
+        const maxCrosswind = Math.max(cw12 ?? 0, cw30 ?? 0);
+        if (maxCrosswind > 15) {
+            restrictions.private.push(`💨 ${maxCrosswind.toFixed(1)} kt crosswind`);
+        } else if (maxCrosswind > 10) {
+            restrictions.student.push(`💨 ${maxCrosswind.toFixed(1)} kt crosswind`);
+        }
+    }
+
+    // Visibility (Unified threshold 3 SM)
+    if (data.visibility != null && isVisibilityRestricted(data.visibility)) {
+        restrictions.all.push(`👁️ ${data.visibility} SM vis`);
+    }
+
+    // Ceiling (Unified threshold 1,500 ft AGL; METAR is already AGL)
+    if (data.cloudCeiling != null && data.cloudCeiling < 99999 && isCeilingRestricted(data.cloudCeiling)) {
+        restrictions.all.push(`☁️ ${data.cloudCeiling} ft ceiling`);
+    }
+
+    // Temperature + Heat Index
+    if (data.temperatureC != null) {
+        const tempF = data.temperatureC * 9/5 + 32;
+        if (tempF <= 5) {
+            restrictions.all.push(`🌡️ ${tempF.toFixed(0)}°F`);
+        } else if (tempF <= 14) {
+            restrictions.private.push(`🌡️ ${tempF.toFixed(0)}°F`);
+        } else if (tempF <= 23) {
+            restrictions.student.push(`🌡️ ${tempF.toFixed(0)}°F`);
+        }
+
+        if (data.dewPointC != null && tempF >= 80) {
+            // Compute RH from T/DP in Celsius, then use shared heat index
+            const T = data.temperatureC;
+            const DP = data.dewPointC;
+            const rh = 100 * Math.exp((17.625 * DP) / (243.04 + DP)) / Math.exp((17.625 * T) / (243.04 + T));
+            const hi = calculateHeatIndex(tempF, rh);
+            if (hi != null) {
+                if (hi >= 105) {
+                    restrictions.all.push(`🔥 ${hi.toFixed(0)}°F heat index`);
+                } else if (hi >= 100) {
+                    restrictions.private.push(`🔥 ${hi.toFixed(0)}°F heat index`);
+                } else if (hi >= 95) {
+                    restrictions.student.push(`🔥 ${hi.toFixed(0)}°F heat index`);
+                }
+            }
+        }
+    }
+
+    // Summarize
+    if (restrictions.all.length > 0) {
+        return {
+            class: 'all-restricted',
+            title: 'All Flights Restricted',
+            details: 'Restricting factors: ' + restrictions.all.join(', ')
+        };
+    }
+    if (restrictions.private.length > 0) {
+        return {
+            class: 'private-only',
+            title: 'Private+ Only',
+            details: 'Restricting factors: ' + restrictions.private.join(', ')
+        };
+    }
+    if (restrictions.student.length > 0) {
+        return {
+            class: 'student-restricted',
+            title: 'Students Restricted',
+            details: 'Restricting factors: ' + restrictions.student.join(', ')
+        };
+    }
+    return {
+        class: 'all-clear',
+        title: 'All Pilots Clear',
+        details: 'No weather restrictions in effect'
+    };
+}
+
 let metarRefreshTimer = null;
 let metarScriptEl = null;
 function refreshMetarTafWidget() {
