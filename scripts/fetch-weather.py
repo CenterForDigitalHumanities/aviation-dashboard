@@ -13,6 +13,24 @@ from urllib.error import URLError
 KCPS_URL = 'https://tgftp.nws.noaa.gov/data/observations/metar/stations/KCPS.TXT'
 KSTL_URL = 'https://tgftp.nws.noaa.gov/data/observations/metar/stations/KSTL.TXT'
 
+def _clean_text(text: str) -> str:
+    """Remove control characters (including nulls) and trim."""
+    if text is None:
+        return ''
+    # Remove ASCII control chars 0x00-0x1F and 0x7F
+    return re.sub(r"[\x00-\x1F\x7F]", "", text).strip()
+
+
+def _looks_like_metar(text: str) -> bool:
+    """Heuristic to validate a METAR/SPECI line: station + time token present."""
+    if not text:
+        return False
+    # Accept lines like "METAR KCPS ..." or "SPECI KCPS ..." or "KCPS ..."
+    has_station = bool(re.search(r"\b(?:METAR|SPECI)?\s*([A-Z]{4})\b", text))
+    has_time = bool(re.search(r"\b\d{6}Z\b", text))
+    return has_station and has_time
+
+
 def fetch_metar(url, retry_on_stale=True):
     """Fetch METAR data from NOAA
     
@@ -33,9 +51,20 @@ def fetch_metar(url, retry_on_stale=True):
         request.add_header('Expires', '0')
         
         with urlopen(request, timeout=10) as response:
-            data = response.read().decode('utf-8')
-            # Get the last line which contains the METAR
-            metar = data.strip().split('\n')[-1]
+            raw = response.read()
+            # Try utf-8 first, fall back to latin-1 without crashing
+            try:
+                data = raw.decode('utf-8', errors='replace')
+            except Exception:
+                data = raw.decode('latin-1', errors='replace')
+
+            # NOAA format: last non-empty line is the METAR
+            lines = [ln for ln in (data or '').split('\n') if ln.strip()]
+            metar = lines[-1] if lines else ''
+            metar = _clean_text(metar)
+            if not _looks_like_metar(metar):
+                print("Fetched line doesn't look like METAR; treating as unavailable")
+                return None
             print(f"Successfully fetched: {metar}")
             
             # Check if METAR is stale (more than 30 minutes old)
@@ -100,7 +129,8 @@ def extract_metar_timestamp(metar_text):
 
 def parse_metar(metar_text):
     """Parse METAR text into structured data"""
-    if not metar_text:
+    metar_text = _clean_text(metar_text)
+    if not metar_text or not _looks_like_metar(metar_text):
         return None
     
     data = {
@@ -116,8 +146,8 @@ def parse_metar(metar_text):
         'timestamp': None
     }
     
-    # Extract station
-    station_match = re.search(r'^([A-Z]{4})\s', metar_text)
+    # Extract station (support "METAR KCPS" / "SPECI KCPS" / "KCPS")
+    station_match = re.search(r'\b(?:METAR|SPECI)?\s*([A-Z]{4})\b', metar_text)
     if station_match:
         data['station'] = station_match.group(1)
     
@@ -218,10 +248,12 @@ def main():
     }
     
     # Write to file (in scripts directory, workflow will copy it)
-    with open('weather-data.json', 'w') as f:
+    # Write to the repo data directory
+    output_path = '../data/weather-data.json'
+    with open(output_path, 'w', encoding='utf-8') as f:
         json.dump(output_data, f, indent=2)
     
-    print('Weather data written to weather-data.json')
+    print(f'Weather data written to {output_path}')
     print(json.dumps(output_data, indent=2))
     
     return output_data

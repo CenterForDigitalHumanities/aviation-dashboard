@@ -216,6 +216,19 @@
             font-style: italic;
             color: rgba(255, 255, 255, 0.8);
         }
+        /* KCPS fallback badge */
+        .fallback-badge {
+            display: inline-block;
+            margin-left: 8px;
+            padding: 2px 6px;
+            font-size: 0.75em;
+            border-radius: 999px;
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffc107;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
     </style>
 </head>
 <body>
@@ -627,7 +640,7 @@
                     </div>
                     
                     <div style="margin-top: 20px;">
-                        <h3 style="color: white; margin-bottom: 15px;">📊 Current Flight Status (using ${operationalStation})</h3>
+                        <h3 style="color: white; margin-bottom: 15px;">📊 Current Flight Status (using ${operationalStation})${operationalStation === 'KSTL' ? ' <span class="fallback-badge" title="KCPS unavailable — using KSTL conditions">Using KSTL</span>' : ''}</h3>
                         <div class="flight-status-card ${status}">
                             <div class="status-title">${statusTitle}</div>
                             <div class="status-details">${restrictionText}</div>

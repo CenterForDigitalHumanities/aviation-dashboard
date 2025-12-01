@@ -328,6 +328,20 @@
             margin-bottom: 10px;
         }
 
+        /* KCPS fallback badge */
+        .fallback-badge {
+            display: none;
+            margin-left: 8px;
+            padding: 2px 6px;
+            font-size: 0.75em;
+            border-radius: 999px;
+            background-color: var(--warning-bg);
+            color: var(--warning-text);
+            border: 1px solid var(--border-color);
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
         /* Airport closed overlay */
         .airport-closed-overlay {
             position: absolute;
@@ -468,7 +482,9 @@
 
             <div class="card scrollable">
                 <h2>Heat Index and Temperature Flight Restrictions</h2>
-                <p class="heat-note"><em>Based on KCPS METAR</em></p>
+                <p class="heat-note"><em>Based on KCPS METAR</em>
+                    <span id="heatFallbackBadge" class="fallback-badge" title="KCPS unavailable — using KSTL METAR">Using KSTL</span>
+                </p>
                 <table>
                     <thead>
                         <tr>
@@ -518,7 +534,9 @@
             </div>
 
             <div class="card">
-                <h2>Current Conditions (KCPS)</h2>
+                <h2>Current Conditions (KCPS)
+                    <span id="fallbackBadge" class="fallback-badge" title="KCPS unavailable — using KSTL conditions">Using KSTL</span>
+                </h2>
                 <div class="weather-stat">
                     <strong>Temperature:</strong>
                     <span id="currentTemp">N/A</span>
@@ -812,20 +830,30 @@
                 }
 
                 // Display METAR data
-                if (data.kcps && data.kcps.metar && data.kcps.metar.trim().replace(/\0/g, '').length > 0) {
+                const kcpsMetarValid = !!(data.kcps && data.kcps.metar && data.kcps.metar.trim().replace(/\0/g, '').length > 0);
+                const kstlMetarValid = !!(data.kstl && data.kstl.metar && data.kstl.metar.trim().replace(/\0/g, '').length > 0);
+
+                if (kcpsMetarValid) {
                     document.getElementById("metarKCPS").innerText = data.kcps.metar.replace(/\0/g, '');
                 } else {
                     document.getElementById("metarKCPS").innerText = "KCPS METAR unavailable";
                 }
 
-                if (data.kstl && data.kstl.metar && data.kstl.metar.trim().replace(/\0/g, '').length > 0) {
+                if (kstlMetarValid) {
                     document.getElementById("metarKSTL").innerText = data.kstl.metar.replace(/\0/g, '');
                 } else {
                     document.getElementById("metarKSTL").innerText = "KSTL METAR unavailable";
                 }
 
-                // Use KCPS data preferentially
-                const weatherData = data.kcps || data.kstl;
+                // Use KCPS data preferentially; fall back to KSTL when KCPS unavailable
+                const weatherData = kcpsMetarValid ? data.kcps : (kstlMetarValid ? data.kstl : null);
+
+                // Toggle fallback badges
+                const showFallback = !kcpsMetarValid && kstlMetarValid;
+                const fallbackBadge = document.getElementById('fallbackBadge');
+                const heatFallbackBadge = document.getElementById('heatFallbackBadge');
+                if (fallbackBadge) fallbackBadge.style.display = showFallback ? 'inline-block' : 'none';
+                if (heatFallbackBadge) heatFallbackBadge.style.display = showFallback ? 'inline-block' : 'none';
 
                 if (!weatherData) {
                     console.error("No valid weather data available");
