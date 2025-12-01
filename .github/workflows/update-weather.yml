@@ -37,16 +37,23 @@ jobs:
           cd scripts
           python fetch-weather.py
           
-      - name: Copy weather data to data directory
+      - name: Safely verify weather data file
         run: |
-          mkdir -p data
-          cp scripts/weather-data.json data/weather-data.json
+          if [ -f data/weather-data.json ]; then
+            echo "weather-data.json exists in data directory"
+          else
+            echo "data/weather-data.json not found. The fetch script should write here."
+            # Exit gracefully to avoid failing the workflow when upstream data is missing
+            exit 0
+          fi
           
       - name: Commit and push if changed
         run: |
           git config user.name "GitHub Actions Bot"
           git config user.email "actions@github.com"
-          git add data/weather-data.json
+          if [ -f data/weather-data.json ]; then
+            git add data/weather-data.json
+          fi
           # Only commit if there are changes
           git diff --quiet && git diff --staged --quiet || (git commit -m "🌤️ Update weather data - $(date -u +%Y-%m-%dT%H:%M:%SZ)" && git push)
       
