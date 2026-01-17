@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-01-17T06:42:05.977964+00:00",
+  "lastUpdated": "2026-01-17T06:53:35.521939+00:00",
   "kcps": {
     "metar": "KCPS 170553Z AUTO 30014G25KT 10SM SCT090 M02/M12 A2995 RMK AO2 PK WND 31028/0515 SLP143 60000 T10171117 10056 21017 400721017 51024 $",
     "windDirection": 300,
@@ -14,16 +14,8 @@
     "station": "KCPS"
   },
   "kstl": {
-    "metar": "KSTL 170551Z 30011KT 10SM FEW040 M03/M13 A2994 RMK AO2 PK WND 29028/0455 SLP148 60000 T10331128 10050 21033 400721033 51023 $",
-    "windDirection": 300,
-    "windSpeed": 11,
-    "windGust": null,
-    "visibility": 10,
-    "temperatureC": -3,
-    "dewPointC": -13,
-    "cloudCeiling": null,
-    "altimeter": "A2994",
-    "timestamp": "2026-01-17T05:51:00+00:00",
-    "station": "KSTL"
+    "station": "KSTL",
+    "metar": "Data unavailable",
+    "error": "Failed to fetch METAR"
   }
 }
