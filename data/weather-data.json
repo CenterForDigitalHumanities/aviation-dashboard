@@ -1,17 +1,9 @@
 {
-  "lastUpdated": "2026-01-17T17:20:52.650330+00:00",
+  "lastUpdated": "2026-01-17T17:33:58.072303+00:00",
   "kcps": {
-    "metar": "KCPS 171708Z 31011KT 1/2SM SN FZFG BKN010 BKN017 OVC024 M07/M09 A3019 RMK AO2 P0000 T10671089 $",
-    "windDirection": 310,
-    "windSpeed": 11,
-    "windGust": null,
-    "visibility": 0.5,
-    "temperatureC": -7,
-    "dewPointC": -9,
-    "cloudCeiling": 1000,
-    "altimeter": "A3019",
-    "timestamp": "2026-01-17T17:08:00+00:00",
-    "station": "KCPS"
+    "station": "KCPS",
+    "metar": "Data unavailable",
+    "error": "Failed to fetch METAR"
   },
   "kstl": {
     "metar": "KSTL 171651Z 30010KT 9SM -SN BKN030 OVC055 M07/M12 A3016 RMK AO2 SLP227 P0000 T10671122 $",
