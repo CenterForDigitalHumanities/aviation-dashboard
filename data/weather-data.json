@@ -1,21 +1,29 @@
 {
-  "lastUpdated": "2026-01-17T06:53:35.521939+00:00",
+  "lastUpdated": "2026-01-17T07:02:22.021944+00:00",
   "kcps": {
-    "metar": "KCPS 170553Z AUTO 30014G25KT 10SM SCT090 M02/M12 A2995 RMK AO2 PK WND 31028/0515 SLP143 60000 T10171117 10056 21017 400721017 51024 $",
-    "windDirection": 300,
-    "windSpeed": 14,
-    "windGust": 25,
+    "metar": "KCPS 170653Z AUTO 29007KT 10SM CLR M03/M12 A2996 RMK AO2 PK WND 31027/0602 SLP147 T10281117 $",
+    "windDirection": 290,
+    "windSpeed": 7,
+    "windGust": null,
     "visibility": 10,
-    "temperatureC": -2,
+    "temperatureC": -3,
     "dewPointC": -12,
-    "cloudCeiling": null,
-    "altimeter": "A2995",
-    "timestamp": "2026-01-17T05:53:00+00:00",
+    "cloudCeiling": 99999,
+    "altimeter": "A2996",
+    "timestamp": "2026-01-17T06:53:00+00:00",
     "station": "KCPS"
   },
   "kstl": {
-    "station": "KSTL",
-    "metar": "Data unavailable",
-    "error": "Failed to fetch METAR"
+    "metar": "KSTL 170651Z 29008KT 10SM FEW040 M04/M12 A2994 RMK AO2 SLP147 T10391122 $",
+    "windDirection": 290,
+    "windSpeed": 8,
+    "windGust": null,
+    "visibility": 10,
+    "temperatureC": -4,
+    "dewPointC": -12,
+    "cloudCeiling": null,
+    "altimeter": "A2994",
+    "timestamp": "2026-01-17T06:51:00+00:00",
+    "station": "KSTL"
   }
 }
