@@ -1,29 +1,21 @@
 {
-  "lastUpdated": "2026-01-21T15:42:16.786423+00:00",
+  "lastUpdated": "2026-01-21T15:55:48.813629+00:00",
   "kcps": {
-    "metar": "KCPS 211453Z 25006KT 10SM CLR 04/M06 A3009 RMK AO2 SLP191 T00391056 51009 $",
-    "windDirection": 250,
-    "windSpeed": 6,
-    "windGust": null,
-    "visibility": 10,
-    "temperatureC": 4,
-    "dewPointC": -6,
-    "cloudCeiling": 99999,
-    "altimeter": "A3009",
-    "timestamp": "2026-01-21T14:53:00+00:00",
-    "station": "KCPS"
+    "station": "KCPS",
+    "metar": "Data unavailable",
+    "error": "Failed to fetch METAR"
   },
   "kstl": {
-    "metar": "KSTL 211451Z 25014G21KT 10SM FEW170 04/M06 A3008 RMK AO2 SLP194 T00391061 51013 $",
-    "windDirection": 250,
-    "windSpeed": 14,
-    "windGust": 21,
+    "metar": "KSTL 211551Z 26011KT 10SM FEW170 06/M06 A3009 RMK AO2 SLP199 T00561061 $",
+    "windDirection": 260,
+    "windSpeed": 11,
+    "windGust": null,
     "visibility": 10,
-    "temperatureC": 4,
+    "temperatureC": 6,
     "dewPointC": -6,
     "cloudCeiling": null,
-    "altimeter": "A3008",
-    "timestamp": "2026-01-21T14:51:00+00:00",
+    "altimeter": "A3009",
+    "timestamp": "2026-01-21T15:51:00+00:00",
     "station": "KSTL"
   }
 }
