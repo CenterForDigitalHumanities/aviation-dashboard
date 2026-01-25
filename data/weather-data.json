@@ -1,29 +1,29 @@
 {
-  "lastUpdated": "2026-01-25T10:21:51.682140+00:00",
+  "lastUpdated": "2026-01-25T10:37:18.008205+00:00",
   "kcps": {
-    "metar": "KCPS 251006Z AUTO 01014KT 1SM BR VV012 M13/M15 A3014 RMK AO2 T11281150 PWINO FZRANO $",
-    "windDirection": 10,
-    "windSpeed": 14,
+    "metar": "KCPS 251031Z AUTO 36011KT 2 1/2SM BR OVC028 M13/M15 A3014 RMK AO2 T11281150 PWINO FZRANO $",
+    "windDirection": 360,
+    "windSpeed": 11,
     "windGust": null,
-    "visibility": 1,
+    "visibility": 0.5,
     "temperatureC": -13,
     "dewPointC": -15,
-    "cloudCeiling": 1200,
+    "cloudCeiling": 2800,
     "altimeter": "A3014",
-    "timestamp": "2026-01-25T10:06:00+00:00",
+    "timestamp": "2026-01-25T10:31:00+00:00",
     "station": "KCPS"
   },
   "kstl": {
-    "metar": "KSTL 250951Z 36008KT 3/4SM R30R/P6000FT -SN OVC026 M13/M16 A3015 RMK AO2 SLP232 SNINCR 1/7 P0006 T11281156 $",
+    "metar": "KSTL 251032Z 36011KT 1/2SM R30R/5500VP6000FT SN FZFG VV017 M13/M16 A3014 RMK AO2 P0002 T11331156 $",
     "windDirection": 360,
-    "windSpeed": 8,
+    "windSpeed": 11,
     "windGust": null,
-    "visibility": 0.75,
+    "visibility": 0.5,
     "temperatureC": -13,
     "dewPointC": -16,
-    "cloudCeiling": 2600,
-    "altimeter": "A3015",
-    "timestamp": "2026-01-25T09:51:00+00:00",
+    "cloudCeiling": 1700,
+    "altimeter": "A3014",
+    "timestamp": "2026-01-25T10:32:00+00:00",
     "station": "KSTL"
   }
 }
