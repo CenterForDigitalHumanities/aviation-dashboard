@@ -68,11 +68,24 @@ jobs:
       
       - name: Squash old weather commits
         if: |
-          (github.event.schedule == '0 3 * * *') || 
+          github.event_name == 'schedule' || 
           (github.event_name == 'workflow_dispatch' && inputs.squash_commits == true)
         run: |
           git config user.name "GitHub Actions Bot"
           git config user.email "actions@github.com"
+          
+          # Store the current branch name
+          CURRENT_BRANCH="${{ github.ref_name }}"
+          echo "Working on branch: $CURRENT_BRANCH"
+          
+          # Check if this is the 3 AM schedule or manual trigger
+          CURRENT_HOUR=$(date -u +%H)
+          if [ "${{ github.event_name }}" = "schedule" ] && [ "$CURRENT_HOUR" != "03" ]; then
+            echo "Skipping squash - not the 3 AM UTC schedule (current hour: $CURRENT_HOUR)"
+            exit 0
+          fi
+          
+          echo "Starting squash operation..."
           
           # Calculate the cutoff date (keep last 7 days of commits)
           CUTOFF_DATE=$(date -u -d '7 days ago' +%Y-%m-%dT%H:%M:%SZ)
@@ -86,8 +99,8 @@ jobs:
             exit 0
           fi
           
-          # Count commits that will be squashed
-          COMMITS_TO_SQUASH=$(git rev-list --count $CUTOFF_COMMIT..HEAD --grep="🌤️ Update weather data")
+          # Count commits that will be squashed (commits older than cutoff)
+          COMMITS_TO_SQUASH=$(git rev-list --count --grep="🌤️ Update weather data" $CUTOFF_COMMIT)
           echo "Found $COMMITS_TO_SQUASH weather commits to potentially squash"
           
           if [ "$COMMITS_TO_SQUASH" -lt 50 ]; then
@@ -95,21 +108,24 @@ jobs:
             exit 0
           fi
           
+          # Store the latest commit tree before switching branches
+          LATEST_HEAD=$(git rev-parse HEAD)
+          
           # Create a temporary branch for the squash operation
           git checkout -b temp-squash-branch $CUTOFF_COMMIT
           
-          # Get the tree state from the current HEAD (latest state)
-          TREE=$(git rev-parse HEAD^{tree})
+          # Get the tree state from the original HEAD (latest state)
+          TREE=$(git rev-parse $LATEST_HEAD^{tree})
           
           # Create a single commit with the current state
           SQUASH_COMMIT=$(git commit-tree $TREE -p $CUTOFF_COMMIT -m "📦 Squashed $COMMITS_TO_SQUASH weather data updates (commits before $CUTOFF_DATE)")
           
-          # Reset main branch to the new squashed commit
-          git checkout main
+          # Reset current branch to the new squashed commit
+          git checkout $CURRENT_BRANCH
           git reset --hard $SQUASH_COMMIT
           
           # Force push with lease for safety
-          git push --force-with-lease origin main
+          git push --force-with-lease origin $CURRENT_BRANCH
           
           echo "✅ Successfully squashed $COMMITS_TO_SQUASH commits"
       
