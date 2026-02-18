@@ -4,7 +4,15 @@ on:
   schedule:
     # Runs every 15 minutes
     - cron: '*/15 * * * *'
-  workflow_dispatch: # Allows manual trigger from Actions tab
+    # Squash commits daily at 3 AM UTC
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+    inputs:
+      squash_commits:
+        description: 'Squash old weather commits'
+        required: false
+        type: boolean
+        default: false
   push:
     branches:
       - gh-actions-timer
@@ -26,6 +34,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ github.ref }}
+          fetch-depth: 0  # Fetch full history for squashing
           
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -56,6 +65,53 @@ jobs:
           fi
           # Only commit if there are changes
           git diff --quiet && git diff --staged --quiet || (git commit -m "🌤️ Update weather data - $(date -u +%Y-%m-%dT%H:%M:%SZ)" && git push)
+      
+      - name: Squash old weather commits
+        if: |
+          (github.event.schedule == '0 3 * * *') || 
+          (github.event_name == 'workflow_dispatch' && inputs.squash_commits == true)
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+          
+          # Calculate the cutoff date (keep last 7 days of commits)
+          CUTOFF_DATE=$(date -u -d '7 days ago' +%Y-%m-%dT%H:%M:%SZ)
+          echo "Squashing weather commits older than: $CUTOFF_DATE"
+          
+          # Find the commit hash just before the cutoff date
+          CUTOFF_COMMIT=$(git rev-list -1 --before="$CUTOFF_DATE" --first-parent HEAD)
+          
+          if [ -z "$CUTOFF_COMMIT" ]; then
+            echo "No commits found before cutoff date. Skipping squash."
+            exit 0
+          fi
+          
+          # Count commits that will be squashed
+          COMMITS_TO_SQUASH=$(git rev-list --count $CUTOFF_COMMIT..HEAD --grep="🌤️ Update weather data")
+          echo "Found $COMMITS_TO_SQUASH weather commits to potentially squash"
+          
+          if [ "$COMMITS_TO_SQUASH" -lt 50 ]; then
+            echo "Less than 50 weather commits to squash. Skipping to avoid unnecessary history rewriting."
+            exit 0
+          fi
+          
+          # Create a temporary branch for the squash operation
+          git checkout -b temp-squash-branch $CUTOFF_COMMIT
+          
+          # Get the tree state from the current HEAD (latest state)
+          TREE=$(git rev-parse HEAD^{tree})
+          
+          # Create a single commit with the current state
+          SQUASH_COMMIT=$(git commit-tree $TREE -p $CUTOFF_COMMIT -m "📦 Squashed $COMMITS_TO_SQUASH weather data updates (commits before $CUTOFF_DATE)")
+          
+          # Reset main branch to the new squashed commit
+          git checkout main
+          git reset --hard $SQUASH_COMMIT
+          
+          # Force push with lease for safety
+          git push --force-with-lease origin main
+          
+          echo "✅ Successfully squashed $COMMITS_TO_SQUASH commits"
       
       - name: Trigger Jekyll deployment
         if: success()
