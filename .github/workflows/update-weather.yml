@@ -69,7 +69,7 @@ jobs:
       - name: Squash old weather commits
         if: |
           github.event_name == 'schedule' || 
-          (github.event_name == 'workflow_dispatch' && inputs.squash_commits == true)
+          (github.event_name == 'workflow_dispatch' && inputs.squash_commits)
         run: |
           git config user.name "GitHub Actions Bot"
           git config user.email "actions@github.com"
@@ -88,10 +88,11 @@ jobs:
           echo "Starting squash operation..."
           
           # Calculate the cutoff date (keep last 7 days of commits)
+          # Note: Using GNU date which is available on GitHub Actions Ubuntu runners
           CUTOFF_DATE=$(date -u -d '7 days ago' +%Y-%m-%dT%H:%M:%SZ)
           echo "Squashing weather commits older than: $CUTOFF_DATE"
           
-          # Find the commit hash just before the cutoff date
+          # Find the commit hash at the cutoff date (7 days ago)
           CUTOFF_COMMIT=$(git rev-list -1 --before="$CUTOFF_DATE" --first-parent HEAD)
           
           if [ -z "$CUTOFF_COMMIT" ]; then
@@ -99,35 +100,69 @@ jobs:
             exit 0
           fi
           
-          # Count commits that will be squashed (commits older than cutoff)
-          COMMITS_TO_SQUASH=$(git rev-list --count --grep="🌤️ Update weather data" $CUTOFF_COMMIT)
-          echo "Found $COMMITS_TO_SQUASH weather commits to potentially squash"
+          echo "Cutoff commit: ${CUTOFF_COMMIT:0:8}"
+          
+          # Count weather commits older than the cutoff that will be squashed
+          COMMITS_TO_SQUASH=$(git rev-list --count --grep="🌤️ Update weather data" --before="$CUTOFF_DATE" HEAD)
+          echo "Found $COMMITS_TO_SQUASH weather commits older than cutoff to potentially squash"
           
           if [ "$COMMITS_TO_SQUASH" -lt 50 ]; then
-            echo "Less than 50 weather commits to squash. Skipping to avoid unnecessary history rewriting."
+            echo "Less than 50 old weather commits to squash. Skipping to avoid unnecessary history rewriting."
             exit 0
           fi
           
-          # Store the latest commit tree before switching branches
-          LATEST_HEAD=$(git rev-parse HEAD)
+          # Save the current HEAD for later
+          ORIGINAL_HEAD=$(git rev-parse HEAD)
           
-          # Create a temporary branch for the squash operation
-          git checkout -b temp-squash-branch $CUTOFF_COMMIT
+          # Find the parent of the cutoff commit (to use as parent of squash commit)
+          CUTOFF_PARENT=$(git rev-parse ${CUTOFF_COMMIT}^ 2>/dev/null || echo "")
           
-          # Get the tree state from the original HEAD (latest state)
-          TREE=$(git rev-parse $LATEST_HEAD^{tree})
+          # Get the tree state at the cutoff commit
+          CUTOFF_TREE=$(git rev-parse $CUTOFF_COMMIT^{tree})
           
-          # Create a single commit with the current state
-          SQUASH_COMMIT=$(git commit-tree $TREE -p $CUTOFF_COMMIT -m "📦 Squashed $COMMITS_TO_SQUASH weather data updates (commits before $CUTOFF_DATE)")
+          # Create a squash commit for all old commits
+          if [ -z "$CUTOFF_PARENT" ]; then
+            # Cutoff commit has no parent (is root), create orphan
+            SQUASH_COMMIT=$(git commit-tree $CUTOFF_TREE -m "📦 Squashed $COMMITS_TO_SQUASH weather data updates (commits before $CUTOFF_DATE)")
+          else
+            # Use cutoff's parent as the parent of squash commit
+            SQUASH_COMMIT=$(git commit-tree $CUTOFF_TREE -p $CUTOFF_PARENT -m "📦 Squashed $COMMITS_TO_SQUASH weather data updates (commits before $CUTOFF_DATE)")
+          fi
           
-          # Reset current branch to the new squashed commit
-          git checkout $CURRENT_BRANCH
-          git reset --hard $SQUASH_COMMIT
+          echo "Created squash commit: ${SQUASH_COMMIT:0:8}"
+          
+          # Now we need to replay commits from cutoff to HEAD onto the squash commit
+          # We'll do this by creating new commits with same content but different parents
+          
+          echo "Reconstructing recent commit history..."
+          LAST_COMMIT=$SQUASH_COMMIT
+          
+          # Get list of commits from cutoff to HEAD (recent commits to preserve)
+          for commit in $(git rev-list --reverse $CUTOFF_COMMIT..HEAD); do
+            TREE=$(git rev-parse $commit^{tree})
+            MESSAGE=$(git log -1 --format=%B $commit)
+            AUTHOR=$(git log -1 --format="%an <%ae>" $commit)
+            AUTHOR_DATE=$(git log -1 --format=%aI $commit)
+            
+            # Create new commit with same content but new parent
+            NEW_COMMIT=$(GIT_AUTHOR_NAME="${AUTHOR%% <*}" \
+                        GIT_AUTHOR_EMAIL="${AUTHOR#*<}" \
+                        GIT_AUTHOR_EMAIL="${GIT_AUTHOR_EMAIL%>}" \
+                        GIT_AUTHOR_DATE="$AUTHOR_DATE" \
+                        git commit-tree $TREE -p $LAST_COMMIT -m "$MESSAGE")
+            
+            LAST_COMMIT=$NEW_COMMIT
+            echo "Reconstructed commit ${commit:0:8} -> ${NEW_COMMIT:0:8}"
+          done
+          
+          # Reset branch to the new history
+          git reset --hard $LAST_COMMIT
           
           # Force push with lease for safety
           git push --force-with-lease origin $CURRENT_BRANCH
           
-          echo "✅ Successfully squashed $COMMITS_TO_SQUASH commits"
+          RECENT_COUNT=$(git rev-list --count $SQUASH_COMMIT..HEAD)
+          echo "✅ Successfully squashed $COMMITS_TO_SQUASH old commits and preserved $RECENT_COUNT recent commits"
       
       - name: Trigger Jekyll deployment
         if: success()
