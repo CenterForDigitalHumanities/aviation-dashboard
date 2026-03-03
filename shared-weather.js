@@ -32,7 +32,7 @@ function isMetarTooOld(timestamp) {
 
 /**
  * Validate and clean weather data, rejecting stale KCPS METAR
- * If KCPS METAR is over 1 hour old, it will be cleared to trigger fallback to KSTL
+ * If KCPS METAR is over 1 hour old, all KCPS data is cleared to trigger fallback to KSTL
  * @param {Object} data - Weather data object with kcps and kstl properties
  * @returns {Object} Validated weather data object
  */
@@ -41,8 +41,21 @@ function validateWeatherData(data) {
     
     // Check KCPS METAR age
     if (data.kcps && isMetarTooOld(data.kcps.timestamp)) {
-        console.warn("KCPS METAR is stale; rejecting in favor of KSTL fallback");
-        data.kcps.metar = ""; // Clear METAR to trigger fallback
+        console.warn("KCPS data is stale (older than 1 hour); rejecting all KCPS data in favor of KSTL fallback");
+        // Clear all KCPS data to force fallback to KSTL
+        data.kcps = {
+            metar: "",
+            windDirection: null,
+            windSpeed: null,
+            windGust: null,
+            visibility: null,
+            temperatureC: null,
+            dewPointC: null,
+            cloudCeiling: null,
+            altimeter: null,
+            timestamp: null,
+            station: "KCPS"
+        };
     }
     
     return data;
