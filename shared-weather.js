@@ -6,6 +6,47 @@
 
 // Constants
 const WEATHER_DATA_URL = "data/weather-data.json";
+const METAR_MAX_AGE_MS = 60 * 60 * 1000; // 1 hour in milliseconds
+
+/**
+ * Check if a METAR timestamp is too old (over 1 hour)
+ * @param {string} timestamp - ISO 8601 timestamp string (e.g., "2026-01-06T17:53:00+00:00")
+ * @returns {boolean} True if the METAR is older than 1 hour
+ */
+function isMetarTooOld(timestamp) {
+    if (!timestamp) return true; // Missing timestamp = too old
+    try {
+        const metarTime = new Date(timestamp).getTime();
+        const currentTime = new Date().getTime();
+        const agems = currentTime - metarTime;
+        if (agems > METAR_MAX_AGE_MS) {
+            console.warn(`METAR from ${timestamp} is ${Math.round(agems / 60000)} minutes old and will be rejected`);
+            return true;
+        }
+        return false;
+    } catch {
+        console.error(`Failed to parse METAR timestamp: ${timestamp}`);
+        return true; // Unparseable = too old
+    }
+}
+
+/**
+ * Validate and clean weather data, rejecting stale KCPS METAR
+ * If KCPS METAR is over 1 hour old, it will be cleared to trigger fallback to KSTL
+ * @param {Object} data - Weather data object with kcps and kstl properties
+ * @returns {Object} Validated weather data object
+ */
+function validateWeatherData(data) {
+    if (!data) return data;
+    
+    // Check KCPS METAR age
+    if (data.kcps && isMetarTooOld(data.kcps.timestamp)) {
+        console.warn("KCPS METAR is stale; rejecting in favor of KSTL fallback");
+        data.kcps.metar = ""; // Clear METAR to trigger fallback
+    }
+    
+    return data;
+}
 
 /**
  * Fetch pre-parsed weather data from GitHub Actions generated JSON file
@@ -27,7 +68,11 @@ async function fetchWeatherDataFromJSON() {
         }
         const data = await response.json()
         console.log("Loaded weather data from JSON:", data)
-        return data
+        
+        // Validate data and reject stale METAR
+        const validatedData = validateWeatherData(data)
+        
+        return validatedData
     } catch (error) {
         console.error(`Could not fetch weather data from JSON:`, error)
         return null
