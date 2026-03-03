@@ -31,17 +31,68 @@ function isMetarTooOld(timestamp) {
 }
 
 /**
+ * Extract and validate the embedded METAR time (DDHHMMZ format)
+ * Returns the actual UTC time the METAR was issued
+ * @param {string} metarString - Raw METAR string (e.g., "KCPS 280953Z AUTO...")
+ * @returns {Date|null} Date object for the METAR time, or null if unparseable
+ */
+function getMetarEmbeddedTime(metarString) {
+    if (!metarString) return null;
+    
+    // Extract DDHHMMZ pattern (e.g., "280953Z")
+    const match = metarString.match(/(\d{2})(\d{2})(\d{2})Z/);
+    if (!match) return null;
+    
+    const day = parseInt(match[1], 10);
+    const hour = parseInt(match[2], 10);
+    const minute = parseInt(match[3], 10);
+    
+    if (day < 1 || day > 31 || hour > 23 || minute > 59) return null;
+    
+    // Build date: use current month/year, but handle day rollovers
+    const now = new Date();
+    let metarDate = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), day, hour, minute, 0));
+    
+    // If the METAR day is in the future, it's from the previous month
+    if (metarDate.getTime() > now.getTime()) {
+        metarDate = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 1, day, hour, minute, 0));
+    }
+    
+    return metarDate;
+}
+
+/**
+ * Check if METAR is too old based on embedded timestamp in METAR string
+ * @param {string} metarString - Raw METAR string
+ * @returns {boolean} True if the embedded METAR time is older than 1 hour
+ */
+function isMetarStringTooOld(metarString) {
+    const metarTime = getMetarEmbeddedTime(metarString);
+    if (!metarTime) return true; // Unparseable = too old
+    
+    const currentTime = new Date();
+    const agems = currentTime.getTime() - metarTime.getTime();
+    
+    if (agems > METAR_MAX_AGE_MS) {
+        console.warn(`METAR "${metarString.substring(0, 40)}..." is ${Math.round(agems / 60000)} minutes old and will be rejected`);
+        return true;
+    }
+    return false;
+}
+
+/**
  * Validate and clean weather data, rejecting stale KCPS METAR
- * If KCPS METAR is over 1 hour old, all KCPS data is cleared to trigger fallback to KSTL
+ * If KCPS METAR is over 1 hour old (based on embedded timestamp), 
+ * all KCPS data is cleared to trigger fallback to KSTL
  * @param {Object} data - Weather data object with kcps and kstl properties
  * @returns {Object} Validated weather data object
  */
 function validateWeatherData(data) {
     if (!data) return data;
     
-    // Check KCPS METAR age
-    if (data.kcps && isMetarTooOld(data.kcps.timestamp)) {
-        console.warn("KCPS data is stale (older than 1 hour); rejecting all KCPS data in favor of KSTL fallback");
+    // Check KCPS METAR age based on embedded timestamp in METAR string
+    if (data.kcps && data.kcps.metar && isMetarStringTooOld(data.kcps.metar)) {
+        console.warn("KCPS data is stale (METAR older than 1 hour); rejecting all KCPS data in favor of KSTL fallback");
         // Clear all KCPS data to force fallback to KSTL
         data.kcps = {
             metar: "",
