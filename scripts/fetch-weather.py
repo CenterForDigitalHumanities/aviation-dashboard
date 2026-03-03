@@ -237,12 +237,12 @@ def main():
         'lastUpdated': datetime.now(timezone.utc).isoformat(),
         'kcps': kcps_data or {
             'station': 'KCPS',
-            'metar': 'Data unavailable',
+            'metar': None,
             'error': 'Failed to fetch METAR'
         },
         'kstl': kstl_data or {
             'station': 'KSTL',
-            'metar': 'Data unavailable',
+            'metar': None,
             'error': 'Failed to fetch METAR'
         }
     }
