@@ -844,6 +844,13 @@
                 if (fallbackBadge) fallbackBadge.style.display = showFallback ? 'inline-block' : 'none';
                 if (heatFallbackBadge) heatFallbackBadge.style.display = showFallback ? 'inline-block' : 'none';
 
+                // Toggle strikethrough on KCPS references when using KSTL fallback
+                const heatNoteEm = document.querySelector('.heat-note em');
+                const currentConditionsH2 = document.getElementById('fallbackBadge')?.closest('h2');
+                
+                if (heatNoteEm) heatNoteEm.style.textDecoration = showFallback ? 'line-through' : 'none';
+                if (currentConditionsH2) currentConditionsH2.style.textDecoration = showFallback ? 'line-through' : 'none';
+
                 if (!weatherData) {
                     console.error("No valid weather data available");
                     return;
