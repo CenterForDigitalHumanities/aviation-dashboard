@@ -78,12 +78,13 @@ jobs:
           git config user.name "GitHub Actions Bot"
           git config user.email "actions@github.com"
 
-          # Stash the newly fetched data before switching branches
+          # Save the newly fetched data before switching branches
           cp data/weather-data.json /tmp/weather-data-new.json
 
-          # Reset local branch to match remote exactly, avoiding non-fast-forward rejections
+          # Force checkout to weather-data branch, discarding the working tree change
+          # (safe because we already saved the new data to /tmp above)
           git fetch origin weather-data
-          git checkout -B weather-data origin/weather-data
+          git checkout -f -B weather-data origin/weather-data
 
           # Apply new data and commit
           mkdir -p data
