@@ -71,8 +71,23 @@ const authHeaders = {
     Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
     'Content-Type': 'application/json',
 }
-const res  = await fetch(`${SUPABASE_URL}/rest/v1/push_subscriptions?select=*`, { headers: authHeaders })
-const subs = await res.json()
+const res = await fetch(`${SUPABASE_URL}/rest/v1/push_subscriptions?select=*`, { headers: authHeaders })
+if (!res.ok) {
+    const body = await res.text()
+    console.error(`Supabase subscription query failed (${res.status} ${res.statusText})`)
+    console.error(body.slice(0, 500))
+    if (res.status === 401 || res.status === 403)
+        console.error('Check SUPABASE_SERVICE_ROLE_KEY secret and RLS policies.')
+    process.exit(1)
+}
+
+let subs = []
+try {
+    subs = await res.json()
+} catch (err) {
+    console.error('Failed to parse Supabase response JSON:', err)
+    process.exit(1)
+}
 
 if (!Array.isArray(subs) || !subs.length) {
     console.log('No subscribers — push skipped.')
@@ -82,24 +97,34 @@ console.log(`Sending to ${subs.length} subscriber(s)…`)
 
 // ── Push to each subscriber, collect expired endpoints ──────────────────────
 const expired = []
+let sentCount = 0
+let failedCount = 0
 await Promise.allSettled(subs.map(async row => {
     try {
         await webpush.sendNotification(
             { endpoint: row.endpoint, keys: { p256dh: row.p256dh, auth: row.auth } },
             payload,
         )
+        sentCount += 1
     } catch (err) {
+        failedCount += 1
         console.warn(`  Failed (${err.statusCode}) for …${row.endpoint.slice(-30)}`)
         if (err.statusCode === 410 || err.statusCode === 404) expired.push(row.endpoint)
     }
 }))
+console.log(`Push delivery summary: sent=${sentCount}, failed=${failedCount}, expired=${expired.length}`)
 
 // ── Remove subscriptions the browser has revoked ────────────────────────────
 for (const ep of expired) {
-    await fetch(
+    const delRes = await fetch(
         `${SUPABASE_URL}/rest/v1/push_subscriptions?endpoint=eq.${encodeURIComponent(ep)}`,
         { method: 'DELETE', headers: authHeaders },
     )
+    if (!delRes.ok) {
+        const body = await delRes.text()
+        console.warn(`Failed removing expired subscription (${delRes.status} ${delRes.statusText})`)
+        console.warn(body.slice(0, 300))
+    }
 }
 if (expired.length) console.log(`Removed ${expired.length} expired subscription(s).`)
 
