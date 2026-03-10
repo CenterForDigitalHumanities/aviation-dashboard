@@ -118,15 +118,9 @@ function validateWeatherData(data) {
  */
 async function fetchWeatherDataFromJSON() {
     try {
-        const response = await fetch(WEATHER_DATA_URL, {
-            method: 'GET',
-            cache: 'no-store',
-            headers: {
-                'Cache-Control': 'no-cache, no-store, must-revalidate',
-                Pragma: 'no-cache',
-                Expires: '0'
-            }
-        })
+        // Append timestamp as query param to bust CDN cache without triggering CORS preflight
+        const url = `${WEATHER_DATA_URL}?t=${Date.now()}`
+        const response = await fetch(url)
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`)
         }
