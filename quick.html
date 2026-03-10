@@ -167,36 +167,39 @@
         text-align: center;
     }
     
-    .flight-status-card.all-clear {
-        border-color: #4caf50;
-        background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(76, 175, 80, 0.05));
+    .flight-status-card.cat-a {
+        border-color: #548235;
+        background: linear-gradient(135deg, rgba(84, 130, 53, 0.16), rgba(84, 130, 53, 0.07));
     }
-    
-    .flight-status-card.student-restricted {
-        border-color: #ff9800;
-        background: linear-gradient(135deg, rgba(255, 152, 0, 0.1), rgba(255, 152, 0, 0.05));
+    .flight-status-card.cat-b {
+        border-color: #ffff00;
+        background: linear-gradient(135deg, rgba(255, 255, 0, 0.20), rgba(255, 255, 0, 0.10));
     }
-    
-    .flight-status-card.private-only {
-        border-color: #ff5722;
-        background: linear-gradient(135deg, rgba(255, 87, 34, 0.1), rgba(255, 87, 34, 0.05));
+    .flight-status-card.cat-c {
+        border-color: #ed7d31;
+        background: linear-gradient(135deg, rgba(237, 125, 49, 0.20), rgba(237, 125, 49, 0.10));
     }
-    
-    .flight-status-card.all-restricted {
-        border-color: #f44336;
-        background: linear-gradient(135deg, rgba(244, 67, 54, 0.1), rgba(244, 67, 54, 0.05));
+    .flight-status-card.cat-d {
+        border-color: #ff0000;
+        background: linear-gradient(135deg, rgba(255, 0, 0, 0.18), rgba(255, 0, 0, 0.08));
     }
-    
+    .flight-status-card.cat-f {
+        border-color: #000000;
+        background: linear-gradient(135deg, rgba(20, 20, 20, 0.9), rgba(45, 45, 45, 0.8));
+    }
+
     .status-title {
-        font-size: 2em;
+        font-size: 3.3em;
+        line-height: 1;
         font-weight: bold;
         margin-bottom: 10px;
     }
-    
-    .flight-status-card.all-clear .status-title { color: #4caf50; }
-    .flight-status-card.student-restricted .status-title { color: #ff9800; }
-    .flight-status-card.private-only .status-title { color: #ff5722; }
-    .flight-status-card.all-restricted .status-title { color: #f44336; }
+
+    .flight-status-card.cat-a .status-title { color: #548235; }
+    .flight-status-card.cat-b .status-title { color: #000; }
+    .flight-status-card.cat-c .status-title { color: #ed7d31; }
+    .flight-status-card.cat-d .status-title,
+    .flight-status-card.cat-f .status-title { color: #fff; }
     
     .status-details {
         font-size: 1em;
@@ -357,9 +360,9 @@
                 </div>
         </div>
         
-        <div id="overall-flight-status" class="flight-status-card all-clear">
-            <div class="status-title">Loading...</div>
-            <div class="status-details">Checking weather conditions...</div>
+        <div id="overall-flight-status" class="flight-status-card cat-a">
+            <div class="status-title">A</div>
+            <div class="status-details">Loading weather conditions...</div>
         </div>
     </div>
 
@@ -477,88 +480,88 @@ function getMinutesAgo(timestamp) {
     return `(${hours} hr${hours > 1 ? 's' : ''} ${mins} min${mins > 1 ? 's' : ''} ago)`;
 }
 
-// Determine overall flight restrictions summary for quick view
-function calculateFlightRestrictions(data) {
-    const restrictions = { all: [], private: [], student: [] };
+// A-F category system matching the operations manual and dashboard.html
+let lastQuickCategory = { category: 'A', categoryClass: 'cat-a', details: 'No solo restrictions in effect.' };
 
-    // Crosswind
+function updateQuickCategoryCard(letter, categoryClass, details) {
+    const card = document.getElementById('overall-flight-status');
+    if (!card) return;
+    card.className = `flight-status-card ${categoryClass}`;
+    card.innerHTML = `
+        <div class="status-title">${letter}</div>
+        <div class="status-details">${details}</div>
+    `;
+}
+
+function calculateFlightCategory(data) {
+    const effectiveWind = getEffectiveWindSpeed(data.windSpeed, data.windGust);
+
+    let cw12 = null, cw30 = null;
     if (data.windDirection != null && data.windSpeed != null) {
-        const cw12 = calculateCrosswind(data.windDirection, data.windSpeed, KCPS_RUNWAY_12_HDG, data.windGust);
-        const cw30 = calculateCrosswind(data.windDirection, data.windSpeed, KCPS_RUNWAY_30_HDG, data.windGust);
-        const maxCrosswind = Math.max(cw12 ?? 0, cw30 ?? 0);
-        if (maxCrosswind > 15) {
-            restrictions.private.push(`💨 ${maxCrosswind.toFixed(1)} kt crosswind`);
-        } else if (maxCrosswind > 10) {
-            restrictions.student.push(`💨 ${maxCrosswind.toFixed(1)} kt crosswind`);
-        }
+        cw12 = calculateCrosswind(data.windDirection, data.windSpeed, KCPS_RUNWAY_12_HDG, data.windGust);
+        cw30 = calculateCrosswind(data.windDirection, data.windSpeed, KCPS_RUNWAY_30_HDG, data.windGust);
     }
 
-    // Visibility (Unified threshold 3 SM)
-    if (data.visibility != null && isVisibilityRestricted(data.visibility)) {
-        restrictions.all.push(`👁️ ${data.visibility} SM vis`);
-    }
+    const ceilingRestricted = isCeilingRestricted(data.cloudCeiling);
+    const visRestricted = isVisibilityRestricted(data.visibility);
 
-    // Ceiling (Unified threshold 1,500 ft AGL; METAR is already AGL)
-    if (data.cloudCeiling != null && data.cloudCeiling < 99999 && isCeilingRestricted(data.cloudCeiling)) {
-        restrictions.all.push(`☁️ ${data.cloudCeiling} ft ceiling`);
-    }
+    const studentSurfaceRestricted = effectiveWind !== null && effectiveWind > 15;
+    const studentCrossRestricted = (cw12 !== null && cw12 > 10) || (cw30 !== null && cw30 > 10);
+    const privateSurfaceRestricted = effectiveWind !== null && effectiveWind > 25;
+    const privateCrossRestricted = (cw12 !== null && cw12 > 15) || (cw30 !== null && cw30 > 15);
+    const instCommSurfaceRestricted = effectiveWind !== null && effectiveWind > 30;
+    const instCommCrossRestricted = (cw12 !== null && cw12 > 20) || (cw30 !== null && cw30 > 20);
 
-    // Temperature + Heat Index
+    let tempStudentRestricted = false, tempPrivateRestricted = false, tempInstCommRestricted = false;
     if (data.temperatureC != null) {
-        const tempF = data.temperatureC * 9/5 + 32;
-        if (tempF <= 5) {
-            restrictions.all.push(`🌡️ ${tempF.toFixed(0)}°F`);
-        } else if (tempF <= 14) {
-            restrictions.private.push(`🌡️ ${tempF.toFixed(0)}°F`);
-        } else if (tempF <= 23) {
-            restrictions.student.push(`🌡️ ${tempF.toFixed(0)}°F`);
-        }
+        const tempF = data.temperatureC * 9 / 5 + 32;
+        if (tempF <= 5) tempInstCommRestricted = true;
+        else if (tempF <= 14) tempPrivateRestricted = true;
+        else if (tempF <= 23) tempStudentRestricted = true;
 
         if (data.dewPointC != null && tempF >= 80) {
-            // Compute RH from T/DP in Celsius, then use shared heat index
-            const T = data.temperatureC;
-            const DP = data.dewPointC;
+            const T = data.temperatureC, DP = data.dewPointC;
             const rh = 100 * Math.exp((17.625 * DP) / (243.04 + DP)) / Math.exp((17.625 * T) / (243.04 + T));
             const hi = calculateHeatIndex(tempF, rh);
             if (hi != null) {
-                if (hi >= 105) {
-                    restrictions.all.push(`🔥 ${hi.toFixed(0)}°F heat index`);
-                } else if (hi >= 100) {
-                    restrictions.private.push(`🔥 ${hi.toFixed(0)}°F heat index`);
-                } else if (hi >= 95) {
-                    restrictions.student.push(`🔥 ${hi.toFixed(0)}°F heat index`);
-                }
+                if (hi >= 105) tempInstCommRestricted = true;
+                else if (hi >= 100) tempPrivateRestricted = true;
+                else if (hi >= 95) tempStudentRestricted = true;
             }
         }
     }
 
-    // Summarize
-    if (restrictions.all.length > 0) {
-        return {
-            class: 'all-restricted',
-            title: 'All Flights Restricted',
-            details: 'Restricting factors: ' + restrictions.all.join(', ')
-        };
+    const studentRestricted = ceilingRestricted || visRestricted || studentSurfaceRestricted || studentCrossRestricted || tempStudentRestricted;
+    const privateRestricted = ceilingRestricted || visRestricted || privateSurfaceRestricted || privateCrossRestricted || tempPrivateRestricted;
+    const instCommRestricted = ceilingRestricted || visRestricted || instCommSurfaceRestricted || instCommCrossRestricted || tempInstCommRestricted;
+
+    // Shared factors (ceiling/vis affect all levels equally)
+    const sharedFactors = [];
+    if (ceilingRestricted) sharedFactors.push('ceiling below 1,500 ft AGL');
+    if (visRestricted) sharedFactors.push('visibility below 3 SM');
+
+    if (instCommRestricted) {
+        const factors = [...sharedFactors];
+        if (instCommSurfaceRestricted) factors.push('surface winds above 30 kt');
+        if (instCommCrossRestricted) factors.push('crosswind above 20 kt');
+        if (tempInstCommRestricted) factors.push('temperature/heat index');
+        return { category: 'D', categoryClass: 'cat-d', details: `Instrument/Commercial solo restricted: ${factors.join(', ')}` };
     }
-    if (restrictions.private.length > 0) {
-        return {
-            class: 'private-only',
-            title: 'Private+ Only',
-            details: 'Restricting factors: ' + restrictions.private.join(', ')
-        };
+    if (privateRestricted) {
+        const factors = [...sharedFactors];
+        if (privateSurfaceRestricted) factors.push('surface winds above 25 kt');
+        if (privateCrossRestricted) factors.push('crosswind above 15 kt');
+        if (tempPrivateRestricted) factors.push('temperature/heat index');
+        return { category: 'C', categoryClass: 'cat-c', details: `Private pilot solo restricted: ${factors.join(', ')}` };
     }
-    if (restrictions.student.length > 0) {
-        return {
-            class: 'student-restricted',
-            title: 'Students Restricted',
-            details: 'Restricting factors: ' + restrictions.student.join(', ')
-        };
+    if (studentRestricted) {
+        const factors = [...sharedFactors];
+        if (studentSurfaceRestricted) factors.push('surface winds above 15 kt');
+        if (studentCrossRestricted) factors.push('crosswind above 10 kt');
+        if (tempStudentRestricted) factors.push('temperature/heat index');
+        return { category: 'B', categoryClass: 'cat-b', details: `Student pilot solo restricted: ${factors.join(', ')}` };
     }
-    return {
-        class: 'all-clear',
-        title: 'All Pilots Clear',
-        details: 'No weather restrictions in effect'
-    };
+    return { category: 'A', categoryClass: 'cat-a', details: 'No solo restrictions in effect.' };
 }
 
 let metarRefreshTimer = null;
@@ -647,16 +650,10 @@ async function fetchWeatherData() {
         if (fbQuick) fbQuick.style.display = (!kcpsMetarValid && kstlMetarValid) ? 'inline-block' : 'none';
         
         if (weatherData) {
-            // Calculate flight restrictions
-            const restrictions = calculateFlightRestrictions(weatherData, kcpsElevation);
-            
-            // Update flight status card
-            const statusCard = document.getElementById('overall-flight-status');
-            statusCard.className = 'flight-status-card ' + restrictions.class;
-            statusCard.innerHTML = `
-                <div class="status-title">${restrictions.title}</div>
-                <div class="status-details">${restrictions.details}</div>
-            `;
+            // Calculate and display flight category
+            const cat = calculateFlightCategory(weatherData);
+            lastQuickCategory = cat;
+            updateQuickCategoryCard(cat.category, cat.categoryClass, cat.details);
             
             // Update weather graphics (for fallback)
             updateWeatherGraphics(weatherData);
@@ -866,6 +863,13 @@ function displayAnnouncements(announcements) {
         overlay.classList.add('active');
     } else if (overlay) {
         overlay.classList.remove('active');
+    }
+
+    // Update flight category card: F for no-fly, otherwise restore last weather category
+    if (hasNoFlying) {
+        updateQuickCategoryCard('F', 'cat-f', 'No flights. See airport announcements for details.');
+    } else {
+        updateQuickCategoryCard(lastQuickCategory.category, lastQuickCategory.categoryClass, lastQuickCategory.details);
     }
     
     container.innerHTML = announcements.map(announcement => {
