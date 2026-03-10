@@ -44,24 +44,96 @@ if (d.windSpeed == null && d.visibility == null) {
     station = 'KSTL'
 }
 
-// ── Simplified A–D category logic (mirrors shared-weather.js thresholds) ─────
-function calcCategory(d) {
-    const ceil    = d.cloudCeiling ?? null
-    const vis     = d.visibility   ?? null
-    const ws      = Math.max(d.windSpeed ?? 0, d.windGust ?? 0)
-    const ceilStr = ceil != null ? `${ceil} ft`        : 'CLR'
-    const visStr  = vis  != null ? `${vis} SM`         : '–'
+const KCPS_RUNWAY_12_HDG = 122
+const KCPS_RUNWAY_30_HDG = 302
 
-    if ((ceil != null && ceil < 500)  || (vis != null && vis < 1))
-        return ['d', `LIFR · Ceil ${ceilStr} · Vis ${visStr}`]
-    if ((ceil != null && ceil < 1000) || (vis != null && vis < 3))
-        return ['c', `IFR · Ceil ${ceilStr} · Vis ${visStr}`]
-    if ((ceil != null && ceil < 3000) || (vis != null && vis < 5) || ws > 15)
-        return ['b', `MVFR · Ceil ${ceilStr} · Vis ${visStr}`]
-    return ['a', `VFR · Vis ${visStr} · Wind ${Math.round(ws)} kt`]
+function calcHumidity(tC, tdC) {
+    if (tC == null || tdC == null) return null
+    const eS = 6.1078 * Math.pow(10, (7.5 * tC)  / (237.3 + tC))
+    const eA = 6.1078 * Math.pow(10, (7.5 * tdC) / (237.3 + tdC))
+    return Math.min(100, (eA / eS) * 100)
 }
 
-const [category, details] = calcCategory(d)
+function calculateHeatIndex(tempF, rh) {
+    if (tempF < 80) return tempF
+    if (rh == null) return null
+    return -42.379 + (2.04901523 * tempF) + (10.14333127 * rh) - (0.22475541 * tempF * rh) -
+           (0.00683783 * tempF * tempF) - (0.05481717 * rh * rh) +
+           (0.00122874 * tempF * tempF * rh) + (0.00085282 * tempF * rh * rh) -
+           (0.00000199 * tempF * tempF * rh * rh)
+}
+
+function getEffectiveWindSpeed(windSpeed, windGust) {
+    const hasGust = (windGust ?? 0) > 0
+    const hasSpeed = windSpeed != null
+    if (!hasGust && !hasSpeed) return null
+    if (hasGust && (!hasSpeed || windGust > windSpeed)) return windGust
+    return windSpeed
+}
+
+function calculateCrosswind(windDirection, windSpeed, runwayHeading, windGust = null) {
+    if (windDirection == null) return null
+    const effectiveWindSpeed = getEffectiveWindSpeed(windSpeed, windGust)
+    if (effectiveWindSpeed == null) return null
+    const angleDiff = Math.abs(windDirection - runwayHeading)
+    const effectiveAngle = angleDiff > 180 ? 360 - angleDiff : angleDiff
+    return effectiveWindSpeed * Math.sin(effectiveAngle * Math.PI / 180)
+}
+
+function isCeilingRestricted(cloudCeilingAGL, thresholdFtAGL = 1500) {
+    if (cloudCeilingAGL == null) return false
+    if (cloudCeilingAGL >= 99999) return false
+    return cloudCeilingAGL < thresholdFtAGL
+}
+
+function isVisibilityRestricted(visibilitySM, thresholdSM = 3) {
+    return visibilitySM != null && visibilitySM < thresholdSM
+}
+
+// ── Category logic aligned with mobile/dashboard restrictions ─────────────────
+function calcCategory(d) {
+    const tempF = d.temperatureC != null ? d.temperatureC * 9 / 5 + 32 : null
+    const humidity = calcHumidity(d.temperatureC, d.dewPointC)
+    const hi = (tempF != null && humidity != null)
+        ? calculateHeatIndex(tempF, humidity)
+        : (tempF ?? 70)
+
+    const ew = getEffectiveWindSpeed(d.windSpeed, d.windGust) ?? 0
+    const cw12 = d.windDirection != null
+        ? Math.abs(calculateCrosswind(d.windDirection, d.windSpeed, KCPS_RUNWAY_12_HDG, d.windGust))
+        : 0
+    const cw30 = d.windDirection != null
+        ? Math.abs(calculateCrosswind(d.windDirection, d.windSpeed, KCPS_RUNWAY_30_HDG, d.windGust))
+        : 0
+    const maxCW = Math.max(cw12, cw30)
+
+    let tempCat = 'a'
+    if (tempF != null) {
+        if (tempF <= 14) tempCat = 'd'
+        else if (tempF <= 23) tempCat = 'c'
+    }
+    if (hi >= 105) tempCat = 'd'
+    else if (hi >= 100 && tempCat !== 'd') tempCat = 'd'
+    else if (hi >= 95 && tempCat === 'a') tempCat = 'c'
+
+    let wxCat = 'a'
+    if (ew > 30 || maxCW > 20 || isCeilingRestricted(d.cloudCeiling) || isVisibilityRestricted(d.visibility)) wxCat = 'd'
+    else if (ew > 25 || maxCW > 15) wxCat = 'c'
+    else if (ew > 15 || maxCW > 10) wxCat = 'b'
+
+    const order = ['a', 'b', 'c', 'd', 'f']
+    return order[Math.max(order.indexOf(wxCat), order.indexOf(tempCat))]
+}
+
+const category = calcCategory(d)
+const catLabels = {
+    a: 'No solo restrictions in effect.',
+    b: 'Student pilot solos restricted.',
+    c: 'Private pilot solos restricted.',
+    d: 'Instrument/Commercial solos restricted.',
+    f: 'No flights. See airport announcements for details.'
+}
+const details = catLabels[category] ?? 'Flight status updated.'
 const payload = JSON.stringify({ category, details, station })
 console.log(`Category ${category.toUpperCase()} — ${details} (${station})`)
 

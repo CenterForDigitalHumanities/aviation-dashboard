@@ -603,10 +603,10 @@
 
             const ew   = getEffectiveWindSpeed(d.windSpeed, d.windGust) ?? 0
             const cw12 = d.windDirection != null
-                ? Math.abs(calculateCrosswind(d.windDirection, d.windSpeed, KCPS_RUNWAY_12_HDG))
+                ? Math.abs(calculateCrosswind(d.windDirection, d.windSpeed, KCPS_RUNWAY_12_HDG, d.windGust))
                 : 0
             const cw30 = d.windDirection != null
-                ? Math.abs(calculateCrosswind(d.windDirection, d.windSpeed, KCPS_RUNWAY_30_HDG))
+                ? Math.abs(calculateCrosswind(d.windDirection, d.windSpeed, KCPS_RUNWAY_30_HDG, d.windGust))
                 : 0
             const maxCW = Math.max(cw12, cw30)
 
@@ -679,8 +679,8 @@
             const humidity = calcHumidity(d.temperatureC, d.dewPointC)
             const hi       = (tempF != null && humidity != null && tempF >= 80) ? calculateHeatIndex(tempF, humidity) : tempF
             const ew       = getEffectiveWindSpeed(d.windSpeed, d.windGust)
-            const cw12     = d.windDirection != null ? calculateCrosswind(d.windDirection, d.windSpeed, KCPS_RUNWAY_12_HDG) : null
-            const cw30     = d.windDirection != null ? calculateCrosswind(d.windDirection, d.windSpeed, KCPS_RUNWAY_30_HDG) : null
+            const cw12     = d.windDirection != null ? calculateCrosswind(d.windDirection, d.windSpeed, KCPS_RUNWAY_12_HDG, d.windGust) : null
+            const cw30     = d.windDirection != null ? calculateCrosswind(d.windDirection, d.windSpeed, KCPS_RUNWAY_30_HDG, d.windGust) : null
 
             const windText = d.windSpeed != null
                 ? `${d.windDirection ?? 'VRB'}° at ${d.windSpeed} kt${d.windGust ? ` G${d.windGust}` : ''}`
@@ -735,8 +735,8 @@
         // ── Render: restrictions panel ────────────────────────────────────
         function renderRestrictionsPanel(d) {
             const ew   = getEffectiveWindSpeed(d.windSpeed, d.windGust) ?? 0
-            const cw12 = d.windDirection != null ? Math.abs(calculateCrosswind(d.windDirection, d.windSpeed, KCPS_RUNWAY_12_HDG)) : 0
-            const cw30 = d.windDirection != null ? Math.abs(calculateCrosswind(d.windDirection, d.windSpeed, KCPS_RUNWAY_30_HDG)) : 0
+            const cw12 = d.windDirection != null ? Math.abs(calculateCrosswind(d.windDirection, d.windSpeed, KCPS_RUNWAY_12_HDG, d.windGust)) : 0
+            const cw30 = d.windDirection != null ? Math.abs(calculateCrosswind(d.windDirection, d.windSpeed, KCPS_RUNWAY_30_HDG, d.windGust)) : 0
             const maxCW = Math.max(cw12, cw30)
             const ceil  = isCeilingRestricted(d.cloudCeiling)
             const vis   = isVisibilityRestricted(d.visibility)
