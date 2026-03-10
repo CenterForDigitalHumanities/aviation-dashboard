@@ -24,6 +24,13 @@
             --success-text: #2e7d32;
             --warning-bg: #fffacd;
             --warning-text: #f57c00;
+
+            /* Flight category palette (matched to operations table) */
+            --cat-a: #548235;
+            --cat-b: #ffff00;
+            --cat-c: #ed7d31;
+            --cat-d: #ff0000;
+            --cat-f: #000000;
         }
 
         body.dark-theme {
@@ -200,6 +207,86 @@
             color: var(--warning-text);
         }
 
+        .flight-status-section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .flight-status-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 12px;
+            border: 3px solid;
+            padding: 16px;
+            text-align: center;
+            min-height: 180px;
+        }
+
+        .flight-status-card.cat-a {
+            border-color: var(--cat-a);
+            background: linear-gradient(135deg, rgba(84, 130, 53, 0.16), rgba(84, 130, 53, 0.07));
+        }
+
+        .flight-status-card.cat-b {
+            border-color: var(--cat-b);
+            background: linear-gradient(135deg, rgba(255, 255, 0, 0.20), rgba(255, 255, 0, 0.10));
+        }
+
+        .flight-status-card.cat-c {
+            border-color: var(--cat-c);
+            background: linear-gradient(135deg, rgba(237, 125, 49, 0.20), rgba(237, 125, 49, 0.10));
+        }
+
+        .flight-status-card.cat-d {
+            border-color: var(--cat-d);
+            background: linear-gradient(135deg, rgba(255, 0, 0, 0.18), rgba(255, 0, 0, 0.08));
+        }
+
+        .flight-status-card.cat-f {
+            border-color: var(--cat-f);
+            background: linear-gradient(135deg, rgba(20, 20, 20, 0.9), rgba(45, 45, 45, 0.8));
+        }
+
+        .status-title {
+            font-size: 3.3em;
+            line-height: 1;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .flight-status-card.cat-a .status-title {
+            color: var(--cat-a);
+        }
+
+        .flight-status-card.cat-b .status-title {
+            color: #000;
+        }
+
+        .flight-status-card.cat-c .status-title {
+            color: var(--cat-c);
+        }
+
+        .flight-status-card.cat-d .status-title {
+            color: var(--cat-d);
+        }
+
+        body.dark-theme .flight-status-card.cat-d .status-title,
+        .flight-status-card.cat-f .status-title {
+            color: #fff;
+        }
+
+        .status-details {
+            font-size: 0.95em;
+            line-height: 1.4;
+            color: var(--text-secondary);
+        }
+
+        .flight-status-card.cat-f .status-details {
+            color: #e0e0e0;
+        }
+
         .embed-container {
             display: flex;
             justify-content: center;
@@ -236,6 +323,16 @@
             border-bottom: 1px solid var(--border-color);
             font-size: 1em;
             transition: border-color 0.3s ease;
+        }
+
+        .current-conditions-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .conditions-col {
+            min-width: 0;
         }
 
         .weather-stat:last-child {
@@ -392,6 +489,61 @@
         .column:first-child {
             position: relative;
         }
+
+        @media (max-width: 900px) {
+            html,
+            body {
+                height: auto;
+                min-height: 100vh;
+                overflow: auto;
+            }
+
+            header {
+                padding: 10px 12px;
+            }
+
+            h1 {
+                font-size: 1.05em;
+                text-align: left;
+            }
+
+            .dashboard-container {
+                grid-template-columns: 1fr;
+                overflow: visible;
+                gap: 12px;
+                padding: 12px;
+            }
+
+            .column {
+                overflow: visible;
+            }
+
+            .card.scrollable {
+                overflow: visible;
+            }
+
+            .weather-stat {
+                flex-direction: column;
+                gap: 4px;
+            }
+
+            .current-conditions-grid {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+
+            .flight-status-card {
+                min-height: 150px;
+            }
+
+            .status-title {
+                font-size: 2.8em;
+            }
+
+            table {
+                font-size: 0.8em;
+            }
+        }
     </style>
 </head>
 
@@ -454,7 +606,7 @@
                             <td id="privateVisibilityStatus"></td>
                         </tr>
                         <tr>
-                            <td>Surface winds &gt; 20 kt</td>
+                            <td>Surface winds &gt; 25 kt</td>
                             <td id="privateSurfaceWindStatus"></td>
                         </tr>
                         <tr>
@@ -471,7 +623,7 @@
                             <td id="instCommVisibilityStatus"></td>
                         </tr>
                         <tr>
-                            <td>Surface winds &gt; 25 kt</td>
+                            <td>Surface winds &gt; 30 kt</td>
                             <td id="instCommSurfaceWindStatus"></td>
                         </tr>
                         <tr>
@@ -539,37 +691,51 @@
                 <h2>Current Conditions (KCPS)
                     <span id="fallbackBadge" class="fallback-badge" title="KCPS unavailable — using KSTL conditions">Using KSTL</span>
                 </h2>
-                <div class="weather-stat">
-                    <strong>Temperature:</strong>
-                    <span id="currentTemp">N/A</span>
+                <div class="current-conditions-grid">
+                    <div class="conditions-col">
+                        <div class="weather-stat">
+                            <strong>Temperature:</strong>
+                            <span id="currentTemp">N/A</span>
+                        </div>
+                        <div class="weather-stat">
+                            <strong>Humidity:</strong>
+                            <span id="currentHumidity">N/A</span>
+                        </div>
+                        <div class="weather-stat">
+                            <strong>Heat Index:</strong>
+                            <span id="heatIndexValue">N/A</span>
+                        </div>
+                        <div class="weather-stat">
+                            <strong>Visibility:</strong>
+                            <span id="visibility">N/A</span>
+                        </div>
+                    </div>
+                    <div class="conditions-col">
+                        <div class="weather-stat">
+                            <strong>Surface Winds:</strong>
+                            <span id="surfaceWinds">N/A</span>
+                        </div>
+                        <div class="weather-stat">
+                            <strong>Cloud Ceiling:</strong>
+                            <span id="cloudCeiling">N/A</span>
+                        </div>
+                        <div class="weather-stat">
+                            <strong>Crosswind RWY 12 (122°):</strong>
+                            <span id="crosswind12">N/A</span>
+                        </div>
+                        <div class="weather-stat">
+                            <strong>Crosswind RWY 30 (302°):</strong>
+                            <span id="crosswind30">N/A</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="weather-stat">
-                    <strong>Humidity:</strong>
-                    <span id="currentHumidity">N/A</span>
-                </div>
-                <div class="weather-stat">
-                    <strong>Heat Index:</strong>
-                    <span id="heatIndexValue">N/A</span>
-                </div>
-                <div class="weather-stat">
-                    <strong>Surface Winds:</strong>
-                    <span id="surfaceWinds">N/A</span>
-                </div>
-                <div class="weather-stat">
-                    <strong>Visibility:</strong>
-                    <span id="visibility">N/A</span>
-                </div>
-                <div class="weather-stat">
-                    <strong>Cloud Ceiling:</strong>
-                    <span id="cloudCeiling">N/A</span>
-                </div>
-                <div class="weather-stat">
-                    <strong>Crosswind RWY 12 (122°):</strong>
-                    <span id="crosswind12">N/A</span>
-                </div>
-                <div class="weather-stat">
-                    <strong>Crosswind RWY 30 (302°):</strong>
-                    <span id="crosswind30">N/A</span>
+            </div>
+
+            <div class="card flight-status-section">
+                <h2>Flight Category</h2>
+                <div id="flightCategoryCard" class="flight-status-card cat-a">
+                    <div id="flightCategoryLetter" class="status-title">A</div>
+                    <div id="flightCategoryDetails" class="status-details">No solo restrictions in effect.</div>
                 </div>
             </div>
         </div>
@@ -924,6 +1090,15 @@
             }
         }
 
+        let lastFlightCategoryState = {
+            studentRestricted: false,
+            privateRestricted: false,
+            instCommRestricted: false,
+            studentFactors: [],
+            privateFactors: [],
+            instCommFactors: []
+        }
+
         function updateRestrictions(data) {
             // Note: METAR cloudCeiling is already in AGL (Above Ground Level)
             const visibilitySM = data.visibility;
@@ -935,30 +1110,84 @@
                 crosswind12 = calculateCrosswind(data.windDirection, data.windSpeed, KCPS_RUNWAY_12_HDG, data.windGust);
                 crosswind30 = calculateCrosswind(data.windDirection, data.windSpeed, KCPS_RUNWAY_30_HDG, data.windGust);
             }
+
+            const studentCeilingRestricted = isCeilingRestricted(data.cloudCeiling);
+            const studentVisibilityRestricted = isVisibilityRestricted(visibilitySM);
+            const studentSurfaceRestricted = effectiveWindSpeed !== null && effectiveWindSpeed > 15;
+            const studentCrosswindRestricted =
+                (crosswind12 !== null && crosswind12 > 10) || (crosswind30 !== null && crosswind30 > 10);
+
+            const privateCeilingRestricted = isCeilingRestricted(data.cloudCeiling);
+            const privateVisibilityRestricted = isVisibilityRestricted(visibilitySM);
+            const privateSurfaceRestricted = effectiveWindSpeed !== null && effectiveWindSpeed > 25;
+            const privateCrosswindRestricted =
+                (crosswind12 !== null && crosswind12 > 15) || (crosswind30 !== null && crosswind30 > 15);
+
+            const instCommCeilingRestricted = isCeilingRestricted(data.cloudCeiling);
+            const instCommVisibilityRestricted = isVisibilityRestricted(visibilitySM);
+            const instCommSurfaceRestricted = effectiveWindSpeed !== null && effectiveWindSpeed > 30;
+            const instCommCrosswindRestricted =
+                (crosswind12 !== null && crosswind12 > 20) || (crosswind30 !== null && crosswind30 > 20);
+
+            const studentRestricted =
+                studentCeilingRestricted || studentVisibilityRestricted || studentSurfaceRestricted || studentCrosswindRestricted;
+            const privateRestricted =
+                privateCeilingRestricted || privateVisibilityRestricted || privateSurfaceRestricted || privateCrosswindRestricted;
+            const instCommRestricted =
+                instCommCeilingRestricted || instCommVisibilityRestricted || instCommSurfaceRestricted || instCommCrosswindRestricted;
+
+            const studentFactors = [];
+            if (studentCeilingRestricted) studentFactors.push('ceiling below 1,500 ft AGL');
+            if (studentVisibilityRestricted) studentFactors.push('visibility below 3 SM');
+            if (studentSurfaceRestricted) studentFactors.push('surface winds above 15 kt');
+            if (studentCrosswindRestricted) studentFactors.push('crosswind above 10 kt');
+
+            const privateFactors = [];
+            if (privateCeilingRestricted) privateFactors.push('ceiling below 1,500 ft AGL');
+            if (privateVisibilityRestricted) privateFactors.push('visibility below 3 SM');
+            if (privateSurfaceRestricted) privateFactors.push('surface winds above 25 kt');
+            if (privateCrosswindRestricted) privateFactors.push('crosswind above 15 kt');
+
+            const instCommFactors = [];
+            if (instCommCeilingRestricted) instCommFactors.push('ceiling below 1,500 ft AGL');
+            if (instCommVisibilityRestricted) instCommFactors.push('visibility below 3 SM');
+            if (instCommSurfaceRestricted) instCommFactors.push('surface winds above 30 kt');
+            if (instCommCrosswindRestricted) instCommFactors.push('crosswind above 20 kt');
             
             // Student Pilot Restrictions (Ceiling unified to 1,500 ft AGL)
-            setStatus('studentCeilingStatus', isCeilingRestricted(data.cloudCeiling), 'RESTRICTED: Ceiling too low');
-            setStatus('studentVisibilityStatus', isVisibilityRestricted(visibilitySM), 'RESTRICTED: Visibility too low');
-            setStatus('studentSurfaceWindStatus', effectiveWindSpeed !== null && effectiveWindSpeed > 15, 'RESTRICTED: Surface winds too high');
-            setStatus('studentCrosswindStatus', 
-                (crosswind12 !== null && crosswind12 > 10) || (crosswind30 !== null && crosswind30 > 10), 
-                'RESTRICTED: Crosswind too high');
+            setStatus('studentCeilingStatus', studentCeilingRestricted, 'RESTRICTED: Ceiling too low');
+            setStatus('studentVisibilityStatus', studentVisibilityRestricted, 'RESTRICTED: Visibility too low');
+            setStatus('studentSurfaceWindStatus', studentSurfaceRestricted, 'RESTRICTED: Surface winds too high');
+            setStatus('studentCrosswindStatus', studentCrosswindRestricted, 'RESTRICTED: Crosswind too high');
             
             // Private Pilot Restrictions (Ceiling unified to 1,500 ft AGL)
-            setStatus('privateCeilingStatus', isCeilingRestricted(data.cloudCeiling), 'RESTRICTED: Ceiling too low');
-            setStatus('privateVisibilityStatus', isVisibilityRestricted(visibilitySM), 'RESTRICTED: Visibility too low');
-            setStatus('privateSurfaceWindStatus', effectiveWindSpeed !== null && effectiveWindSpeed > 20, 'RESTRICTED: Surface winds too high');
-            setStatus('privateCrosswindStatus', 
-                (crosswind12 !== null && crosswind12 > 15) || (crosswind30 !== null && crosswind30 > 15), 
-                'RESTRICTED: Crosswind too high');
+            setStatus('privateCeilingStatus', privateCeilingRestricted, 'RESTRICTED: Ceiling too low');
+            setStatus('privateVisibilityStatus', privateVisibilityRestricted, 'RESTRICTED: Visibility too low');
+            setStatus('privateSurfaceWindStatus', privateSurfaceRestricted, 'RESTRICTED: Surface winds too high');
+            setStatus('privateCrosswindStatus', privateCrosswindRestricted, 'RESTRICTED: Crosswind too high');
             
             // Instrument/Commercial Pilot Restrictions
-            setStatus('instCommVisibilityStatus', isVisibilityRestricted(visibilitySM), 'RESTRICTED: Visibility too low');
-            setStatus('instCommCeilingStatus', isCeilingRestricted(data.cloudCeiling), 'RESTRICTED: Ceiling too low');
-            setStatus('instCommSurfaceWindStatus', effectiveWindSpeed !== null && effectiveWindSpeed > 25, 'RESTRICTED: Surface winds too high');
-            setStatus('instCommCrosswindStatus', 
-                (crosswind12 !== null && crosswind12 > 20) || (crosswind30 !== null && crosswind30 > 20), 
-                'RESTRICTED: Crosswind too high');            // Heat Index / Temperature Restrictions
+            setStatus('instCommVisibilityStatus', instCommVisibilityRestricted, 'RESTRICTED: Visibility too low');
+            setStatus('instCommCeilingStatus', instCommCeilingRestricted, 'RESTRICTED: Ceiling too low');
+            setStatus('instCommSurfaceWindStatus', instCommSurfaceRestricted, 'RESTRICTED: Surface winds too high');
+            setStatus('instCommCrosswindStatus', instCommCrosswindRestricted, 'RESTRICTED: Crosswind too high');
+
+            // A/B/C/D category precedence: D > C > B > A, with F for no-fly announcements
+            lastFlightCategoryState = {
+                studentRestricted,
+                privateRestricted,
+                instCommRestricted,
+                studentFactors,
+                privateFactors,
+                instCommFactors
+            };
+            const noFlights = document.getElementById('airportClosedOverlay')?.classList.contains('active') ?? false;
+            updateFlightCategory({
+                ...lastFlightCategoryState,
+                noFlights
+            });
+
+            // Heat Index / Temperature Restrictions
             if (data.temperatureC !== undefined && data.temperatureC !== null) {
                 const tempF = data.temperatureC * 9 / 5 + 32;
 
@@ -979,6 +1208,47 @@
                 setStatus('temp14Status', tempF <= 14, 'No solos or cross-countries');
                 setStatus('temp5Status', tempF <= 5, 'All Flights Restricted');
             }
+        }
+
+        function updateFlightCategory({
+            studentRestricted,
+            privateRestricted,
+            instCommRestricted,
+            studentFactors = [],
+            privateFactors = [],
+            instCommFactors = [],
+            noFlights = false
+        }) {
+            const card = document.getElementById('flightCategoryCard');
+            const letter = document.getElementById('flightCategoryLetter');
+            const details = document.getElementById('flightCategoryDetails');
+            if (!card || !letter || !details) return;
+
+            let category = 'A';
+            let categoryClass = 'cat-a';
+            let categoryDetails = 'No solo restrictions in effect.';
+
+            if (noFlights) {
+                category = 'F';
+                categoryClass = 'cat-f';
+                categoryDetails = 'No flights. See airport announcements for details.';
+            } else if (instCommRestricted) {
+                category = 'D';
+                categoryClass = 'cat-d';
+                categoryDetails = `Instrument/Commercial solo restricted: ${instCommFactors.join(', ')}`;
+            } else if (privateRestricted) {
+                category = 'C';
+                categoryClass = 'cat-c';
+                categoryDetails = `Private pilot solo restricted: ${privateFactors.join(', ')}`;
+            } else if (studentRestricted) {
+                category = 'B';
+                categoryClass = 'cat-b';
+                categoryDetails = `Student pilot solo restricted: ${studentFactors.join(', ')}`;
+            }
+
+            card.className = `flight-status-card ${categoryClass}`;
+            letter.textContent = category;
+            details.textContent = categoryDetails;
         }
 
         function setStatus(elementId, conditionMet, restrictionText) {
@@ -1057,6 +1327,11 @@
                     overlay.classList.remove('active');
                 }
             }
+
+            updateFlightCategory({
+                ...lastFlightCategoryState,
+                noFlights: hasNoFlying
+            });
 
             container.innerHTML = announcements.map(announcement => {
                 const date = new Date(announcement.date);
