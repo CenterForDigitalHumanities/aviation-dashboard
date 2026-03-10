@@ -77,18 +77,17 @@ jobs:
         run: |
           git config user.name "GitHub Actions Bot"
           git config user.email "actions@github.com"
-          
-          # Create or switch to weather-data branch
-          git fetch origin weather-data 2>/dev/null || git checkout -b weather-data
-          git checkout weather-data 2>/dev/null || git checkout -b weather-data
-          
-          # Copy the fetched data to weather-data branch
+
+          # Stash the newly fetched data before switching branches
+          cp data/weather-data.json /tmp/weather-data-new.json
+
+          # Reset local branch to match remote exactly, avoiding non-fast-forward rejections
+          git fetch origin weather-data
+          git checkout -B weather-data origin/weather-data
+
+          # Apply new data and commit
           mkdir -p data
-          cp /path/to/fetched/data/weather-data.json data/weather-data.json 2>/dev/null || true
-          
-          # The fetch script should have created data/weather-data.json already
-          if [ -f data/weather-data.json ]; then
-            git add data/weather-data.json
-            git commit -m "🌤️ Update weather data - $(date -u +%Y-%m-%dT%H:%M:%SZ)" || echo "Nothing to commit"
-            git push origin weather-data
-          fi
+          cp /tmp/weather-data-new.json data/weather-data.json
+          git add data/weather-data.json
+          git commit -m "🌤️ Update weather data - $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          git push origin weather-data
