@@ -5,7 +5,7 @@
  */
 
 // Constants
-const WEATHER_DATA_URL = "data/weather-data.json";
+const WEATHER_DATA_URL = "https://raw.githubusercontent.com/CenterForDigitalHumanities/aviation-dashboard/weather-data/data/weather-data.json";
 const METAR_MAX_AGE_MS = 60 * 60 * 1000; // 1 hour in milliseconds
 
 /**

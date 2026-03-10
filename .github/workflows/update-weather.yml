@@ -21,11 +21,19 @@ jobs:
       contents: write  # Required to commit and push changes
       actions: write   # Required to trigger Jekyll deployment workflow
     
+    outputs:
+      data-changed: ${{ steps.check-changes.outputs.data-changed }}
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref }}
+          ref: main
+          fetch-depth: 1
+          
+      - name: Checkout weather-data branch
+        run: |
+          git fetch origin weather-data --depth=1 2>/dev/null || echo "weather-data branch does not exist yet"
           
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -43,22 +51,54 @@ jobs:
             echo "weather-data.json exists in data directory"
           else
             echo "data/weather-data.json not found. The fetch script should write here."
-            # Exit gracefully to avoid failing the workflow when upstream data is missing
             exit 0
           fi
           
-      - name: Commit and push if changed
+      - name: Check if data changed
+        id: check-changes
+        run: |
+          # Get checksum of current fetched data
+          NEW_CHECKSUM=$(sha256sum data/weather-data.json | cut -d' ' -f1)
+          echo "New checksum: $NEW_CHECKSUM"
+          
+          # Try to get previous checksum from weather-data branch
+          git show origin/weather-data:data/weather-data.json > /tmp/old-weather.json 2>/dev/null && \
+          OLD_CHECKSUM=$(sha256sum /tmp/old-weather.json | cut -d' ' -f1) || \
+          OLD_CHECKSUM="none"
+          
+          echo "Old checksum: $OLD_CHECKSUM"
+          
+          if [ "$NEW_CHECKSUM" = "$OLD_CHECKSUM" ]; then
+            echo "data-changed=false" >> $GITHUB_OUTPUT
+            echo "Data unchanged, skipping commit"
+          else
+            echo "data-changed=true" >> $GITHUB_OUTPUT
+            echo "Data changed, will commit to weather-data branch"
+          fi
+          
+      - name: Commit and push to weather-data branch
+        if: steps.check-changes.outputs.data-changed == 'true'
         run: |
           git config user.name "GitHub Actions Bot"
           git config user.email "actions@github.com"
+          
+          # Create or switch to weather-data branch
+          git fetch origin weather-data 2>/dev/null || git checkout -b weather-data
+          git checkout weather-data 2>/dev/null || git checkout -b weather-data
+          
+          # Copy the fetched data to weather-data branch
+          mkdir -p data
+          cp /path/to/fetched/data/weather-data.json data/weather-data.json 2>/dev/null || true
+          
+          # The fetch script should have created data/weather-data.json already
           if [ -f data/weather-data.json ]; then
             git add data/weather-data.json
+            git commit -m "🌤️ Update weather data - $(date -u +%Y-%m-%dT%H:%M:%SZ)" || echo "Nothing to commit"
+            git push origin weather-data
           fi
-          # Only commit if there are changes
-          git diff --quiet && git diff --staged --quiet || (git commit -m "🌤️ Update weather data - $(date -u +%Y-%m-%dT%H:%M:%SZ)" && git push)
       
       - name: Trigger Jekyll deployment
-        if: success()
+        if: steps.check-changes.outputs.data-changed == 'true'
         uses: actions/github-script@v7
         with:
           script: |
@@ -68,4 +108,4 @@ jobs:
               workflow_id: 'jekyll-gh-pages.yml',
               ref: 'main'
             });
-            console.log('Triggered Jekyll deployment workflow');
+            console.log('Triggered Jekyll deployment workflow (data changed)');
