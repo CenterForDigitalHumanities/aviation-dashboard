@@ -393,6 +393,14 @@
         const KCPS_RUNWAY_12_HDG = 122
         const KCPS_RUNWAY_30_HDG = 302
 
+    // ── Web Push configuration ────────────────────────────────────────
+    // Fill these in after completing PUSH_SETUP.md.
+    // VAPID_PUBLIC_KEY and Supabase values are safe to commit (they are
+    // public-facing); only the private key / service-role key are secrets.
+    const VAPID_PUBLIC_KEY  = 'BP7byIVBRDdsIzQ1umYq0fQ4p_XHblGM4J4ldOtp-G96XYInMQE0BtvloGzJKUVFFmkDVl6eCbnslDHB7mB4-68'
+    const SUPABASE_URL      = 'https://hmcymrqnlsamrhrqmanz.supabase.co'
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtY3ltcnFubHNhbXJocnFtYW56Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxNzcyODIsImV4cCI6MjA4ODc1MzI4Mn0.jzZ9CQ6ZwrpbCm7Qa6cfZpYm5wWni5_LTnAFWfiK_jw'
+
         // ── Shared state ─────────────────────────────────────────────────
         let swReg            = null
         let noFlyingActive   = false
@@ -412,30 +420,97 @@
         }
 
         // ── Notification helpers ──────────────────────────────────────────
-        function updateNotifyBtn() {
+        // Converts the URL-safe base64 VAPID public key to the Uint8Array
+        // format required by pushManager.subscribe()
+        function urlBase64ToUint8Array(base64String) {
+            const padding = '='.repeat((4 - base64String.length % 4) % 4)
+            const base64  = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/')
+            const rawData = atob(base64)
+            return Uint8Array.from([...rawData].map(c => c.charCodeAt(0)))
+        }
+
+        async function updateNotifyBtn() {
             const btn = document.getElementById('notifyBtn')
             if (!('Notification' in window)) { btn.style.display = 'none'; return }
-            if (Notification.permission === 'granted') {
-                btn.textContent = '🔔 On'
-                btn.className = 'notify-btn on'
-            } else if (Notification.permission === 'denied') {
+            if (Notification.permission === 'denied') {
                 btn.textContent = '🔕 Off'
                 btn.className = 'notify-btn off'
-            } else {
-                btn.textContent = '🔔 Notify'
-                btn.className = 'notify-btn'
+                return
             }
+            // When Web Push is configured, reflect actual push subscription state
+            if (VAPID_PUBLIC_KEY && 'PushManager' in window) {
+                const reg = swReg ?? await navigator.serviceWorker.getRegistration?.()
+                const sub = await reg?.pushManager?.getSubscription?.()
+                btn.textContent = sub ? '🔔 On' : '🔔 Notify'
+                btn.className   = sub ? 'notify-btn on' : 'notify-btn'
+                return
+            }
+            // Fallback: reflect OS notification permission only
+            btn.textContent = Notification.permission === 'granted' ? '🔔 On' : '🔔 Notify'
+            btn.className   = Notification.permission === 'granted' ? 'notify-btn on' : 'notify-btn'
         }
 
         async function handleNotifyBtn() {
             if (!('Notification' in window)) return
             if (Notification.permission === 'denied') return
+
+            // ── Web Push path (VAPID configured + browser supports PushManager) ──
+            if (VAPID_PUBLIC_KEY && 'PushManager' in window) {
+                const reg      = swReg ?? await navigator.serviceWorker.ready
+                const existing = await reg.pushManager.getSubscription()
+
+                if (existing) {
+                    // Tap again = unsubscribe
+                    await existing.unsubscribe()
+                    if (SUPABASE_URL) {
+                        fetch(
+                            `${SUPABASE_URL}/rest/v1/push_subscriptions?endpoint=eq.${encodeURIComponent(existing.endpoint)}`,
+                            { method: 'DELETE', headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } },
+                        ).catch(() => {})
+                    }
+                    updateNotifyBtn()
+                    return
+                }
+
+                if (Notification.permission !== 'granted') {
+                    const result = await Notification.requestPermission()
+                    updateNotifyBtn()
+                    if (result !== 'granted') return
+                }
+
+                try {
+                    const sub = await reg.pushManager.subscribe({
+                        userVisibleOnly: true,
+                        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
+                    })
+                    if (SUPABASE_URL) {
+                        const { endpoint, keys } = sub.toJSON()
+                        fetch(`${SUPABASE_URL}/rest/v1/push_subscriptions`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                apikey: SUPABASE_ANON_KEY,
+                                Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+                                Prefer: 'resolution=ignore-duplicates',
+                            },
+                            body: JSON.stringify({ endpoint, p256dh: keys.p256dh, auth: keys.auth }),
+                        }).catch(() => {})
+                    }
+                    updateNotifyBtn()
+                    sendNotification(lastCategory, lastDetails, lastStation)
+                } catch (err) {
+                    console.warn('Push subscription failed:', err)
+                    updateNotifyBtn()
+                }
+                return
+            }
+
+            // ── Local notification fallback (Web Push not configured) ─────────
             if (Notification.permission !== 'granted') {
                 const result = await Notification.requestPermission()
                 updateNotifyBtn()
                 if (result !== 'granted') return
             }
-            // Push current status immediately after granting (or as a test tap)
             sendNotification(lastCategory, lastDetails, lastStation)
         }
 

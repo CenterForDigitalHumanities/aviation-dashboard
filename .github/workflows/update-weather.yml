@@ -72,6 +72,20 @@ jobs:
             echo "Data changed, will commit to weather-data branch"
           fi
           
+      - name: Install Web Push dependencies
+        if: steps.check-changes.outputs.data-changed == 'true'
+        run: npm install --no-save web-push
+
+      - name: Send Web Push notifications
+        if: steps.check-changes.outputs.data-changed == 'true'
+        run: node scripts/send-push.mjs
+        env:
+          VAPID_PUBLIC_KEY:          ${{ secrets.VAPID_PUBLIC_KEY }}
+          VAPID_PRIVATE_KEY:         ${{ secrets.VAPID_PRIVATE_KEY }}
+          VAPID_SUBJECT:             ${{ secrets.VAPID_SUBJECT }}
+          SUPABASE_URL:              ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
       - name: Commit and push to weather-data branch
         if: steps.check-changes.outputs.data-changed == 'true'
         run: |
