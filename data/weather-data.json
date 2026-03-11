@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-03-11T22:04:04.036917+00:00",
+  "lastUpdated": "2026-03-11T22:22:25.312173+00:00",
   "kcps": {
     "metar": "KCPS 112153Z 32016G29KT 10SM OVC022 07/03 A3005 RMK AO2 PK WND 33029/2113 SLP176 T00720033 $",
     "windDirection": 320,
@@ -14,16 +14,16 @@
     "station": "KCPS"
   },
   "kstl": {
-    "metar": "KSTL 112151Z 32020G29KT 10SM BKN022 OVC036 06/02 A3006 RMK AO2 PK WND 32031/2135 SLP178 T00610022 $",
-    "windDirection": 320,
-    "windSpeed": 20,
+    "metar": "KSTL 112211Z 31017G29KT 10SM SCT024 BKN030 BKN080 OVC250 06/02 A3009 RMK AO2 PK WND 32030/2200 PRESRR T00610022 $",
+    "windDirection": 310,
+    "windSpeed": 17,
     "windGust": 29,
     "visibility": 10,
     "temperatureC": 6,
     "dewPointC": 2,
-    "cloudCeiling": 2200,
-    "altimeter": "A3006",
-    "timestamp": "2026-03-11T21:51:00+00:00",
+    "cloudCeiling": 3000,
+    "altimeter": "A3009",
+    "timestamp": "2026-03-11T22:11:00+00:00",
     "station": "KSTL"
   }
 }
