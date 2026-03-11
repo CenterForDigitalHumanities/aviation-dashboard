@@ -228,7 +228,8 @@ const ceilingAGL = cloudHeightMSL - 605;
 Runway information is used in:
 - `shared-weather.js` - `calculateCrosswind()` function
 - `dashboard.html` - Crosswind calculations for runway 12/30
-- `dashboard5.html` - Crosswind calculations for runway 12/30
+- `quick.html` - Crosswind calculations for runway 12/30
+- `mobile.html` - Crosswind calculations for runway 12/30
 - `demo.html` - Crosswind examples and live calculations
 
 ### Constants

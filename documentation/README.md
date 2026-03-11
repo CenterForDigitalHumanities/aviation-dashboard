@@ -206,21 +206,18 @@ Quick navigation to all documentation files with overview of the concentric rest
 **Wind Restrictions**:
 - `documentation/wind-restrictions.md`
 - `dashboard.html` - checkRestrictions()
-- `dashboard5.html` - checkRestrictions()
 - `documentation/demo.html` - loadCurrentConditions()
 - `shared-weather.js` - calculateCrosswind()
 
 **Temperature Restrictions**:
 - `documentation/temperature-restrictions.md`
 - `dashboard.html` - heat index table
-- `dashboard5.html` - heat index table and flight status
 - `documentation/demo.html` - temperature scenarios
 - `shared-weather.js` - calculateHeatIndex(), calculateHumidity()
 
 **Visibility/Ceiling Restrictions**:
 - `documentation/visibility-ceiling-restrictions.md`
 - `dashboard.html` - checkRestrictions()
-- `dashboard5.html` - checkRestrictions()
 - `documentation/demo.html` - loadCurrentConditions()
 
 ---
@@ -277,6 +274,13 @@ Quick navigation to all documentation files with overview of the concentric rest
 - Temperature restrictions integrated
 - Comprehensive examples and scenarios
 
+### Version 1.1 (March 2026)
+- Corrected student pilot surface wind threshold to ≥ 20 kt (matching operational documentation)
+- Updated surface wind operators to >= (at or above) for all pilot levels
+- Fixed heat index calculation bug in restriction evaluation
+- Removed references to non-existent dashboard5.html
+- Updated documentation files list to reflect current codebase
+
 ---
 
 ## Contact Information
@@ -300,7 +304,8 @@ Restrictions should be reviewed periodically and updated based on:
 ### Project Files
 - `README.md` - Project overview
 - `dashboard.html` - Main operational dashboard
-- `dashboard5.html` - Simplified dashboard
+- `quick.html` - Large-format TV display dashboard
+- `mobile.html` - Mobile-optimized dashboard with push notifications
 - `documentation/demo.html` - Demonstration with scenarios
 - `shared-weather.js` - Calculation utilities
 - `.github/workflows/update-weather.yml` - Automated data updates
@@ -313,4 +318,4 @@ Restrictions should be reviewed periodically and updated based on:
 
 ---
 
-*This documentation was created on October 9, 2025, and should be updated whenever operational thresholds are modified.*
+*This documentation was created in October 2025 and should be updated whenever operational thresholds are modified.*

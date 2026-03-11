@@ -130,7 +130,6 @@ The system calculates crosswind for both runway directions and uses the maximum 
 Wind calculations are performed in:
 - `shared-weather.js` - `calculateCrosswind()` function
 - `dashboard.html` - `checkRestrictions()` function
-- `dashboard5.html` - `checkRestrictions()` function
 - `demo.html` - `loadCurrentConditions()` function
 
 ### Calculation Example

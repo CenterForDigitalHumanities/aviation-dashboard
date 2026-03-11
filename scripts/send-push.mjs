@@ -117,9 +117,9 @@ function calcCategory(d) {
     else if (hi >= 95 && tempCat === 'a') tempCat = 'c'
 
     let wxCat = 'a'
-    if (ew > 30 || maxCW > 20 || isCeilingRestricted(d.cloudCeiling) || isVisibilityRestricted(d.visibility)) wxCat = 'd'
-    else if (ew > 25 || maxCW > 15) wxCat = 'c'
-    else if (ew > 15 || maxCW > 10) wxCat = 'b'
+    if (ew >= 30 || maxCW > 20 || isCeilingRestricted(d.cloudCeiling) || isVisibilityRestricted(d.visibility)) wxCat = 'd'
+    else if (ew >= 25 || maxCW > 15) wxCat = 'c'
+    else if (ew >= 20 || maxCW > 10) wxCat = 'b'
 
     const order = ['a', 'b', 'c', 'd', 'f']
     return order[Math.max(order.indexOf(wxCat), order.indexOf(tempCat))]
