@@ -59,7 +59,7 @@ Interactive demonstration showing all 11 flight restriction scenarios with live 
 
 ## Version Information
 
-**Last Updated**: October 9, 2025  
+**Last Updated**: March 2026  
 **Dashboard Version**: 1.0  
 **Documentation Maintained By**: SLU Aviation Science Department
 
@@ -69,8 +69,7 @@ Interactive demonstration showing all 11 flight restriction scenarios with live 
 
 - `dashboard.html` - Main operational dashboard
 - `quick.html` - Large-format TV display dashboard with weather graphics
-- `dashboard5.html` - Simplified dashboard with flight status card
-- `quick.html` - Large-format TV display dashboard with weather graphics
+- `mobile.html` - Mobile-optimized dashboard with push notifications
 - `demo.html` - Demonstration page with scenario examples
 - `shared-weather.js` - Shared calculation utilities
 - `scripts/fetch-weather.py` - Weather data fetching script

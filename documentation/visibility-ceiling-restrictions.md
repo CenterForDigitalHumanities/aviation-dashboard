@@ -144,7 +144,8 @@ if (ceilingCloud) {
 
 Ceiling calculations are performed in:
 - `dashboard.html` - `checkRestrictions()` function
-- `dashboard5.html` - `checkRestrictions()` function
+- `quick.html` - `calculateFlightCategory()` function
+- `mobile.html` - `calcCategory()` function
 - `demo.html` - `loadCurrentConditions()` function
 
 ### Parsing Logic

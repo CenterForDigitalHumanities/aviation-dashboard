@@ -505,11 +505,11 @@ function calculateFlightCategory(data) {
     const ceilingRestricted = isCeilingRestricted(data.cloudCeiling);
     const visRestricted = isVisibilityRestricted(data.visibility);
 
-    const studentSurfaceRestricted = effectiveWind !== null && effectiveWind > 15;
+    const studentSurfaceRestricted = effectiveWind !== null && effectiveWind >= 20;
     const studentCrossRestricted = (cw12 !== null && cw12 > 10) || (cw30 !== null && cw30 > 10);
-    const privateSurfaceRestricted = effectiveWind !== null && effectiveWind > 25;
+    const privateSurfaceRestricted = effectiveWind !== null && effectiveWind >= 25;
     const privateCrossRestricted = (cw12 !== null && cw12 > 15) || (cw30 !== null && cw30 > 15);
-    const instCommSurfaceRestricted = effectiveWind !== null && effectiveWind > 30;
+    const instCommSurfaceRestricted = effectiveWind !== null && effectiveWind >= 30;
     const instCommCrossRestricted = (cw12 !== null && cw12 > 20) || (cw30 !== null && cw30 > 20);
 
     let tempStudentRestricted = false, tempPrivateRestricted = false, tempInstCommRestricted = false;
@@ -542,21 +542,21 @@ function calculateFlightCategory(data) {
 
     if (instCommRestricted) {
         const factors = [...sharedFactors];
-        if (instCommSurfaceRestricted) factors.push('surface winds above 30 kt');
+        if (instCommSurfaceRestricted) factors.push('surface winds at or above 30 kt');
         if (instCommCrossRestricted) factors.push('crosswind above 20 kt');
         if (tempInstCommRestricted) factors.push('temperature/heat index');
         return { category: 'D', categoryClass: 'cat-d', details: `Instrument/Commercial solo restricted: ${factors.join(', ')}` };
     }
     if (privateRestricted) {
         const factors = [...sharedFactors];
-        if (privateSurfaceRestricted) factors.push('surface winds above 25 kt');
+        if (privateSurfaceRestricted) factors.push('surface winds at or above 25 kt');
         if (privateCrossRestricted) factors.push('crosswind above 15 kt');
         if (tempPrivateRestricted) factors.push('temperature/heat index');
         return { category: 'C', categoryClass: 'cat-c', details: `Private pilot solo restricted: ${factors.join(', ')}` };
     }
     if (studentRestricted) {
         const factors = [...sharedFactors];
-        if (studentSurfaceRestricted) factors.push('surface winds above 15 kt');
+        if (studentSurfaceRestricted) factors.push('surface winds at or above 20 kt');
         if (studentCrossRestricted) factors.push('crosswind above 10 kt');
         if (tempStudentRestricted) factors.push('temperature/heat index');
         return { category: 'B', categoryClass: 'cat-b', details: `Student pilot solo restricted: ${factors.join(', ')}` };
@@ -901,7 +901,6 @@ function showDefaultAnnouncement() {
     const container = document.getElementById('announcements-content');
     container.innerHTML = `
         <div class="announcement-item">
-            <div class="announcement-date">October 9, 2025</div>
             <div class="announcement-title">Welcome to the Aviation Dashboard</div>
             <div class="announcement-content">This dashboard provides real-time weather conditions and flight
                 restrictions for SLU Aviation operations. Please check this section regularly for important updates.

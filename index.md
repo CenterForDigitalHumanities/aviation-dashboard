@@ -80,7 +80,7 @@ Data is automatically updated every **15 minutes** via GitHub Actions.
       <td style="border:1px solid #ccc; padding:8px; background:#548235; color:#fff; font-weight:900; font-size:1.3em;">A</td>
       <td style="border:1px solid #ccc; padding:8px;">At least 1,500 ft</td>
       <td style="border:1px solid #ccc; padding:8px;">At least 3 SM</td>
-      <td style="border:1px solid #ccc; padding:8px;">&lt; 10 &amp;&amp; &lt; 20</td>
+      <td style="border:1px solid #ccc; padding:8px;">&le; 10 &amp;&amp; &lt; 20</td>
       <td style="border:1px solid #ccc; padding:8px;">No Restrictions</td>
       <td style="border:1px solid #ccc; padding:8px;">No Restrictions</td>
       <td style="border:1px solid #ccc; padding:8px;">No Restrictions</td>
@@ -89,7 +89,7 @@ Data is automatically updated every **15 minutes** via GitHub Actions.
       <td style="border:1px solid #ccc; padding:8px; background:#ffff00; color:#5a5a00; font-weight:900; font-size:1.3em;">B</td>
       <td style="border:1px solid #ccc; padding:8px;">At least 1,500 ft</td>
       <td style="border:1px solid #ccc; padding:8px;">At least 3 SM</td>
-      <td style="border:1px solid #ccc; padding:8px;">10–15 or 20–25</td>
+      <td style="border:1px solid #ccc; padding:8px;">11–15 or 20–24</td>
       <td style="border:1px solid #ccc; padding:8px; background:#fff3cd;">No Solo</td>
       <td style="border:1px solid #ccc; padding:8px;">No Restrictions</td>
       <td style="border:1px solid #ccc; padding:8px;">No Restrictions</td>
@@ -98,7 +98,7 @@ Data is automatically updated every **15 minutes** via GitHub Actions.
       <td style="border:1px solid #ccc; padding:8px; background:#ed7d31; color:#fff; font-weight:900; font-size:1.3em;">C</td>
       <td style="border:1px solid #ccc; padding:8px;">At least 1,500 ft</td>
       <td style="border:1px solid #ccc; padding:8px;">At least 3 SM</td>
-      <td style="border:1px solid #ccc; padding:8px;">16–20 or 26–30</td>
+      <td style="border:1px solid #ccc; padding:8px;">16–20 or 25–29</td>
       <td style="border:1px solid #ccc; padding:8px; background:#fff3cd;">No Solo</td>
       <td style="border:1px solid #ccc; padding:8px; background:#fff3cd;">No Solo</td>
       <td style="border:1px solid #ccc; padding:8px;">No Restrictions</td>
@@ -107,7 +107,7 @@ Data is automatically updated every **15 minutes** via GitHub Actions.
       <td style="border:1px solid #ccc; padding:8px; background:#ff0000; color:#fff; font-weight:900; font-size:1.3em;">D</td>
       <td style="border:1px solid #ccc; padding:8px;">Less than 1,500 ft</td>
       <td style="border:1px solid #ccc; padding:8px;">Less than 3 SM</td>
-      <td style="border:1px solid #ccc; padding:8px;">&gt; 20 or &gt; 30</td>
+      <td style="border:1px solid #ccc; padding:8px;">&gt; 20 or &ge; 30</td>
       <td style="border:1px solid #ccc; padding:8px; background:#fff3cd;">No Solo</td>
       <td style="border:1px solid #ccc; padding:8px; background:#fff3cd;">No Solo</td>
       <td style="border:1px solid #ccc; padding:8px; background:#fff3cd;">No Solo</td>
@@ -133,16 +133,12 @@ Data is automatically updated every **15 minutes** via GitHub Actions.
 - ✅ **Service announcements** section for operational updates
 - ✅ **Large-format TV display** option for monitor viewing
 - ✅ **Mobile-responsive** design for access anywhere
-- ✅ **Visual weather graphics** with icons and color-coded alerts
-- ✅ **Large-format TV display option** for monitor viewing
 
 ---
 
 ## 🔗 Quick Links
 
 - [View Main Dashboard](dashboard.html)
-- [View Quick View Dashboard](quick.html)
-- [View Simplified Dashboard](dashboard5.html)
 - [View Quick View Dashboard](quick.html)
 - [View Demo Scenarios](documentation/demo.html)
 - [Read Documentation](documentation/)
@@ -158,6 +154,6 @@ The system automatically evaluates wind speed, crosswind components, visibility,
 
 ---
 
-**Last Updated:** October 9, 2025  
+**Last Updated:** March 2026  
 **Questions?** Contact the SLU Aviation Science Department
 

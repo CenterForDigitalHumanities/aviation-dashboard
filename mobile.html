@@ -620,9 +620,9 @@
             else if (hi >= 95  && tempCat === 'a') tempCat = 'c'
 
             let wxCat = 'a'
-            if (ew > 30 || maxCW > 20 || isCeilingRestricted(d.cloudCeiling) || isVisibilityRestricted(d.visibility)) wxCat = 'd'
-            else if (ew > 25 || maxCW > 15) wxCat = 'c'
-            else if (ew > 15 || maxCW > 10) wxCat = 'b'
+            if (ew >= 30 || maxCW > 20 || isCeilingRestricted(d.cloudCeiling) || isVisibilityRestricted(d.visibility)) wxCat = 'd'
+            else if (ew >= 25 || maxCW > 15) wxCat = 'c'
+            else if (ew >= 20 || maxCW > 10) wxCat = 'b'
 
             const order = ['a', 'b', 'c', 'd', 'f']
             return order[Math.max(order.indexOf(wxCat), order.indexOf(tempCat))]
@@ -756,21 +756,21 @@
                     <div class="restriction-group-header">Student Pilot Solo</div>
                     ${row('Ceiling &lt; 1,500 ft AGL', ceil)}
                     ${row('Visibility &lt; 3 SM', vis)}
-                    ${row('Surface winds &gt; 15 kt', ew > 15)}
+                    ${row('Surface winds &ge; 20 kt', ew >= 20)}
                     ${row(`Crosswind &gt; 10 kt (${maxCW.toFixed(1)} kt max)`, maxCW > 10)}
                 </div>
                 <div class="restriction-group">
                     <div class="restriction-group-header">Private Pilot Solo</div>
                     ${row('Ceiling &lt; 1,500 ft AGL', ceil)}
                     ${row('Visibility &lt; 3 SM', vis)}
-                    ${row('Surface winds &gt; 25 kt', ew > 25)}
+                    ${row('Surface winds &ge; 25 kt', ew >= 25)}
                     ${row(`Crosswind &gt; 15 kt (${maxCW.toFixed(1)} kt max)`, maxCW > 15)}
                 </div>
                 <div class="restriction-group">
                     <div class="restriction-group-header">Instrument / Commercial Solo</div>
                     ${row('Ceiling &lt; 1,500 ft AGL', ceil)}
                     ${row('Visibility &lt; 3 SM', vis)}
-                    ${row('Surface winds &gt; 30 kt', ew > 30)}
+                    ${row('Surface winds &ge; 30 kt', ew >= 30)}
                     ${row(`Crosswind &gt; 20 kt (${maxCW.toFixed(1)} kt max)`, maxCW > 20)}
                 </div>
                 <div class="restriction-group">

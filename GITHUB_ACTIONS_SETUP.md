@@ -15,7 +15,8 @@ aviation-dashboard/
 ├── data/
 │   └── weather-data.json            # Updated every 15 minutes by Actions
 ├── dashboard.html                   # Main dashboard (reads from data/weather-data.json)
-└── dashboard5.html                  # Alternative dashboard
+├── quick.html                       # Large-format TV display dashboard
+└── mobile.html                      # Mobile-optimized dashboard
 ```
 
 ## How It Works

@@ -151,7 +151,7 @@ When multiple restricting factors are present, all are displayed in the flight s
 - Flight status is recalculated every time weather data is updated (every 5 minutes)
 - The most restrictive condition always takes precedence
 - Temperature restrictions are evaluated independently but can upgrade the overall status
-- All thresholds are applied consistently across both dashboards (dashboard.html and dashboard5.html)
+- All thresholds are applied consistently across all dashboards (dashboard.html, quick.html, and mobile.html)
 - The [demo page](demo.html) shows 11 scenarios demonstrating all restriction levels
 
 ---

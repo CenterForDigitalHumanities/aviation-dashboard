@@ -242,7 +242,8 @@ function toFahrenheit(celsius) {
 
 Temperature restriction checks are performed in:
 - `dashboard.html` - Heat index table display and restrictions
-- `dashboard5.html` - Heat index table and flight status card
+- `quick.html` - Flight category card with temperature restrictions
+- `mobile.html` - Mobile temperature display and restrictions
 - `demo.html` - Live conditions and scenario examples
 - `shared-weather.js` - Calculation utilities
 
