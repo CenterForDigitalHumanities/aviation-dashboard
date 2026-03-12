@@ -1,29 +1,29 @@
 {
-  "lastUpdated": "2026-03-12T01:14:59.275268+00:00",
+  "lastUpdated": "2026-03-12T01:59:30.533175+00:00",
   "kcps": {
-    "metar": "KCPS 120053Z 34014G26KT 10SM OVC028 06/01 A3020 RMK AO2 PK WND 34029/0042 SLP226 T00610011 $",
+    "metar": "KCPS 120153Z 34013G20KT 10SM OVC036 06/00 A3023 RMK AO2 PK WND 35029/0103 SLP236 T00610000 $",
     "windDirection": 340,
-    "windSpeed": 14,
-    "windGust": 26,
-    "visibility": 10,
-    "temperatureC": 6,
-    "dewPointC": 1,
-    "cloudCeiling": 2800,
-    "altimeter": "A3020",
-    "timestamp": "2026-03-12T00:53:00+00:00",
-    "station": "KCPS"
-  },
-  "kstl": {
-    "metar": "KSTL 120051Z 33014G23KT 10SM OVC029 06/00 A3020 RMK AO2 PK WND 34028/0027 SLP229 T00560000 $",
-    "windDirection": 330,
-    "windSpeed": 14,
-    "windGust": 23,
+    "windSpeed": 13,
+    "windGust": 20,
     "visibility": 10,
     "temperatureC": 6,
     "dewPointC": 0,
-    "cloudCeiling": 2900,
-    "altimeter": "A3020",
-    "timestamp": "2026-03-12T00:51:00+00:00",
+    "cloudCeiling": 3600,
+    "altimeter": "A3023",
+    "timestamp": "2026-03-12T01:53:00+00:00",
+    "station": "KCPS"
+  },
+  "kstl": {
+    "metar": "KSTL 120151Z 32016G29KT 10SM FEW027 OVC036 06/01 A3022 RMK AO2 PK WND 33029/0148 SLP234 T00560006 $",
+    "windDirection": 320,
+    "windSpeed": 16,
+    "windGust": 29,
+    "visibility": 10,
+    "temperatureC": 6,
+    "dewPointC": 1,
+    "cloudCeiling": 3600,
+    "altimeter": "A3022",
+    "timestamp": "2026-03-12T01:51:00+00:00",
     "station": "KSTL"
   }
 }
