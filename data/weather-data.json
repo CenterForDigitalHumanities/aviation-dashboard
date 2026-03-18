@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-03-18T00:14:03.163375+00:00",
+  "lastUpdated": "2026-03-18T00:53:55.128555+00:00",
   "kcps": {
     "metar": "KCPS 172353Z 16008KT 10SM OVC080 01/M13 A3018 RMK AO2 SLP225 T00111133 10011 21028 56017 $",
     "windDirection": 160,
@@ -14,16 +14,8 @@
     "station": "KCPS"
   },
   "kstl": {
-    "metar": "KSTL 172351Z 20008KT 10SM OVC080 01/M16 A3017 RMK AO2 SLP231 T00111161 10011 21033 56017 $",
-    "windDirection": 200,
-    "windSpeed": 8,
-    "windGust": null,
-    "visibility": 10,
-    "temperatureC": 1,
-    "dewPointC": -16,
-    "cloudCeiling": 8000,
-    "altimeter": "A3017",
-    "timestamp": "2026-03-17T23:51:00+00:00",
-    "station": "KSTL"
+    "station": "KSTL",
+    "metar": null,
+    "error": "Failed to fetch METAR"
   }
 }
