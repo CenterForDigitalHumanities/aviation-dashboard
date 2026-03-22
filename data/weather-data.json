@@ -1,29 +1,29 @@
 {
-  "lastUpdated": "2026-03-22T21:50:41.841188+00:00",
+  "lastUpdated": "2026-03-22T22:03:26.707926+00:00",
   "kcps": {
-    "metar": "KCPS 222053Z 35022G27KT 10SM CLR 32/14 A2960 RMK AO2 PK WND 36027/2050 SLP018 T03220139 55009 $",
+    "metar": "KCPS 222153Z 35027G38KT 10SM CLR 26/11 A2967 RMK AO2 PK WND 36040/2135 PRESRR SLP044 T02610111 $",
     "windDirection": 350,
-    "windSpeed": 22,
-    "windGust": 27,
-    "visibility": 10,
-    "temperatureC": 32,
-    "dewPointC": 14,
-    "cloudCeiling": 99999,
-    "altimeter": "A2960",
-    "timestamp": "2026-03-22T20:53:00+00:00",
-    "station": "KCPS"
-  },
-  "kstl": {
-    "metar": "KSTL 222121Z 36024G32KT 10SM FEW050 OVC250 26/11 A2967 RMK AO2 PK WND 33034/2103 WSHFT 2101 PRESRR FROPA T02610111 $",
-    "windDirection": 360,
-    "windSpeed": 24,
-    "windGust": 32,
+    "windSpeed": 27,
+    "windGust": 38,
     "visibility": 10,
     "temperatureC": 26,
     "dewPointC": 11,
-    "cloudCeiling": 25000,
+    "cloudCeiling": 99999,
     "altimeter": "A2967",
-    "timestamp": "2026-03-22T21:21:00+00:00",
+    "timestamp": "2026-03-22T21:53:00+00:00",
+    "station": "KCPS"
+  },
+  "kstl": {
+    "metar": "KSTL 222151Z 35023G39KT 10SM FEW050 OVC210 23/10 A2971 RMK AO2 PK WND 36039/2146 WSHFT 2101 PRESRR SLP052 FROPA T02280100 $",
+    "windDirection": 350,
+    "windSpeed": 23,
+    "windGust": 39,
+    "visibility": 10,
+    "temperatureC": 23,
+    "dewPointC": 10,
+    "cloudCeiling": 21000,
+    "altimeter": "A2971",
+    "timestamp": "2026-03-22T21:51:00+00:00",
     "station": "KSTL"
   }
 }
