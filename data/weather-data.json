@@ -1,29 +1,29 @@
 {
-  "lastUpdated": "2026-03-27T04:38:34.264549+00:00",
+  "lastUpdated": "2026-03-27T05:22:04.967446+00:00",
   "kcps": {
-    "metar": "KCPS 270407Z AUTO 02016G33KT 10SM BKN020 14/09 A2991 RMK AO2 PK WND 02033/0401 T01390094 $",
+    "metar": "KCPS 270453Z AUTO 02026G44KT 10SM OVC021 13/09 A2996 RMK AO2 PK WND 02044/0451 PRESRR SLP144 T01330089 $",
     "windDirection": 20,
-    "windSpeed": 16,
-    "windGust": 33,
-    "visibility": 10,
-    "temperatureC": 14,
-    "dewPointC": 9,
-    "cloudCeiling": 2000,
-    "altimeter": "A2991",
-    "timestamp": "2026-03-27T04:07:00+00:00",
-    "station": "KCPS"
-  },
-  "kstl": {
-    "metar": "KSTL 270431Z 01012G26KT 10SM OVC019 13/09 A2996 RMK AO2 PK WND 03028/0411 T01330089 $",
-    "windDirection": 10,
-    "windSpeed": 12,
-    "windGust": 26,
+    "windSpeed": 26,
+    "windGust": 44,
     "visibility": 10,
     "temperatureC": 13,
     "dewPointC": 9,
-    "cloudCeiling": 1900,
+    "cloudCeiling": 2100,
     "altimeter": "A2996",
-    "timestamp": "2026-03-27T04:31:00+00:00",
+    "timestamp": "2026-03-27T04:53:00+00:00",
+    "station": "KCPS"
+  },
+  "kstl": {
+    "metar": "KSTL 270451Z 02016G27KT 10SM OVC019 13/08 A2999 RMK AO2 PK WND 03028/0411 PRESRR SLP146 T01330083 $",
+    "windDirection": 20,
+    "windSpeed": 16,
+    "windGust": 27,
+    "visibility": 10,
+    "temperatureC": 13,
+    "dewPointC": 8,
+    "cloudCeiling": 1900,
+    "altimeter": "A2999",
+    "timestamp": "2026-03-27T04:51:00+00:00",
     "station": "KSTL"
   }
 }
