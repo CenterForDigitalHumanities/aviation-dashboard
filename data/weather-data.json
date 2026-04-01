@@ -1,29 +1,29 @@
 {
-  "lastUpdated": "2026-04-01T11:32:24.264517+00:00",
+  "lastUpdated": "2026-04-01T11:59:51.157172+00:00",
   "kcps": {
-    "metar": "KCPS 011053Z AUTO 03012KT 9SM OVC005 13/12 A2999 RMK AO2 RAE15 SLP152 P0001 T01330122 $",
-    "windDirection": 30,
-    "windSpeed": 12,
-    "windGust": null,
-    "visibility": 9,
-    "temperatureC": 13,
-    "dewPointC": 12,
-    "cloudCeiling": 500,
-    "altimeter": "A2999",
-    "timestamp": "2026-04-01T10:53:00+00:00",
-    "station": "KCPS"
-  },
-  "kstl": {
-    "metar": "KSTL 011051Z 01009KT 10SM -RA OVC006 12/11 A3000 RMK AO2 RAB37 PRESRR SLP153 P0000 T01220111 $",
-    "windDirection": 10,
-    "windSpeed": 9,
+    "metar": "KCPS 011153Z 05010KT 10SM OVC006 12/11 A2997 RMK AO2 SLP147 60005 70005 T01170106 10228 20117 50019 $",
+    "windDirection": 50,
+    "windSpeed": 10,
     "windGust": null,
     "visibility": 10,
     "temperatureC": 12,
     "dewPointC": 11,
     "cloudCeiling": 600,
-    "altimeter": "A3000",
-    "timestamp": "2026-04-01T10:51:00+00:00",
+    "altimeter": "A2997",
+    "timestamp": "2026-04-01T11:53:00+00:00",
+    "station": "KCPS"
+  },
+  "kstl": {
+    "metar": "KSTL 011151Z 08015KT 10SM -RA OVC006 11/09 A2996 RMK AO2 RAE11B45 PRESFR SLP139 P0002 60029 70029 T01060094 10211 20106 50004 $",
+    "windDirection": 80,
+    "windSpeed": 15,
+    "windGust": null,
+    "visibility": 10,
+    "temperatureC": 11,
+    "dewPointC": 9,
+    "cloudCeiling": 600,
+    "altimeter": "A2996",
+    "timestamp": "2026-04-01T11:51:00+00:00",
     "station": "KSTL"
   }
 }
