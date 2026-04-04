@@ -1,17 +1,9 @@
 {
-  "lastUpdated": "2026-04-04T15:24:03.608135+00:00",
+  "lastUpdated": "2026-04-04T15:41:42.666227+00:00",
   "kcps": {
-    "metar": "KCPS 041500Z 30011G15KT 10SM FEW010 BKN023 OVC038 13/11 A2998 RMK AO2 T01330106 $",
-    "windDirection": 300,
-    "windSpeed": 11,
-    "windGust": 15,
-    "visibility": 10,
-    "temperatureC": 13,
-    "dewPointC": 11,
-    "cloudCeiling": 2300,
-    "altimeter": "A2998",
-    "timestamp": "2026-04-04T15:00:00+00:00",
-    "station": "KCPS"
+    "station": "KCPS",
+    "metar": null,
+    "error": "Failed to fetch METAR"
   },
   "kstl": {
     "metar": "KSTL 041451Z 31014G20KT 10SM SCT015 BKN029 OVC045 12/11 A2999 RMK AO2 RAE27 SLP150 P0001 60005 T01220106 53019 $",
