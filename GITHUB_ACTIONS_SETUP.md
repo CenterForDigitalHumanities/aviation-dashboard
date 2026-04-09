@@ -1,20 +1,20 @@
 # GitHub Actions Weather Updater Setup
 
 ## Overview
-This setup uses GitHub Actions to automatically fetch METAR weather data every 15 minutes and commit it to the repository.
+This setup uses GitHub Actions to automatically fetch METAR weather data every 15 minutes and commit it to the repository. The updated data is also pushed to a public GitHub Gist so the frontend can fetch it without CORS restrictions.
 
 ## File Structure
 ```
 aviation-dashboard/
 ├── .github/
 │   └── workflows/
-│       ├── update-weather.yml       # GitHub Actions workflow (updates weather + triggers deployment)
+│       ├── update-weather.yml       # GitHub Actions workflow (updates weather + Gist + triggers deployment)
 │       └── jekyll-gh-pages.yml      # Jekyll deployment workflow (triggered after weather update)
 ├── scripts/
 │   └── fetch-weather.py             # Weather fetcher script (Python)
 ├── data/
 │   └── weather-data.json            # Updated every 15 minutes by Actions
-├── dashboard.html                   # Main dashboard (reads from data/weather-data.json)
+├── dashboard.html                   # Main dashboard (reads from Gist raw URL)
 ├── quick.html                       # Large-format TV display dashboard
 └── mobile.html                      # Mobile-optimized dashboard
 ```
@@ -26,6 +26,7 @@ aviation-dashboard/
 - **Manual Trigger**: Can be manually triggered from the Actions tab
 - **Push Trigger**: Runs when workflow or fetch-weather.js is updated
 - **Jekyll Deployment**: Automatically triggers Jekyll deployment after updating weather data to ensure GitHub Pages serves the latest data
+- **Gist Update**: After committing to the `weather-data` branch, the workflow patches the public Gist with the latest data
 
 ### 2. Weather Fetcher Script (`scripts/fetch-weather.py`)
 - Fetches METAR data from NOAA for KCPS and KSTL
@@ -39,17 +40,33 @@ aviation-dashboard/
 - Contains parsed METAR data for both airports
 - Includes timestamp of last update
 
-### 4. Dashboard Integration
-- Dashboards read from `data/weather-data.json` first
+### 4. Gist Integration
+- The workflow updates the public Gist `cubap/8559048ba1cac126b5eb03e56309e73f` via the GitHub REST API (`PATCH /gists/{gist_id}`).
+- The Gist raw URL is served with permissive CORS headers, allowing the browser-based dashboard to fetch fresh data directly.
+- **Frontend fetch URL** (used in `shared-weather.js`):
+  ```
+  https://gist.githubusercontent.com/cubap/8559048ba1cac126b5eb03e56309e73f/raw/weather-data.json
+  ```
+- Authentication uses the `WEATHER_PAT` repository secret — a GitHub Personal Access Token with the **`gist`** scope.  
+  **The PAT is never logged or exposed in workflow output.**
+
+### 5. Dashboard Integration
+- Dashboards fetch weather data from the Gist raw URL (see above)
 - Falls back to direct API calls if needed
 - Displays current weather and flight restrictions
 
-### 5. GitHub Pages Deployment
+### 6. GitHub Pages Deployment
 - After weather data is updated and committed, the workflow automatically triggers the Jekyll deployment
 - This ensures GitHub Pages always serves the latest weather data
 - Uses GitHub API to trigger the `jekyll-gh-pages.yml` workflow via workflow_dispatch event
 
 ## Setup Steps
+
+### Configure the `WEATHER_PAT` Secret
+1. Create a GitHub Personal Access Token (PAT) with the **`gist`** scope at https://github.com/settings/tokens.
+2. In the repository, go to **Settings → Secrets and variables → Actions**.
+3. Add a new secret named `WEATHER_PAT` with the PAT value.
+4. The workflow will use this secret to authenticate Gist updates via the GitHub API.
 
 ### Initial Commit
 1. Commit all the new files to your repository:
@@ -121,6 +138,12 @@ Each workflow run shows:
 2. Verify NOAA URLs are still correct
 3. Check parsing logic in fetch-weather.py
 
+### Gist Not Updating
+1. Verify the `WEATHER_PAT` secret is set in repository Settings → Secrets and variables → Actions
+2. Confirm the PAT has the `gist` scope (not just `repo`)
+3. Check the "Update Gist with latest weather data" step logs in the Actions run
+4. Ensure the Gist ID in the workflow matches the target Gist
+
 ### Dashboard Not Updating
 1. Check that Jekyll deployment is being triggered after weather updates
 2. View Actions tab to see both "Update Weather Data" and "Deploy Jekyll" workflow runs
@@ -128,7 +151,7 @@ Each workflow run shows:
 4. Check browser console for errors
 5. Verify data/weather-data.json exists and has recent timestamp
 6. Verify workflow has `actions: write` permission to trigger Jekyll deployment
-7. Check dashboard.html is reading from correct path
+7. Check shared-weather.js is fetching from the Gist raw URL
 
 ## Customization
 
@@ -153,18 +176,20 @@ Edit the `output_data` dictionary in `scripts/fetch-weather.py` to include addit
 
 ## Benefits of This Approach
 
-✅ **No CORS Issues**: Server-side fetching bypasses browser restrictions  
+✅ **No CORS Issues**: Gist raw URLs are served with permissive CORS headers, unlike `raw.githubusercontent.com`  
 ✅ **Free**: GitHub Actions provides generous free tier  
 ✅ **Reliable**: GitHub's infrastructure handles scheduling  
-✅ **Transparent**: All updates visible in commit history  
+✅ **Transparent**: All updates visible in commit history and Gist revisions  
 ✅ **Simple**: Single repository, no external services  
 ✅ **Fast**: Dashboards load pre-fetched data instantly  
+✅ **Secure**: `WEATHER_PAT` is stored as a secret and never exposed in logs  
 
 ## Next Steps
 
 After pushing these changes:
-1. ✅ Enable GitHub Actions
-2. ✅ Run workflow manually for first update
-3. ✅ Verify dashboard displays correct data
-4. ✅ Monitor for 1 hour to ensure automatic updates work
-5. ✅ Merge gh-actions-timer branch into main when satisfied
+1. ✅ Add the `WEATHER_PAT` secret to the repository
+2. ✅ Enable GitHub Actions
+3. ✅ Run workflow manually for first update
+4. ✅ Verify dashboard displays correct data (fetching from Gist raw URL)
+5. ✅ Monitor for 1 hour to ensure automatic updates work
+6. ✅ Merge gh-actions-timer branch into main when satisfied
