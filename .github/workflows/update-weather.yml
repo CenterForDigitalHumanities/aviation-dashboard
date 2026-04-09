@@ -106,3 +106,53 @@ jobs:
           git add data/weather-data.json
           git commit -m "🌤️ Update weather data - $(date -u +%Y-%m-%dT%H:%M:%SZ)"
           git push origin weather-data
+
+      # Update the public Gist so the frontend can fetch weather data without CORS issues.
+      # The Gist raw URL (https://gist.githubusercontent.com/cubap/8559048ba1cac126b5eb03e56309e73f/raw/weather-data.json)
+      # serves files with permissive CORS headers, unlike raw.githubusercontent.com.
+      # WEATHER_PAT must be a GitHub Personal Access Token with the "gist" scope.
+      - name: Update Gist with latest weather data
+        if: steps.check-changes.outputs.data-changed == 'true'
+        env:
+          WEATHER_PAT: ${{ secrets.WEATHER_PAT }}
+        run: |
+          # Use Python to safely encode the JSON file for the PATCH API payload.
+          # This avoids shell-quoting issues and ensures valid JSON encoding.
+          python3 - <<'EOF'
+          import json, os, urllib.request, urllib.error
+
+          gist_id = "8559048ba1cac126b5eb03e56309e73f"
+          pat = os.environ["WEATHER_PAT"]
+
+          with open("data/weather-data.json", "r") as f:
+              content = f.read()
+
+          payload = json.dumps({
+              "files": {
+                  "weather-data.json": {
+                      "content": content
+                  }
+              }
+          }).encode("utf-8")
+
+          req = urllib.request.Request(
+              f"https://api.github.com/gists/{gist_id}",
+              data=payload,
+              method="PATCH",
+              headers={
+                  "Authorization": f"Bearer {pat}",
+                  "Accept": "application/vnd.github+json",
+                  "Content-Type": "application/json",
+                  "X-GitHub-Api-Version": "2022-11-28",
+                  "User-Agent": "aviation-dashboard-actions",
+              },
+          )
+
+          try:
+              with urllib.request.urlopen(req) as resp:
+                  print(f"Gist updated successfully (HTTP {resp.status})")
+          except urllib.error.HTTPError as e:
+              body = e.read().decode()
+              print(f"Failed to update Gist: HTTP {e.code} - {body}")
+              raise SystemExit(1)
+          EOF

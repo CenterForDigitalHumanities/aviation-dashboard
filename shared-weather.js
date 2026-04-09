@@ -5,7 +5,10 @@
  */
 
 // Constants
-const WEATHER_DATA_URL = "https://raw.githubusercontent.com/CenterForDigitalHumanities/aviation-dashboard/weather-data/data/weather-data.json";
+// Weather data is served from a public GitHub Gist, which provides permissive CORS headers.
+// The Gist is updated every 15 minutes by the GitHub Actions workflow (update-weather.yml).
+// See GITHUB_ACTIONS_SETUP.md for details on the WEATHER_PAT secret used for Gist updates.
+const WEATHER_DATA_URL = "https://gist.githubusercontent.com/cubap/8559048ba1cac126b5eb03e56309e73f/raw/weather-data.json";
 const METAR_MAX_AGE_MS = 60 * 60 * 1000; // 1 hour in milliseconds
 
 /**

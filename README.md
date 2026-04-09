@@ -4,6 +4,16 @@
 
 The SLU Aviation Dashboard is a web-based application designed to provide real-time data for aviation operations at Saint Louis University. The primary function of this dashboard is to align METAR reports with flight restrictions for different classes of pilots and aircraft. The visualization should be simple to interpret and provide actionable insights.
 
+## Weather Data
+
+Live weather data is fetched every 15 minutes by a GitHub Actions workflow and published to a public GitHub Gist. The frontend loads weather data directly from the Gist raw URL:
+
+```
+https://gist.githubusercontent.com/cubap/8559048ba1cac126b5eb03e56309e73f/raw/weather-data.json
+```
+
+This avoids CORS restrictions that apply to `raw.githubusercontent.com`. The Gist is updated using the `WEATHER_PAT` repository secret — a GitHub Personal Access Token with the **`gist`** scope. See [GITHUB_ACTIONS_SETUP.md](GITHUB_ACTIONS_SETUP.md) for full setup and maintenance instructions.
+
 ## Features
 
 1. **Pilot Profiles**
