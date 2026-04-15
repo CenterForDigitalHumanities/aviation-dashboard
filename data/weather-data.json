@@ -1,29 +1,29 @@
 {
-  "lastUpdated": "2026-04-15T15:51:23.881220+00:00",
+  "lastUpdated": "2026-04-15T16:19:35.156904+00:00",
   "kcps": {
-    "metar": "KCPS 151453Z 26009KT 10SM BKN045 24/15 A2992 RMK AO2 SLP127 T02390150 51034 $",
-    "windDirection": 260,
+    "metar": "KCPS 151553Z 22009G18KT 10SM -RA OVC110 22/16 A2994 RMK AO2 LTG DSNT S RAB29 SLP136 P0000 T02220161 $",
+    "windDirection": 220,
     "windSpeed": 9,
-    "windGust": null,
-    "visibility": 10,
-    "temperatureC": 24,
-    "dewPointC": 15,
-    "cloudCeiling": 4500,
-    "altimeter": "A2992",
-    "timestamp": "2026-04-15T14:53:00+00:00",
-    "station": "KCPS"
-  },
-  "kstl": {
-    "metar": "KSTL 151451Z 23015G20KT 10SM BKN038 OVC110 22/16 A2991 RMK AO2 SLP120 T02220156 50031",
-    "windDirection": 230,
-    "windSpeed": 15,
-    "windGust": 20,
+    "windGust": 18,
     "visibility": 10,
     "temperatureC": 22,
     "dewPointC": 16,
-    "cloudCeiling": 3800,
-    "altimeter": "A2991",
-    "timestamp": "2026-04-15T14:51:00+00:00",
+    "cloudCeiling": 11000,
+    "altimeter": "A2994",
+    "timestamp": "2026-04-15T15:53:00+00:00",
+    "station": "KCPS"
+  },
+  "kstl": {
+    "metar": "KSTL 151551Z 22012KT 10SM -RA FEW040 SCT080 BKN110 OVC250 21/16 A2993 RMK AO2 RAB49 SLP127 P0000 T02060156",
+    "windDirection": 220,
+    "windSpeed": 12,
+    "windGust": null,
+    "visibility": 10,
+    "temperatureC": 21,
+    "dewPointC": 16,
+    "cloudCeiling": 11000,
+    "altimeter": "A2993",
+    "timestamp": "2026-04-15T15:51:00+00:00",
     "station": "KSTL"
   }
 }
