@@ -1,21 +1,21 @@
 {
-  "lastUpdated": "2026-04-17T22:25:38.247029+00:00",
+  "lastUpdated": "2026-04-17T22:44:12.083750+00:00",
   "kcps": {
-    "station": "KCPS",
-    "metar": null,
-    "error": "Failed to fetch METAR"
+    "metar": "KCPS 172153Z 18012G27KT 10SM CLR 29/17 A2968 RMK AO2 PK WND 17028/2102 LTG DSNT N PRESFR SLP048 T02890172 $",
+    "windDirection": 180,
+    "windSpeed": 12,
+    "windGust": 27,
+    "visibility": 10,
+    "temperatureC": 29,
+    "dewPointC": 17,
+    "cloudCeiling": 99999,
+    "altimeter": "A2968",
+    "timestamp": "2026-04-17T21:53:00+00:00",
+    "station": "KCPS"
   },
   "kstl": {
-    "metar": "KSTL 172151Z 17014G25KT 10SM SCT055 BKN070 BKN110 OVC250 27/18 A2967 RMK AO2 PK WND 20027/2144 RAE18 TSE34 SLP039 CB DSNT N-NE MOV NE P0000 T02720178 $",
-    "windDirection": 170,
-    "windSpeed": 14,
-    "windGust": 25,
-    "visibility": 10,
-    "temperatureC": 27,
-    "dewPointC": 18,
-    "cloudCeiling": 7000,
-    "altimeter": "A2967",
-    "timestamp": "2026-04-17T21:51:00+00:00",
-    "station": "KSTL"
+    "station": "KSTL",
+    "metar": null,
+    "error": "Failed to fetch METAR"
   }
 }
