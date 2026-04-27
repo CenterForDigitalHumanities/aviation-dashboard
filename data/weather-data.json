@@ -1,29 +1,29 @@
 {
-  "lastUpdated": "2026-04-27T09:29:02.133557+00:00",
+  "lastUpdated": "2026-04-27T10:19:33.466171+00:00",
   "kcps": {
-    "metar": "KCPS 270900Z AUTO 06007KT 10SM BKN095 BKN120 17/15 A2981 RMK AO2 LTG DSNT ALQDS T01670150 $",
-    "windDirection": 60,
-    "windSpeed": 7,
+    "metar": "KCPS 271011Z AUTO 20009KT 1 3/4SM +TSRA BR SCT036 BKN070 OVC110 17/16 A2980 RMK AO2 LTG DSNT SE-SW P0019 T01670156 $",
+    "windDirection": 200,
+    "windSpeed": 9,
+    "windGust": null,
+    "visibility": 0.75,
+    "temperatureC": 17,
+    "dewPointC": 16,
+    "cloudCeiling": 7000,
+    "altimeter": "A2980",
+    "timestamp": "2026-04-27T10:11:00+00:00",
+    "station": "KCPS"
+  },
+  "kstl": {
+    "metar": "KSTL 271003Z 12011KT 10SM -RA SCT044 SCT070 BKN100 OVC160 17/15 A2978 RMK AO2 LTG DSNT SE-W TSE03 CONS LTGICCC DSNT SE-S OCNL LTGIC DSNT NW CB DSNT SE-S AND DSNT NW MOV NE P0001 T01670150 $",
+    "windDirection": 120,
+    "windSpeed": 11,
     "windGust": null,
     "visibility": 10,
     "temperatureC": 17,
     "dewPointC": 15,
-    "cloudCeiling": 9500,
-    "altimeter": "A2981",
-    "timestamp": "2026-04-27T09:00:00+00:00",
-    "station": "KCPS"
-  },
-  "kstl": {
-    "metar": "KSTL 270851Z 11013KT 9SM -RA FEW032 BKN042 BKN090 OVC150 17/15 A2981 RMK AO2 TSE50 PRESFR SLP085 OCNL LTGICCC DSNT SE-W CB DSNT SE-W MOV NE P0023 60039 T01670150 58014 $",
-    "windDirection": 110,
-    "windSpeed": 13,
-    "windGust": null,
-    "visibility": 9,
-    "temperatureC": 17,
-    "dewPointC": 15,
-    "cloudCeiling": 4200,
-    "altimeter": "A2981",
-    "timestamp": "2026-04-27T08:51:00+00:00",
+    "cloudCeiling": 10000,
+    "altimeter": "A2978",
+    "timestamp": "2026-04-27T10:03:00+00:00",
     "station": "KSTL"
   }
 }
