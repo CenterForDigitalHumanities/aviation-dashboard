@@ -1,21 +1,29 @@
 {
-  "lastUpdated": "2026-04-28T01:53:44.066128+00:00",
+  "lastUpdated": "2026-04-28T03:01:08.255784+00:00",
   "kcps": {
-    "metar": "KCPS 280108Z 24003KT 10SM VCTS FEW075 FEW100 SCT110 20/18 A2965 RMK AO2 LTG DSNT ALQDS RAE04 TSE02 PRESRR P0000 T02000178 $",
-    "windDirection": 240,
-    "windSpeed": 3,
+    "metar": "KCPS 280253Z AUTO 21004KT 10SM CLR 20/18 A2974 RMK AO2 PRESRR SLP068 60015 T02000178 51069 $",
+    "windDirection": 210,
+    "windSpeed": 4,
     "windGust": null,
     "visibility": 10,
     "temperatureC": 20,
     "dewPointC": 18,
-    "cloudCeiling": null,
-    "altimeter": "A2965",
-    "timestamp": "2026-04-28T01:08:00+00:00",
+    "cloudCeiling": 99999,
+    "altimeter": "A2974",
+    "timestamp": "2026-04-28T02:53:00+00:00",
     "station": "KCPS"
   },
   "kstl": {
-    "station": "KSTL",
-    "metar": null,
-    "error": "Failed to fetch METAR"
+    "metar": "KSTL 280251Z 24005KT 10SM FEW050 SCT110 18/17 A2975 RMK AO2 SLP069 OCNL LTGIC DSNT SE CB DSNT SE MOV E 60076 T01830172 53038 $",
+    "windDirection": 240,
+    "windSpeed": 5,
+    "windGust": null,
+    "visibility": 10,
+    "temperatureC": 18,
+    "dewPointC": 17,
+    "cloudCeiling": null,
+    "altimeter": "A2975",
+    "timestamp": "2026-04-28T02:51:00+00:00",
+    "station": "KSTL"
   }
 }
