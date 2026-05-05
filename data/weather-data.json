@@ -1,29 +1,29 @@
 {
-  "lastUpdated": "2026-05-05T10:20:15.394329+00:00",
+  "lastUpdated": "2026-05-05T10:59:20.463013+00:00",
   "kcps": {
-    "metar": "KCPS 050953Z AUTO 10SM -RA OVC049 17/14 A2971 RMK AO2 LTG DSNT N RAB42 SLP057 P0000 T01670139 $",
-    "windDirection": null,
-    "windSpeed": null,
-    "windGust": null,
-    "visibility": 10,
-    "temperatureC": 17,
-    "dewPointC": 14,
-    "cloudCeiling": 4900,
-    "altimeter": "A2971",
-    "timestamp": "2026-05-05T09:53:00+00:00",
-    "station": "KCPS"
-  },
-  "kstl": {
-    "metar": "KSTL 051010Z 36010KT 10SM -RA FEW005 OVC043 14/11 A2976 RMK AO2 TSE10 OCNL LTGIC DSNT NE-E AND DSNT W CB DSNT NE-E AND DSNT W MOV NE P0000 T01390111 $",
+    "metar": "KCPS 051053Z AUTO 36015KT 10SM -RA OVC045 14/12 A2974 RMK AO2 RAE0955B23 SLP069 P0000 T01440117 $",
     "windDirection": 360,
-    "windSpeed": 10,
+    "windSpeed": 15,
     "windGust": null,
     "visibility": 10,
     "temperatureC": 14,
-    "dewPointC": 11,
+    "dewPointC": 12,
+    "cloudCeiling": 4500,
+    "altimeter": "A2974",
+    "timestamp": "2026-05-05T10:53:00+00:00",
+    "station": "KCPS"
+  },
+  "kstl": {
+    "metar": "KSTL 051051Z 01007KT 10SM OVC043 13/08 A2977 RMK AO2 RAE51 TSE10 SLP073 P0000 T01280083 $",
+    "windDirection": 10,
+    "windSpeed": 7,
+    "windGust": null,
+    "visibility": 10,
+    "temperatureC": 13,
+    "dewPointC": 8,
     "cloudCeiling": 4300,
-    "altimeter": "A2976",
-    "timestamp": "2026-05-05T10:10:00+00:00",
+    "altimeter": "A2977",
+    "timestamp": "2026-05-05T10:51:00+00:00",
     "station": "KSTL"
   }
 }
