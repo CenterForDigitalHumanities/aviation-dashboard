@@ -1,21 +1,29 @@
 {
-  "lastUpdated": "2026-05-06T01:03:38.016260+00:00",
+  "lastUpdated": "2026-05-06T01:53:32.302339+00:00",
   "kcps": {
-    "metar": "KCPS 060053Z 34012G17KT 7SM -RA OVC016 08/07 A2987 RMK AO2 PRESRR SLP115 T00830067 PNO $",
-    "windDirection": 340,
-    "windSpeed": 12,
-    "windGust": 17,
-    "visibility": 7,
+    "metar": "KCPS 060122Z 01008KT 10SM -RA FEW017 SCT028 OVC038 08/06 A2986 RMK AO2 P0000 T00780061 $",
+    "windDirection": 10,
+    "windSpeed": 8,
+    "windGust": null,
+    "visibility": 10,
     "temperatureC": 8,
-    "dewPointC": 7,
-    "cloudCeiling": 1600,
-    "altimeter": "A2987",
-    "timestamp": "2026-05-06T00:53:00+00:00",
+    "dewPointC": 6,
+    "cloudCeiling": 3800,
+    "altimeter": "A2986",
+    "timestamp": "2026-05-06T01:22:00+00:00",
     "station": "KCPS"
   },
   "kstl": {
-    "station": "KSTL",
-    "metar": null,
-    "error": "Failed to fetch METAR"
+    "metar": "KSTL 060151Z 28004KT 6SM -RA BR SCT011 BKN048 OVC080 08/07 A2989 RMK AO2 SLP125 P0008 T00780067 $",
+    "windDirection": 280,
+    "windSpeed": 4,
+    "windGust": null,
+    "visibility": 6,
+    "temperatureC": 8,
+    "dewPointC": 7,
+    "cloudCeiling": 4800,
+    "altimeter": "A2989",
+    "timestamp": "2026-05-06T01:51:00+00:00",
+    "station": "KSTL"
   }
 }
