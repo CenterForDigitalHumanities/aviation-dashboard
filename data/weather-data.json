@@ -1,29 +1,29 @@
 {
-  "lastUpdated": "2026-05-18T22:33:37.993273+00:00",
+  "lastUpdated": "2026-05-18T23:05:48.195525+00:00",
   "kcps": {
-    "metar": "KCPS 182225Z 12005KT 2SM TSRA BR BKN035 OVC075 19/18 A3002 RMK AO2 LTG DSNT ALQDS TSE15B21 LTGIC TS OHD MOV NE P0024 T01890183 $",
-    "windDirection": 120,
-    "windSpeed": 5,
+    "metar": "KCPS 182253Z 14008KT 10SM -RA SCT030 BKN070 OVC080 19/18 A3002 RMK AO2 LTG DSNT ALQDS TSE15B21E36 SLP162 P0042 T01890178 $",
+    "windDirection": 140,
+    "windSpeed": 8,
     "windGust": null,
-    "visibility": 2,
+    "visibility": 10,
     "temperatureC": 19,
     "dewPointC": 18,
-    "cloudCeiling": 3500,
+    "cloudCeiling": 7000,
     "altimeter": "A3002",
-    "timestamp": "2026-05-18T22:25:00+00:00",
+    "timestamp": "2026-05-18T22:53:00+00:00",
     "station": "KCPS"
   },
   "kstl": {
-    "metar": "KSTL 182226Z 00000KT 4SM R30R/5000VP6000FT +TSRA BR BKN047 OVC065CB 19/17 A3002 RMK AO2 TSB2156 OCNL LTGICCC NE-SE TS NE-SE MOV NE P0031 T01890172 $",
-    "windDirection": 0,
-    "windSpeed": 0,
+    "metar": "KSTL 182251Z VRB03KT 1SM R30R/P6000FT TSRA BR OVC044CB 19/17 A3000 RMK AO2 TSB2156 PRESFR SLP150 OCNL LTGICCC ALQDS TS ALQDS MOV NE P0040 T01890172 $",
+    "windDirection": null,
+    "windSpeed": null,
     "windGust": null,
-    "visibility": 4,
+    "visibility": 1,
     "temperatureC": 19,
     "dewPointC": 17,
-    "cloudCeiling": 4700,
-    "altimeter": "A3002",
-    "timestamp": "2026-05-18T22:26:00+00:00",
+    "cloudCeiling": 4400,
+    "altimeter": "A3000",
+    "timestamp": "2026-05-18T22:51:00+00:00",
     "station": "KSTL"
   }
 }
