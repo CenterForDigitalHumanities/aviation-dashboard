@@ -1,29 +1,29 @@
 {
-  "lastUpdated": "2026-05-18T13:33:58.941417+00:00",
+  "lastUpdated": "2026-05-18T14:44:51.303220+00:00",
   "kcps": {
-    "metar": "KCPS 181253Z 17007KT 10SM FEW035 FEW120 25/21 A2990 RMK AO2 SLP120 T02500206",
-    "windDirection": 170,
-    "windSpeed": 7,
-    "windGust": null,
-    "visibility": 10,
-    "temperatureC": 25,
-    "dewPointC": 21,
-    "cloudCeiling": null,
-    "altimeter": "A2990",
-    "timestamp": "2026-05-18T12:53:00+00:00",
-    "station": "KCPS"
-  },
-  "kstl": {
-    "metar": "KSTL 181251Z 17014KT 10SM FEW035 SCT075 BKN100 BKN200 BKN250 26/21 A2989 RMK AO2 SLP108 T02610206 $",
-    "windDirection": 170,
-    "windSpeed": 14,
-    "windGust": null,
+    "metar": "KCPS 181353Z 19010G18KT 10SM FEW090 26/21 A2992 RMK AO2 LTG DSNT ALQDS SLP126 T02610211 $",
+    "windDirection": 190,
+    "windSpeed": 10,
+    "windGust": 18,
     "visibility": 10,
     "temperatureC": 26,
     "dewPointC": 21,
-    "cloudCeiling": 10000,
-    "altimeter": "A2989",
-    "timestamp": "2026-05-18T12:51:00+00:00",
+    "cloudCeiling": null,
+    "altimeter": "A2992",
+    "timestamp": "2026-05-18T13:53:00+00:00",
+    "station": "KCPS"
+  },
+  "kstl": {
+    "metar": "KSTL 181427Z 02007KT 3/4SM R30R/2000VP6000FT +TSRA BR BKN015 BKN026CB OVC042 19/18 A2998 RMK AO2 RAB04 TSB05 OCNL LTGIC ALQDS TS ALQDS MOV E P0026 T01890178 $",
+    "windDirection": 20,
+    "windSpeed": 7,
+    "windGust": null,
+    "visibility": 0.75,
+    "temperatureC": 19,
+    "dewPointC": 18,
+    "cloudCeiling": 1500,
+    "altimeter": "A2998",
+    "timestamp": "2026-05-18T14:27:00+00:00",
     "station": "KSTL"
   }
 }
