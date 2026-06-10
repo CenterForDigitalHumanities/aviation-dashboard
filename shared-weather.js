@@ -82,8 +82,10 @@ function getMetarEmbeddedTime(metarString) {
     const now = new Date();
     let metarDate = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), day, hour, minute, 0));
 
-    // If the METAR day is in the future, it's from the previous month
-    if (metarDate.getTime() > now.getTime()) {
+    // Only fall back to previous month if the date is significantly in the future (>48 hours)
+    // This avoids incorrectly treating same-day METARs as last month when viewed early
+    const hoursDiff = (metarDate.getTime() - now.getTime()) / (1000 * 60 * 60);
+    if (hoursDiff > 48) {
         metarDate = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 1, day, hour, minute, 0));
     }
 
@@ -168,9 +170,9 @@ function calculateHeatIndex(tempF, rh) {
     if (tempF < 80) return tempF; // Heat index is same as temperature below 80F
     if (rh === null) return null;
     const HI = -42.379 + (2.04901523 * tempF) + (10.14333127 * rh) - (0.22475541 * tempF * rh) -
-               (0.00683783 * tempF * tempF) - (0.05481717 * rh * rh) +
-               (0.00122874 * tempF * tempF * rh) + (0.00085282 * tempF * rh * rh) -
-               (0.00000199 * tempF * tempF * rh * rh);
+        (0.00683783 * tempF * tempF) - (0.05481717 * rh * rh) +
+        (0.00122874 * tempF * tempF * rh) + (0.00085282 * tempF * rh * rh) -
+        (0.00000199 * tempF * tempF * rh * rh);
     return HI;
 }
 
@@ -286,4 +288,3 @@ function isVisibilityRestricted(visibilitySM, thresholdSM = VISIBILITY_RESTRICTI
 // Expose to global
 window.VISIBILITY_RESTRICTION_SM = VISIBILITY_RESTRICTION_SM;
 window.isVisibilityRestricted = isVisibilityRestricted;
-
