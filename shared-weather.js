@@ -134,13 +134,13 @@ function validateWeatherData(data) {
     const validateStation = (key) => {
         const station = data[key];
         if (!station || !station?.metar?.trim()) {
-            data[key] = { ...station, metar: "", rejectionReason: "unavailable" };
+            data[key] = { ...station, rejectionReason: "unavailable" };
             return;
         }
 
         const metarTime = getMetarEmbeddedTime(station.metar);
         if (!metarTime) {
-            data[key] = { ...station, metar: "", rejectionReason: "invalid" };
+            data[key] = { ...station, rejectionReason: "invalid" };
             return;
         }
 
@@ -150,9 +150,9 @@ function validateWeatherData(data) {
 
         // Reject if >1 hour old, or suspiciously in the future (>2 hrs)
         if (diffMin > 60) {
-            data[key] = { ...station, metar: "", rejectionReason: `stale (${diffMin} min ago)` };
+            data[key] = { ...station, rejectionReason: `stale (${diffMin} min ago)` };
         } else if (diffMin < -120) {
-            data[key] = { ...station, metar: "", rejectionReason: "invalid (future timestamp)" };
+            data[key] = { ...station, rejectionReason: "invalid (future timestamp)" };
         }
     };
 

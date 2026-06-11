@@ -984,8 +984,8 @@
                 }
 
                 // Display METAR data
-                const kcpsMetarValid = !!(data?.kcps.rejectionReason && data.kcps.metar?.trim().replace(/\0/g, '').length > 0);
-                const kstlMetarValid = !!(data?.kstl.rejectionReason && data.kstl.metar?.trim().replace(/\0/g, '').length > 0);
+                const kcpsMetarValid = !!(!data?.kcps.rejectionReason && data.kcps.metar?.trim().replace(/\0/g, '').length > 0);
+                const kstlMetarValid = !!(!data?.kstl.rejectionReason && data.kstl.metar?.trim().replace(/\0/g, '').length > 0);
 
                 if (kcpsMetarValid) {
                     document.getElementById("metarKCPS").innerText = data.kcps.metar.replace(/\0/g, '');
