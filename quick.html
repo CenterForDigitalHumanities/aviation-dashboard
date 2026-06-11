@@ -477,6 +477,14 @@ function getMinutesAgo(timestamp) {
     const mins = diffMinutes % 60;
     if (hours === 1 && mins === 0) return '(1 hr ago)';
     if (mins === 0) return `(${hours} hrs ago)`;
+    
+    // If older than 24 hours, show the actual UTC date/time instead of "X hrs ago"
+    if (hours >= 24) {
+        const dateStr = metarTime.toISOString().slice(0, 10);
+        const timeStr = metarTime.toISOString().slice(11, 16);
+        return `(Stale: ${dateStr} ${timeStr}Z)`;
+    }
+    
     return `(${hours} hr${hours > 1 ? 's' : ''} ${mins} min${mins > 1 ? 's' : ''} ago)`;
 }
 
@@ -622,24 +630,24 @@ async function fetchWeatherData() {
         const kcpsMetarValid = !!(data.kcps && data.kcps.metar && data.kcps.metar.trim().replace(/\0/g, '').length > 0);
         const kstlMetarValid = !!(data.kstl && data.kstl.metar && data.kstl.metar.trim().replace(/\0/g, '').length > 0);
 
-        // Display KCPS METAR
         if (kcpsMetarValid) {
             document.getElementById("kcps-metar").innerText = data.kcps.metar.replace(/\0/g, '');
             if (data.kcps.timestamp) {
                 document.getElementById("kcps-time").innerText = getMinutesAgo(data.kcps.timestamp);
             }
         } else {
-            document.getElementById("kcps-metar").innerText = "KCPS METAR unavailable";
+            const reason = data.kcps?.rejectionReason || "unavailable";
+            document.getElementById("kcps-metar").innerText = `KCPS METAR ${reason}`;
         }
         
-        // Display KSTL METAR
         if (kstlMetarValid) {
             document.getElementById("kstl-metar").innerText = data.kstl.metar.replace(/\0/g, '');
             if (data.kstl.timestamp) {
                 document.getElementById("kstl-time").innerText = getMinutesAgo(data.kstl.timestamp);
             }
         } else {
-            document.getElementById("kstl-metar").innerText = "KSTL METAR unavailable";
+            const reason = data.kstl?.rejectionReason || "unavailable";
+            document.getElementById("kstl-metar").innerText = `KSTL METAR ${reason}`;
         }
         
         // Use KCPS data preferentially; fall back to KSTL when KCPS unavailable
