@@ -78,15 +78,25 @@ function getMetarEmbeddedTime(metarString) {
 
     if (day < 1 || day > 31 || hour > 23 || minute > 59) return null;
 
-    // Build date: use current month/year, but handle day rollovers
     const now = new Date();
-    let metarDate = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), day, hour, minute, 0));
+    const currentMonth = now.getUTCMonth();
+    const currentYear = now.getUTCFullYear();
 
-    // Only fall back to previous month if the date is significantly in the future (>48 hours)
-    // This avoids incorrectly treating same-day METARs as last month when viewed early
-    const hoursDiff = (metarDate.getTime() - now.getTime()) / (1000 * 60 * 60);
+    // METAR day-of-month is ambiguous across month boundaries.
+    // Build candidates for current month and previous month, then pick
+    // whichever is closer to "now" (within a reasonable window).
+    const currentMonthDate = new Date(Date.UTC(currentYear, currentMonth, day, hour, minute, 0));
+    const previousMonthDate = new Date(Date.UTC(currentYear, currentMonth - 1, day, hour, minute, 0));
+
+    const diffCurrent = Math.abs(currentMonthDate.getTime() - now.getTime());
+    const diffPrevious = Math.abs(previousMonthDate.getTime() - now.getTime());
+
+    let metarDate = diffPrevious < diffCurrent ? previousMonthDate : currentMonthDate;
+
+    // Safety: if the best guess is still >48 hours away, fall back to current month
+    const hoursDiff = Math.abs(metarDate.getTime() - now.getTime()) / (1000 * 60 * 60);
     if (hoursDiff > 48) {
-        metarDate = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 1, day, hour, minute, 0));
+        metarDate = currentMonthDate;
     }
 
     return metarDate;
