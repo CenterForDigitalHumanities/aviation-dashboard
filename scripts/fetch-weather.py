@@ -90,10 +90,13 @@ def fetch_weather():
             if icao:
                 result[icao] = normalize_entry(entry)
 
-        # Ensure output directory exists
-        os.makedirs("data", exist_ok=True)
+        # Write to repo root, not scripts/
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        repo_root = os.path.dirname(script_dir)
+        data_dir = os.path.join(repo_root, "data")
+        os.makedirs(data_dir, exist_ok=True)
 
-        output_path = "data/weather-data.json"
+        output_path = os.path.join(data_dir, "weather-data.json")
         with open(output_path, "w") as f:
             json.dump(result, f, indent=2)
 
