@@ -992,6 +992,7 @@
                 } else {
                     const reason = data.kcps?.rejectionReason || "unavailable";
                     document.getElementById("metarKCPS").innerText = `KCPS METAR ${reason}`;
+                    document.getElementById("metarKCPS").title = data.kcps.metar?.trim().replace(/\0/g, '')
                 }
 
                 if (kstlMetarValid) {
@@ -999,6 +1000,7 @@
                 } else {
                     const reason = data.kstl?.rejectionReason || "unavailable";
                     document.getElementById("metarKSTL").innerText = `KSTL METAR ${reason}`;
+                    document.getElementById("metarKSTL").title = data.kstl.metar.replace(/\0/g, '');
                 }
 
                 // Use KCPS data preferentially; fall back to KSTL when KCPS unavailable
