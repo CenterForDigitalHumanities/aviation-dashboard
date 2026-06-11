@@ -121,24 +121,33 @@ function isMetarStringTooOld(metarString) {
 function validateWeatherData(data) {
     if (!data) return data;
 
-    // Check KCPS METAR age based on embedded timestamp in METAR string
-    if (data.kcps && data.kcps.metar && isMetarStringTooOld(data.kcps.metar)) {
-        console.warn("KCPS data is stale (METAR older than 1 hour); rejecting all KCPS data in favor of KSTL fallback");
-        // Clear all KCPS data to force fallback to KSTL
-        data.kcps = {
-            metar: "",
-            windDirection: null,
-            windSpeed: null,
-            windGust: null,
-            visibility: null,
-            temperatureC: null,
-            dewPointC: null,
-            cloudCeiling: null,
-            altimeter: null,
-            timestamp: null,
-            station: "KCPS",
-        };
-    }
+    const validateStation = (key) => {
+        const station = data[key];
+        if (!station || !station?.metar?.trim()) {
+            data[key] = { ...station, metar: "", rejectionReason: "unavailable" };
+            return;
+        }
+
+        const metarTime = getMetarEmbeddedTime(station.metar);
+        if (!metarTime) {
+            data[key] = { ...station, metar: "", rejectionReason: "invalid" };
+            return;
+        }
+
+        const now = new Date();
+        const diffMs = now.getTime() - metarTime.getTime();
+        const diffMin = Math.round(diffMs / 60000);
+
+        // Reject if >1 hour old, or suspiciously in the future (>2 hrs)
+        if (diffMin > 60) {
+            data[key] = { ...station, metar: "", rejectionReason: `stale (${diffMin} min ago)` };
+        } else if (diffMin < -120) {
+            data[key] = { ...station, metar: "", rejectionReason: "invalid (future timestamp)" };
+        }
+    };
+
+    validateStation('kcps');
+    validateStation('kstl');
 
     return data;
 }

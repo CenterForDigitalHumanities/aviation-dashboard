@@ -990,13 +990,15 @@
                 if (kcpsMetarValid) {
                     document.getElementById("metarKCPS").innerText = data.kcps.metar.replace(/\0/g, '');
                 } else {
-                    document.getElementById("metarKCPS").innerText = "KCPS METAR unavailable";
+                    const reason = data.kcps?.rejectionReason || "unavailable";
+                    document.getElementById("metarKCPS").innerText = `KCPS METAR ${reason}`;
                 }
 
                 if (kstlMetarValid) {
                     document.getElementById("metarKSTL").innerText = data.kstl.metar.replace(/\0/g, '');
                 } else {
-                    document.getElementById("metarKSTL").innerText = "KSTL METAR unavailable";
+                    const reason = data.kstl?.rejectionReason || "unavailable";
+                    document.getElementById("metarKSTL").innerText = `KSTL METAR ${reason}`;
                 }
 
                 // Use KCPS data preferentially; fall back to KSTL when KCPS unavailable
