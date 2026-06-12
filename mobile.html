@@ -961,8 +961,9 @@
                 const data = await fetchWeatherDataFromJSON()
                 if (!data?.kcps || !data?.kstl) return
 
-                const kcpsValid = isKcpsMetarValid(data)
+                                const kcpsValid = isKcpsMetarValid(data)
                 const d = getEffectiveWeatherData(data)
+                if (!d) return
                 const station = kcpsValid ? 'KCPS' : 'KSTL'
 
                 const category = noFlyingActive ? 'f' : calcCategory(d)
