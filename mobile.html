@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -12,12 +13,18 @@
     <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
     <style>
         /* ── Reset + safe-area variables ─────────────────────────────── */
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
         :root {
             --header-h: 52px;
             --nav-h: 58px;
-            --safe-top:    env(safe-area-inset-top,    0px);
+            --safe-top: env(safe-area-inset-top, 0px);
             --safe-bottom: env(safe-area-inset-bottom, 0px);
             --blue: #0056b3;
             --surface: #fff;
@@ -26,7 +33,8 @@
             --muted: #666;
         }
 
-        html, body {
+        html,
+        body {
             height: 100%;
             background: var(--bg);
             color: var(--text);
@@ -37,7 +45,9 @@
         /* ── App header ──────────────────────────────────────────────── */
         .app-header {
             position: fixed;
-            top: 0; left: 0; right: 0;
+            top: 0;
+            left: 0;
+            right: 0;
             height: calc(var(--header-h) + var(--safe-top));
             padding-top: var(--safe-top);
             background: #1a1a2e;
@@ -48,22 +58,25 @@
             padding-left: 16px;
             padding-right: 12px;
             z-index: 100;
-            border-bottom: 1px solid rgba(255,255,255,0.08);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
+
         .header-left h1 {
             font-size: 1rem;
             font-weight: 700;
             letter-spacing: 0.04em;
             line-height: 1.2;
         }
+
         .header-left .update-time {
             font-size: 0.7rem;
             opacity: 0.6;
             margin-top: 1px;
         }
+
         .notify-btn {
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.3);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             color: #fff;
             border-radius: 20px;
             padding: 5px 12px;
@@ -73,9 +86,20 @@
             white-space: nowrap;
             transition: background 0.15s;
         }
-        .notify-btn:active { background: rgba(255,255,255,0.22); }
-        .notify-btn.on  { background: rgba(84,208,84,0.25); border-color: #4caf50; }
-        .notify-btn.off { opacity: 0.45; cursor: not-allowed; }
+
+        .notify-btn:active {
+            background: rgba(255, 255, 255, 0.22);
+        }
+
+        .notify-btn.on {
+            background: rgba(84, 208, 84, 0.25);
+            border-color: #4caf50;
+        }
+
+        .notify-btn.off {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
 
         .toast {
             position: fixed;
@@ -83,9 +107,9 @@
             bottom: calc(var(--nav-h) + var(--safe-bottom) + 14px);
             transform: translateX(-50%) translateY(10px);
             z-index: 250;
-            background: rgba(32,32,40,0.96);
+            background: rgba(32, 32, 40, 0.96);
             color: #fff;
-            border: 1px solid rgba(255,255,255,0.18);
+            border: 1px solid rgba(255, 255, 255, 0.18);
             border-radius: 999px;
             padding: 8px 14px;
             font-size: 0.75rem;
@@ -95,6 +119,7 @@
             pointer-events: none;
             transition: opacity 0.18s ease, transform 0.18s ease;
         }
+
         .toast.show {
             opacity: 1;
             transform: translateX(-50%) translateY(0);
@@ -105,7 +130,8 @@
             position: fixed;
             top: calc(var(--header-h) + var(--safe-top));
             bottom: calc(var(--nav-h) + var(--safe-bottom));
-            left: 0; right: 0;
+            left: 0;
+            right: 0;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
         }
@@ -125,11 +151,31 @@
             background: #f8f9fa;
             transition: border-color 0.4s, background 0.4s;
         }
-        .flight-status-card.cat-a { border-color: #548235; background: linear-gradient(150deg, rgba(84,130,53,0.15), rgba(84,130,53,0.06)); }
-        .flight-status-card.cat-b { border-color: #cccc00; background: linear-gradient(150deg, rgba(255,255,0,0.30), rgba(255,255,0,0.12)); }
-        .flight-status-card.cat-c { border-color: #ed7d31; background: linear-gradient(150deg, rgba(237,125,49,0.20), rgba(237,125,49,0.08)); }
-        .flight-status-card.cat-d { border-color: #ff0000; background: linear-gradient(150deg, rgba(255,0,0,0.18), rgba(255,0,0,0.06)); }
-        .flight-status-card.cat-f { border-color: #000; background: linear-gradient(150deg, #2a2a2a, #1a1a1a); }
+
+        .flight-status-card.cat-a {
+            border-color: #548235;
+            background: linear-gradient(150deg, rgba(84, 130, 53, 0.15), rgba(84, 130, 53, 0.06));
+        }
+
+        .flight-status-card.cat-b {
+            border-color: #cccc00;
+            background: linear-gradient(150deg, rgba(255, 255, 0, 0.30), rgba(255, 255, 0, 0.12));
+        }
+
+        .flight-status-card.cat-c {
+            border-color: #ed7d31;
+            background: linear-gradient(150deg, rgba(237, 125, 49, 0.20), rgba(237, 125, 49, 0.08));
+        }
+
+        .flight-status-card.cat-d {
+            border-color: #ff0000;
+            background: linear-gradient(150deg, rgba(255, 0, 0, 0.18), rgba(255, 0, 0, 0.06));
+        }
+
+        .flight-status-card.cat-f {
+            border-color: #000;
+            background: linear-gradient(150deg, #2a2a2a, #1a1a1a);
+        }
 
         .status-title {
             font-size: 5rem;
@@ -137,11 +183,26 @@
             font-weight: 900;
             letter-spacing: -0.02em;
         }
-        .flight-status-card.cat-a .status-title { color: #548235; }
-        .flight-status-card.cat-b .status-title { color: #5a5a00; }
-        .flight-status-card.cat-c .status-title { color: #ed7d31; }
-        .flight-status-card.cat-d .status-title { color: #ff0000; }
-        .flight-status-card.cat-f .status-title { color: #fff; }
+
+        .flight-status-card.cat-a .status-title {
+            color: #548235;
+        }
+
+        .flight-status-card.cat-b .status-title {
+            color: #5a5a00;
+        }
+
+        .flight-status-card.cat-c .status-title {
+            color: #ed7d31;
+        }
+
+        .flight-status-card.cat-d .status-title {
+            color: #ff0000;
+        }
+
+        .flight-status-card.cat-f .status-title {
+            color: #fff;
+        }
 
         .status-details {
             font-size: 0.88rem;
@@ -149,7 +210,10 @@
             margin-top: 8px;
             color: #333;
         }
-        .flight-status-card.cat-f .status-details { color: #ccc; }
+
+        .flight-status-card.cat-f .status-details {
+            color: #ccc;
+        }
 
         .station-line {
             font-size: 0.72rem;
@@ -157,7 +221,11 @@
             opacity: 0.6;
             color: inherit;
         }
-        .flight-status-card.cat-f .station-line { color: #aaa; opacity: 1; }
+
+        .flight-status-card.cat-f .station-line {
+            color: #aaa;
+            opacity: 1;
+        }
 
         .fallback-badge {
             display: inline-block;
@@ -181,12 +249,28 @@
             background: #e8f5e9;
             color: #2e7d32;
         }
-        .temp-note.warn  { border-color: #ffa000; background: #fff8e1; color: #e65100; }
-        .temp-note.alert { border-color: #f44336; background: #ffebee; color: #b71c1c; }
+
+        .temp-note.warn {
+            border-color: #ffa000;
+            background: #fff8e1;
+            color: #e65100;
+        }
+
+        .temp-note.alert {
+            border-color: #f44336;
+            background: #ffebee;
+            color: #b71c1c;
+        }
 
         /* ── Panel content ───────────────────────────────────────────── */
-        .panel { display: none; padding: 14px; }
-        .panel.active { display: block; }
+        .panel {
+            display: none;
+            padding: 14px;
+        }
+
+        .panel.active {
+            display: block;
+        }
 
         .section-label {
             font-size: 0.68rem;
@@ -209,10 +293,25 @@
             text-align: center;
             border: 2px solid #000;
         }
-        .closed-banner.active { display: block; }
-        .closed-banner .icon { font-size: 2rem; line-height: 1; }
-        .closed-banner h3 { margin: 6px 0 3px; font-size: 1rem; }
-        .closed-banner p  { font-size: 0.82rem; opacity: 0.75; }
+
+        .closed-banner.active {
+            display: block;
+        }
+
+        .closed-banner .icon {
+            font-size: 2rem;
+            line-height: 1;
+        }
+
+        .closed-banner h3 {
+            margin: 6px 0 3px;
+            font-size: 1rem;
+        }
+
+        .closed-banner p {
+            font-size: 0.82rem;
+            opacity: 0.75;
+        }
 
         .announcement-item {
             background: var(--surface);
@@ -221,9 +320,24 @@
             padding: 12px 14px;
             margin-bottom: 9px;
         }
-        .announcement-date    { font-size: 0.72rem; color: #888; margin-bottom: 2px; }
-        .announcement-title   { font-weight: 600; font-size: 0.92rem; margin-bottom: 4px; }
-        .announcement-content { font-size: 0.83rem; color: #555; line-height: 1.45; }
+
+        .announcement-date {
+            font-size: 0.72rem;
+            color: #888;
+            margin-bottom: 2px;
+        }
+
+        .announcement-title {
+            font-weight: 600;
+            font-size: 0.92rem;
+            margin-bottom: 4px;
+        }
+
+        .announcement-content {
+            font-size: 0.83rem;
+            color: #555;
+            line-height: 1.45;
+        }
 
         /* METAR / Conditions */
         .metar-box {
@@ -244,12 +358,14 @@
             gap: 8px;
             margin-bottom: 14px;
         }
+
         .cond-item {
             background: var(--surface);
             border: 1px solid #e4e4e4;
             border-radius: 9px;
             padding: 10px 12px;
         }
+
         .cond-label {
             font-size: 0.66rem;
             font-weight: 700;
@@ -258,10 +374,24 @@
             color: var(--muted);
             margin-bottom: 3px;
         }
-        .cond-value { font-size: 1rem; font-weight: 600; color: var(--text); }
-        .cond-value.ok    { color: #2e7d32; }
-        .cond-value.warn  { color: #e65100; }
-        .cond-value.alert { color: #c62828; }
+
+        .cond-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .cond-value.ok {
+            color: #2e7d32;
+        }
+
+        .cond-value.warn {
+            color: #e65100;
+        }
+
+        .cond-value.alert {
+            color: #c62828;
+        }
 
         /* Restrictions */
         .restriction-group {
@@ -271,6 +401,7 @@
             overflow: hidden;
             margin-bottom: 11px;
         }
+
         .restriction-group-header {
             background: #f5f5f5;
             padding: 9px 14px;
@@ -278,6 +409,7 @@
             font-size: 0.86rem;
             border-bottom: 1px solid #e8e8e8;
         }
+
         .restriction-row {
             display: flex;
             justify-content: space-between;
@@ -287,7 +419,12 @@
             font-size: 0.82rem;
             gap: 8px;
         }
-        .restriction-row .rlabel { flex: 1; color: #444; }
+
+        .restriction-row .rlabel {
+            flex: 1;
+            color: #444;
+        }
+
         .status-pill {
             font-size: 0.7rem;
             font-weight: 700;
@@ -296,13 +433,23 @@
             white-space: nowrap;
             flex-shrink: 0;
         }
-        .status-pill.ok         { background: #e8f5e9; color: #2e7d32; }
-        .status-pill.restricted { background: #ffebee; color: #c62828; }
+
+        .status-pill.ok {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-pill.restricted {
+            background: #ffebee;
+            color: #c62828;
+        }
 
         /* ── Bottom nav ──────────────────────────────────────────────── */
         .bottom-nav {
             position: fixed;
-            bottom: 0; left: 0; right: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
             height: calc(var(--nav-h) + var(--safe-bottom));
             padding-bottom: var(--safe-bottom);
             background: var(--surface);
@@ -310,6 +457,7 @@
             display: flex;
             z-index: 100;
         }
+
         .nav-btn {
             flex: 1;
             display: flex;
@@ -329,10 +477,20 @@
             -webkit-tap-highlight-color: transparent;
             transition: color 0.15s;
         }
-        .nav-btn svg { width: 23px; height: 23px; flex-shrink: 0; stroke: currentColor; }
-        .nav-btn.active { color: var(--blue); }
+
+        .nav-btn svg {
+            width: 23px;
+            height: 23px;
+            flex-shrink: 0;
+            stroke: currentColor;
+        }
+
+        .nav-btn.active {
+            color: var(--blue);
+        }
     </style>
 </head>
+
 <body>
     <!-- ── Fixed header ───────────────────────────────────────────────── -->
     <header class="app-header">
@@ -391,47 +549,59 @@
     <nav class="bottom-nav">
         <button class="nav-btn active" id="nav-announcements" onclick="switchPanel('announcements')">
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-                <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
             </svg>
             Announce
         </button>
         <button class="nav-btn" id="nav-metar" onclick="switchPanel('metar')">
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/>
+                <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" />
             </svg>
             METAR
         </button>
         <button class="nav-btn" id="nav-restrictions" onclick="switchPanel('restrictions')">
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-                <line x1="12" y1="9" x2="12" y2="13"/>
-                <line x1="12" y1="17" x2="12.01" y2="17"/>
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                <line x1="12" y1="9" x2="12" y2="13" />
+                <line x1="12" y1="17" x2="12.01" y2="17" />
             </svg>
             Restrictions
         </button>
     </nav>
 
-    <script src="shared-weather.js"></script>
-    <script>
+    <script type="module">
+        import {
+            fetchWeatherDataFromJSON,
+            isKcpsMetarValid,
+            isKstlMetarValid,
+            getEffectiveWeatherData,
+            formatUpdateTime,
+            calculateHeatIndex,
+            getEffectiveWindSpeed,
+            calculateCrosswind,
+            isCeilingRestricted,
+            isVisibilityRestricted
+        } from './shared-weather.js';
+
         // ── Constants ────────────────────────────────────────────────────
         const KCPS_RUNWAY_12_HDG = 122
         const KCPS_RUNWAY_30_HDG = 302
 
-    // ── Web Push configuration ────────────────────────────────────────
-    // Fill these in after completing PUSH_SETUP.md.
-    // VAPID_PUBLIC_KEY and Supabase values are safe to commit (they are
-    // public-facing); only the private key / service-role key are secrets.
-    const VAPID_PUBLIC_KEY  = 'BP7byIVBRDdsIzQ1umYq0fQ4p_XHblGM4J4ldOtp-G96XYInMQE0BtvloGzJKUVFFmkDVl6eCbnslDHB7mB4-68'
-    const SUPABASE_URL      = 'https://hmcymrqnlsamrhrqmanz.supabase.co'
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtY3ltcnFubHNhbXJocnFtYW56Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxNzcyODIsImV4cCI6MjA4ODc1MzI4Mn0.jzZ9CQ6ZwrpbCm7Qa6cfZpYm5wWni5_LTnAFWfiK_jw'
+        // ── Web Push configuration ────────────────────────────────────────
+        // Fill these in after completing PUSH_SETUP.md.
+        // VAPID_PUBLIC_KEY and Supabase values are safe to commit (they are
+        // public-facing); only the private key / service-role key are secrets.
+        const VAPID_PUBLIC_KEY = 'BP7byIVBRDdsIzQ1umYq0fQ4p_XHblGM4J4ldOtp-G96XYInMQE0BtvloGzJKUVFFmkDVl6eCbnslDHB7mB4-68'
+        const SUPABASE_URL = 'https://hmcymrqnlsamrhrqmanz.supabase.co'
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtY3ltcnFubHNhbXJocnFtYW56Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxNzcyODIsImV4cCI6MjA4ODc1MzI4Mn0.jzZ9CQ6ZwrpbCm7Qa6cfZpYm5wWni5_LTnAFWfiK_jw'
 
         // ── Shared state ─────────────────────────────────────────────────
-        let swReg            = null
-        let noFlyingActive   = false
-        let lastCategory     = 'a'
-        let lastDetails      = 'Loading…'
-        let lastStation      = 'KCPS'
+        let swReg = null
+        let noFlyingActive = false
+        let lastCategory = 'a'
+        let lastDetails = 'Loading…'
+        let lastStation = 'KCPS'
 
         // ── Service worker registration ───────────────────────────────────
         async function registerSW() {
@@ -449,7 +619,7 @@
         // format required by pushManager.subscribe()
         function urlBase64ToUint8Array(base64String) {
             const padding = '='.repeat((4 - base64String.length % 4) % 4)
-            const base64  = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/')
+            const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/')
             const rawData = atob(base64)
             return Uint8Array.from([...rawData].map(c => c.charCodeAt(0)))
         }
@@ -477,12 +647,12 @@
                 const reg = swReg ?? await navigator.serviceWorker.getRegistration?.()
                 const sub = await reg?.pushManager?.getSubscription?.()
                 btn.textContent = sub ? '🔔 On' : '🔔 Notify'
-                btn.className   = sub ? 'notify-btn on' : 'notify-btn'
+                btn.className = sub ? 'notify-btn on' : 'notify-btn'
                 return
             }
             // Fallback: reflect OS notification permission only
             btn.textContent = Notification.permission === 'granted' ? '🔔 On' : '🔔 Notify'
-            btn.className   = Notification.permission === 'granted' ? 'notify-btn on' : 'notify-btn'
+            btn.className = Notification.permission === 'granted' ? 'notify-btn on' : 'notify-btn'
         }
 
         async function handleNotifyBtn() {
@@ -491,7 +661,7 @@
 
             // ── Web Push path (VAPID configured + browser supports PushManager) ──
             if (VAPID_PUBLIC_KEY && 'PushManager' in window) {
-                const reg      = swReg ?? await navigator.serviceWorker.ready
+                const reg = swReg ?? await navigator.serviceWorker.ready
                 const existing = await reg.pushManager.getSubscription()
 
                 if (existing) {
@@ -588,20 +758,20 @@
         // ── Inline humidity (Magnus formula) ─────────────────────────────
         function calcHumidity(tC, tdC) {
             if (tC == null || tdC == null) return null
-            const eS = 6.1078 * Math.pow(10, (7.5 * tC)  / (237.3 + tC))
+            const eS = 6.1078 * Math.pow(10, (7.5 * tC) / (237.3 + tC))
             const eA = 6.1078 * Math.pow(10, (7.5 * tdC) / (237.3 + tdC))
             return Math.min(100, (eA / eS) * 100)
         }
 
         // ── Flight category calculation ───────────────────────────────────
         function calcCategory(d) {
-            const tempF    = d.temperatureC != null ? d.temperatureC * 9 / 5 + 32 : null
+            const tempF = d.temperatureC != null ? d.temperatureC * 9 / 5 + 32 : null
             const humidity = calcHumidity(d.temperatureC, d.dewPointC)
-            const hi       = (tempF != null && humidity != null)
+            const hi = (tempF != null && humidity != null)
                 ? calculateHeatIndex(tempF, humidity)
                 : (tempF ?? 70)
 
-            const ew   = getEffectiveWindSpeed(d.windSpeed, d.windGust) ?? 0
+            const ew = getEffectiveWindSpeed(d.windSpeed, d.windGust) ?? 0
             const cw12 = d.windDirection != null
                 ? Math.abs(calculateCrosswind(d.windDirection, d.windSpeed, KCPS_RUNWAY_12_HDG, d.windGust))
                 : 0
@@ -612,12 +782,12 @@
 
             let tempCat = 'a'
             if (tempF != null) {
-                if      (tempF <= 14) tempCat = 'd'
+                if (tempF <= 14) tempCat = 'd'
                 else if (tempF <= 23) tempCat = 'c'
             }
-            if      (hi >= 105) tempCat = 'd'
+            if (hi >= 105) tempCat = 'd'
             else if (hi >= 100 && tempCat !== 'd') tempCat = 'd'
-            else if (hi >= 95  && tempCat === 'a') tempCat = 'c'
+            else if (hi >= 95 && tempCat === 'a') tempCat = 'c'
 
             let wxCat = 'a'
             if (ew >= 30 || maxCW > 20 || isCeilingRestricted(d.cloudCeiling) || isVisibilityRestricted(d.visibility)) wxCat = 'd'
@@ -630,40 +800,40 @@
 
         // ── Render: category card ─────────────────────────────────────────
         function renderCategoryCard(category, details, station, usedFallback) {
-            document.getElementById('catCard').className    = `flight-status-card cat-${category}`
+            document.getElementById('catCard').className = `flight-status-card cat-${category}`
             document.getElementById('catLetter').textContent = category.toUpperCase()
             document.getElementById('catDetails').textContent = details
-            document.getElementById('catStation').innerHTML  =
+            document.getElementById('catStation').innerHTML =
                 `${station}${usedFallback ? ' <span class="fallback-badge">Using KSTL</span>' : ''}`
         }
 
         // ── Render: temp / heat index note ────────────────────────────────
         function renderTempNote(d) {
-            const el   = document.getElementById('tempNote')
-            const tC   = d.temperatureC
+            const el = document.getElementById('tempNote')
+            const tC = d.temperatureC
             if (tC == null) { el.style.display = 'none'; return }
 
-            const tempF   = tC * 9 / 5 + 32
+            const tempF = tC * 9 / 5 + 32
             const humidity = calcHumidity(tC, d.dewPointC)
-            const hi      = (humidity != null && tempF >= 80) ? calculateHeatIndex(tempF, humidity) : null
+            const hi = (humidity != null && tempF >= 80) ? calculateHeatIndex(tempF, humidity) : null
 
             const lines = []
-            let level   = 'ok'
+            let level = 'ok'
 
             if (hi != null) {
-                if      (hi >= 105) { lines.push(`🌡️ Heat index ${hi.toFixed(0)}°F — all flights restricted`);         level = 'alert' }
-                else if (hi >= 100) { lines.push(`🌡️ Heat index ${hi.toFixed(0)}°F — Diamond Dual/Piper restricted`);  level = 'alert' }
-                else if (hi >= 95)  { lines.push(`🌡️ Heat index ${hi.toFixed(0)}°F — Diamond solo restricted`);        level = 'warn'  }
-                else                 { lines.push(`🌡️ Heat index ${hi.toFixed(0)}°F — OK`) }
+                if (hi >= 105) { lines.push(`🌡️ Heat index ${hi.toFixed(0)}°F — all flights restricted`); level = 'alert' }
+                else if (hi >= 100) { lines.push(`🌡️ Heat index ${hi.toFixed(0)}°F — Diamond Dual/Piper restricted`); level = 'alert' }
+                else if (hi >= 95) { lines.push(`🌡️ Heat index ${hi.toFixed(0)}°F — Diamond solo restricted`); level = 'warn' }
+                else { lines.push(`🌡️ Heat index ${hi.toFixed(0)}°F — OK`) }
             }
 
-            if      (tempF <= 5)  { lines.push(`❄️ ${tempF.toFixed(0)}°F — all flights restricted`);     if (level !== 'alert') level = 'alert' }
+            if (tempF <= 5) { lines.push(`❄️ ${tempF.toFixed(0)}°F — all flights restricted`); if (level !== 'alert') level = 'alert' }
             else if (tempF <= 14) { lines.push(`❄️ ${tempF.toFixed(0)}°F — no solos or cross-countries`); if (level !== 'alert') level = 'alert' }
-            else if (tempF <= 23) { lines.push(`❄️ ${tempF.toFixed(0)}°F — preheat required`);            if (level === 'ok')    level = 'warn'  }
-            else                   { lines.push(`🌡️ ${tempF.toFixed(0)}°F (${tC.toFixed(1)}°C)`) }
+            else if (tempF <= 23) { lines.push(`❄️ ${tempF.toFixed(0)}°F — preheat required`); if (level === 'ok') level = 'warn' }
+            else { lines.push(`🌡️ ${tempF.toFixed(0)}°F (${tC.toFixed(1)}°C)`) }
 
-            el.className    = `temp-note ${level}`
-            el.textContent  = lines.join(' · ')
+            el.className = `temp-note ${level}`
+            el.textContent = lines.join(' · ')
             el.style.display = 'block'
         }
 
@@ -674,13 +844,13 @@
             document.getElementById('metarKcps').textContent = kcpsValid ? (kcps.metar || '— no METAR —') : '— not available —'
             document.getElementById('metarKstl').textContent = kstlValid ? (kstl.metar || '— no METAR —') : '— not available —'
 
-            const d        = kcpsValid ? kcps : kstl
-            const tempF    = d.temperatureC != null ? d.temperatureC * 9 / 5 + 32 : null
+            const d = kcpsValid ? kcps : kstl
+            const tempF = d.temperatureC != null ? d.temperatureC * 9 / 5 + 32 : null
             const humidity = calcHumidity(d.temperatureC, d.dewPointC)
-            const hi       = (tempF != null && humidity != null && tempF >= 80) ? calculateHeatIndex(tempF, humidity) : tempF
-            const ew       = getEffectiveWindSpeed(d.windSpeed, d.windGust)
-            const cw12     = d.windDirection != null ? calculateCrosswind(d.windDirection, d.windSpeed, KCPS_RUNWAY_12_HDG, d.windGust) : null
-            const cw30     = d.windDirection != null ? calculateCrosswind(d.windDirection, d.windSpeed, KCPS_RUNWAY_30_HDG, d.windGust) : null
+            const hi = (tempF != null && humidity != null && tempF >= 80) ? calculateHeatIndex(tempF, humidity) : tempF
+            const ew = getEffectiveWindSpeed(d.windSpeed, d.windGust)
+            const cw12 = d.windDirection != null ? calculateCrosswind(d.windDirection, d.windSpeed, KCPS_RUNWAY_12_HDG, d.windGust) : null
+            const cw30 = d.windDirection != null ? calculateCrosswind(d.windDirection, d.windSpeed, KCPS_RUNWAY_30_HDG, d.windGust) : null
 
             const windText = d.windSpeed != null
                 ? `${d.windDirection ?? 'VRB'}° at ${d.windSpeed} kt${d.windGust ? ` G${d.windGust}` : ''}`
@@ -699,7 +869,7 @@
                 </div>
                 <div class="cond-item">
                     <div class="cond-label">Heat Index</div>
-                    <div class="cond-value ${cls(hi, (hi??70)>=95, (hi??70)>=105)}">${hi != null ? hi.toFixed(0) + '°F' : 'N/A'}</div>
+                    <div class="cond-value ${cls(hi, (hi ?? 70) >= 95, (hi ?? 70) >= 105)}">${hi != null ? hi.toFixed(0) + '°F' : 'N/A'}</div>
                 </div>
                 <div class="cond-item">
                     <div class="cond-label">Humidity</div>
@@ -711,7 +881,7 @@
                 </div>
                 <div class="cond-item" style="grid-column:1/-1;">
                     <div class="cond-label">Surface Winds</div>
-                    <div class="cond-value ${cls(ew, (ew??0)>15, (ew??0)>25)}">${windText}</div>
+                    <div class="cond-value ${cls(ew, (ew ?? 0) > 15, (ew ?? 0) > 25)}">${windText}</div>
                 </div>
                 <div class="cond-item">
                     <div class="cond-label">Ceiling</div>
@@ -734,16 +904,16 @@
 
         // ── Render: restrictions panel ────────────────────────────────────
         function renderRestrictionsPanel(d) {
-            const ew   = getEffectiveWindSpeed(d.windSpeed, d.windGust) ?? 0
+            const ew = getEffectiveWindSpeed(d.windSpeed, d.windGust) ?? 0
             const cw12 = d.windDirection != null ? Math.abs(calculateCrosswind(d.windDirection, d.windSpeed, KCPS_RUNWAY_12_HDG, d.windGust)) : 0
             const cw30 = d.windDirection != null ? Math.abs(calculateCrosswind(d.windDirection, d.windSpeed, KCPS_RUNWAY_30_HDG, d.windGust)) : 0
             const maxCW = Math.max(cw12, cw30)
-            const ceil  = isCeilingRestricted(d.cloudCeiling)
-            const vis   = isVisibilityRestricted(d.visibility)
+            const ceil = isCeilingRestricted(d.cloudCeiling)
+            const vis = isVisibilityRestricted(d.visibility)
 
-            const tempF    = d.temperatureC != null ? d.temperatureC * 9 / 5 + 32 : null
+            const tempF = d.temperatureC != null ? d.temperatureC * 9 / 5 + 32 : null
             const humidity = calcHumidity(d.temperatureC, d.dewPointC)
-            const hi       = (tempF != null && humidity != null && tempF >= 80) ? calculateHeatIndex(tempF, humidity) : (tempF ?? 70)
+            const hi = (tempF != null && humidity != null && tempF >= 80) ? calculateHeatIndex(tempF, humidity) : (tempF ?? 70)
 
             const row = (label, restricted) => `
                 <div class="restriction-row">
@@ -791,9 +961,9 @@
                 const data = await fetchWeatherDataFromJSON()
                 if (!data?.kcps || !data?.kstl) return
 
-                const kcpsValid = data.kcps.windSpeed != null
-                const d         = kcpsValid ? data.kcps : data.kstl
-                const station   = kcpsValid ? 'KCPS' : 'KSTL'
+                const kcpsValid = isKcpsMetarValid(data)
+                const d = getEffectiveWeatherData(data)
+                const station = kcpsValid ? 'KCPS' : 'KSTL'
 
                 const category = noFlyingActive ? 'f' : calcCategory(d)
                 const catLabels = {
@@ -806,16 +976,16 @@
                 const details = catLabels[category]
 
                 lastCategory = category
-                lastDetails  = details
-                lastStation  = station
+                lastDetails = details
+                lastStation = station
 
                 renderCategoryCard(category, details, station, !kcpsValid)
                 renderTempNote(d)
-                renderMetarPanel(data, kcpsValid, data.kstl.windSpeed != null)
+                renderMetarPanel(data, kcpsValid, isKstlMetarValid(data))
                 renderRestrictionsPanel(d)
 
                 const updated = data.lastUpdated
-                    ? new Date(data.lastUpdated).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                    ? formatUpdateTime(new Date(data.lastUpdated), 'time-only')
                     : '—'
                 document.getElementById('updateTime').textContent = `Updated ${updated}`
 
@@ -867,7 +1037,7 @@
             }
 
             document.getElementById('announcementsContent').innerHTML = announcements.map(a => {
-                const date    = new Date(a.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                const date = new Date(a.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
                 const content = a.content.replace(/<[^>]*>/g, '').substring(0, 280)
                 return `<div class="announcement-item">
                     <div class="announcement-date">${date}</div>
@@ -897,4 +1067,5 @@
         setInterval(fetchAnnouncements, 10 * 60 * 1000)
     </script>
 </body>
+
 </html>

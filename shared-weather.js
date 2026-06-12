@@ -4,21 +4,23 @@
  * Fetches weather data from a public GitHub Gist (updated by GitHub Actions
  * every 15 minutes from the Aviation Weather Center API).
  * Provides common weather calculations and data validation.
+ *
+ * This is an ES6 module. Import functions explicitly:
+ *   import { fetchWeatherDataFromJSON, isKcpsMetarValid, getEffectiveWeatherData } from './shared-weather.js';
  */
 
 // Constants
 // Weather data is served from a public GitHub Gist, which provides permissive CORS headers.
 // The Gist is updated by GitHub Actions pulling from the AWC API.
-const WEATHER_DATA_URL = "https://gist.githubusercontent.com/cubap/8559048ba1cac126b5eb03e56309e73f/raw/weather-data.json";
-const METAR_MAX_AGE_MS = 60 * 60 * 1000; // 1 hour in milliseconds
+export const WEATHER_DATA_URL = "https://gist.githubusercontent.com/cubap/8559048ba1cac126b5eb03e56309e73f/raw/weather-data.json";
+export const METAR_MAX_AGE_MS = 60 * 60 * 1000; // 1 hour in milliseconds
 
 /**
  * Fetch pre-parsed weather data from GitHub Gist
  * @returns {Promise<Object|null>} Weather data object or null if fetch fails
  */
-async function fetchWeatherDataFromJSON() {
+export async function fetchWeatherDataFromJSON() {
     try {
-        // Append timestamp as query param to bust CDN cache without triggering CORS preflight
         const url = `${WEATHER_DATA_URL}?t=${Date.now()}`;
         const response = await fetch(url);
         if (!response.ok) {
@@ -27,9 +29,7 @@ async function fetchWeatherDataFromJSON() {
         const data = await response.json();
         console.log("Loaded weather data from Gist:", data);
 
-        // Validate data and reject stale METAR
         const validatedData = validateWeatherData(data);
-
         return validatedData;
     } catch (error) {
         console.error("Could not fetch weather data from Gist:", error);
@@ -39,36 +39,34 @@ async function fetchWeatherDataFromJSON() {
 
 /**
  * Check if a METAR timestamp is too old (over 1 hour)
- * @param {string} timestamp - ISO 8601 timestamp string (e.g., "2026-01-06T17:53:00+00:00")
+ * @param {string} timestamp - ISO 8601 timestamp string
  * @returns {boolean} True if the METAR is older than 1 hour
  */
-function isMetarTooOld(timestamp) {
-    if (!timestamp) return true; // Missing timestamp = too old
+export function isMetarTooOld(timestamp) {
+    if (!timestamp) return true;
     try {
         const metarTime = new Date(timestamp).getTime();
         const currentTime = new Date().getTime();
-        const agems = currentTime - metarTime;
-        if (agems > METAR_MAX_AGE_MS) {
-            console.warn(`METAR from ${timestamp} is ${Math.round(agems / 60000)} minutes old and will be rejected`);
+        const ageMs = currentTime - metarTime;
+        if (ageMs > METAR_MAX_AGE_MS) {
+            console.warn(`METAR from ${timestamp} is ${Math.round(ageMs / 60000)} minutes old and will be rejected`);
             return true;
         }
         return false;
     } catch {
         console.error(`Failed to parse METAR timestamp: ${timestamp}`);
-        return true; // Unparseable = too old
+        return true;
     }
 }
 
 /**
  * Extract and validate the embedded METAR time (DDHHMMZ format)
- * Returns the actual UTC time the METAR was issued
- * @param {string} metarString - Raw METAR string (e.g., "KCPS 280953Z AUTO...")
+ * @param {string} metarString - Raw METAR string
  * @returns {Date|null} Date object for the METAR time, or null if unparseable
  */
-function getMetarEmbeddedTime(metarString) {
+export function getMetarEmbeddedTime(metarString) {
     if (!metarString) return null;
 
-    // Extract DDHHMMZ pattern (e.g., "280953Z")
     const match = metarString.match(/(\d{2})(\d{2})(\d{2})Z/);
     if (!match) return null;
 
@@ -82,9 +80,6 @@ function getMetarEmbeddedTime(metarString) {
     const currentMonth = now.getUTCMonth();
     const currentYear = now.getUTCFullYear();
 
-    // METAR day-of-month is ambiguous across month boundaries.
-    // Build candidates for current month and previous month, then pick
-    // whichever is closer to "now" (within a reasonable window).
     const currentMonthDate = new Date(Date.UTC(currentYear, currentMonth, day, hour, minute, 0));
     const previousMonthDate = new Date(Date.UTC(currentYear, currentMonth - 1, day, hour, minute, 0));
 
@@ -93,7 +88,6 @@ function getMetarEmbeddedTime(metarString) {
 
     let metarDate = diffPrevious < diffCurrent ? previousMonthDate : currentMonthDate;
 
-    // Safety: if the best guess is still >48 hours away, fall back to current month
     const hoursDiff = Math.abs(metarDate.getTime() - now.getTime()) / (1000 * 60 * 60);
     if (hoursDiff > 48) {
         metarDate = currentMonthDate;
@@ -107,15 +101,15 @@ function getMetarEmbeddedTime(metarString) {
  * @param {string} metarString - Raw METAR string
  * @returns {boolean} True if the embedded METAR time is older than 1 hour
  */
-function isMetarStringTooOld(metarString) {
+export function isMetarStringTooOld(metarString) {
     const metarTime = getMetarEmbeddedTime(metarString);
-    if (!metarTime) return true; // Unparseable = too old
+    if (!metarTime) return true;
 
     const currentTime = new Date();
-    const agems = currentTime.getTime() - metarTime.getTime();
+    const ageMs = currentTime.getTime() - metarTime.getTime();
 
-    if (agems > METAR_MAX_AGE_MS) {
-        console.warn(`METAR "${metarString.substring(0, 40)}..." is ${Math.round(agems / 60000)} minutes old and will be rejected`);
+    if (ageMs > METAR_MAX_AGE_MS) {
+        console.warn(`METAR "${metarString.substring(0, 40)}..." is ${Math.round(ageMs / 60000)} minutes old and will be rejected`);
         return true;
     }
     return false;
@@ -123,12 +117,10 @@ function isMetarStringTooOld(metarString) {
 
 /**
  * Validate and clean weather data, rejecting stale KCPS METAR
- * If KCPS METAR is over 1 hour old (based on embedded timestamp),
- * all KCPS data is cleared to trigger fallback to KSTL
  * @param {Object} data - Weather data object with kcps and kstl properties
  * @returns {Object} Validated weather data object
  */
-function validateWeatherData(data) {
+export function validateWeatherData(data) {
     if (!data) return data;
 
     const validateStation = (key) => {
@@ -148,7 +140,6 @@ function validateWeatherData(data) {
         const diffMs = now.getTime() - metarTime.getTime();
         const diffMin = Math.round(diffMs / 60000);
 
-        // Reject if >1 hour old, or suspiciously in the future (>2 hrs)
         if (diffMin > 60) {
             data[key] = { ...station, rejectionReason: `stale (${diffMin} min ago)` };
         } else if (diffMin < -120) {
@@ -166,12 +157,11 @@ function validateWeatherData(data) {
 
 /**
  * Calculate relative humidity from temperature and dew point (Celsius)
- * Source: https://www.wpc.ncep.noaa.gov/html/temp2humid.shtml (simplified)
  * @param {number} T - Temperature in Celsius
  * @param {number} DP - Dew point in Celsius
  * @returns {number|null} Relative humidity as percentage
  */
-function calculateHumidity(T, DP) {
+export function calculateHumidity(T, DP) {
     if (T === null || DP === null) return null;
     const ES = 6.1078 * Math.exp((17.27 * T) / (T + 237.3));
     const E = 6.1078 * Math.exp((17.27 * DP) / (DP + 237.3));
@@ -180,13 +170,12 @@ function calculateHumidity(T, DP) {
 
 /**
  * Calculate heat index using Steadman's formula
- * Source: https://www.wpc.ncep.noaa.gov/html/heatindex_formula.shtml
  * @param {number} tempF - Temperature in Fahrenheit
  * @param {number} rh - Relative humidity as percentage
  * @returns {number|null} Heat index in Fahrenheit
  */
-function calculateHeatIndex(tempF, rh) {
-    if (tempF < 80) return tempF; // Heat index is same as temperature below 80F
+export function calculateHeatIndex(tempF, rh) {
+    if (tempF < 80) return tempF;
     if (rh === null) return null;
     const HI = -42.379 + (2.04901523 * tempF) + (10.14333127 * rh) - (0.22475541 * tempF * rh) -
         (0.00683783 * tempF * tempF) - (0.05481717 * rh * rh) +
@@ -200,7 +189,7 @@ function calculateHeatIndex(tempF, rh) {
  * @param {number} celsius - Temperature in Celsius
  * @returns {number|null} Temperature in Fahrenheit
  */
-function toFahrenheit(celsius) {
+export function toFahrenheit(celsius) {
     if (celsius === null) return null;
     return (celsius * 9 / 5) + 32;
 }
@@ -210,7 +199,7 @@ function toFahrenheit(celsius) {
  * @param {number} mph - Speed in miles per hour
  * @returns {number|null} Speed in knots
  */
-function toKnots(mph) {
+export function toKnots(mph) {
     if (mph === null) return null;
     return mph * 0.868976;
 }
@@ -220,21 +209,20 @@ function toKnots(mph) {
  * @param {number} knots - Speed in knots
  * @returns {number|null} Speed in miles per hour
  */
-function toMPH(knots) {
+export function toMPH(knots) {
     if (knots === null) return null;
     return knots / 0.868976;
 }
 
 /**
  * Get effective wind speed for calculations/restrictions.
- * Uses gust if present and greater than steady wind; otherwise uses steady wind.
  * @param {number|null|undefined} windSpeed - Steady-state wind in knots
  * @param {number|null|undefined} windGust - Wind gust in knots
  * @returns {number|null} Effective wind speed in knots or null if unavailable
  */
-function getEffectiveWindSpeed(windSpeed, windGust) {
+export function getEffectiveWindSpeed(windSpeed, windGust) {
     const hasGust = (windGust ?? 0) > 0;
-    const hasSpeed = windSpeed != null; // allow 0 as valid speed
+    const hasSpeed = windSpeed != null;
     if (!hasGust && !hasSpeed) return null;
     if (hasGust && (!hasSpeed || windGust > windSpeed)) return windGust;
     return windSpeed;
@@ -248,62 +236,144 @@ function getEffectiveWindSpeed(windSpeed, windGust) {
  * @param {number} windGust - Wind gust in knots (optional)
  * @returns {number|null} Crosswind component in knots
  */
-function calculateCrosswind(windDirection, windSpeed, runwayHeading, windGust = null) {
+export function calculateCrosswind(windDirection, windSpeed, runwayHeading, windGust = null) {
     if (windDirection == null) return null;
     const effectiveWindSpeed = getEffectiveWindSpeed(windSpeed, windGust);
     if (effectiveWindSpeed == null) return null;
     const angleDiff = Math.abs(windDirection - runwayHeading);
-    const effectiveAngle = angleDiff > 180 ? 360 - angleDiff : angleDiff; // Smallest angle
+    const effectiveAngle = angleDiff > 180 ? 360 - angleDiff : angleDiff;
     return effectiveWindSpeed * Math.sin(effectiveAngle * Math.PI / 180);
 }
 
 // ── Shared ceiling helpers ───────────────────────────────────────────────
-// Unified restriction threshold for ceiling (AGL, feet)
-const CEILING_RESTRICTION_AGL_FT = 1500;
+export const CEILING_RESTRICTION_AGL_FT = 1500;
 
 /**
  * Get ceiling in AGL format
- * Note: METAR cloud ceilings are already reported in AGL (Above Ground Level), not MSL
  * @param {number|null|undefined} cloudCeilingAGL - Cloud ceiling AGL (ft) or 99999 for clear
  * @returns {number|null} Ceiling AGL in feet, or null if no ceiling
  */
-function getCeilingAGL(cloudCeilingAGL) {
+export function getCeilingAGL(cloudCeilingAGL) {
     if (cloudCeilingAGL === undefined || cloudCeilingAGL === null) return null;
-    if (cloudCeilingAGL >= 99999) return null; // Clear/No ceiling
+    if (cloudCeilingAGL >= 99999) return null;
     return cloudCeilingAGL;
 }
 
 /**
  * Determine if ceiling imposes restrictions given a threshold
- * Note: METAR cloud ceilings are already in AGL, no elevation adjustment needed
  * @param {number|null|undefined} cloudCeilingAGL - Cloud ceiling AGL (ft)
- * @param {number} [thresholdFtAGL=CEILING_RESTRICTION_AGL_FT] - Threshold in feet AGL
+ * @param {number} thresholdFtAGL - Threshold in feet AGL
  * @returns {boolean} True if restricted
  */
-function isCeilingRestricted(cloudCeilingAGL, thresholdFtAGL = CEILING_RESTRICTION_AGL_FT) {
+export function isCeilingRestricted(cloudCeilingAGL, thresholdFtAGL = CEILING_RESTRICTION_AGL_FT) {
     const agl = getCeilingAGL(cloudCeilingAGL);
     return agl !== null && agl < thresholdFtAGL;
 }
 
-// Expose helpers to global scope for inline <script> usage
-window.CEILING_RESTRICTION_AGL_FT = CEILING_RESTRICTION_AGL_FT;
-window.getCeilingAGL = getCeilingAGL;
-window.isCeilingRestricted = isCeilingRestricted;
-
 // ── Shared visibility helpers ────────────────────────────────────────────
-// Unified visibility restriction threshold (statute miles)
-const VISIBILITY_RESTRICTION_SM = 3;
+export const VISIBILITY_RESTRICTION_SM = 3;
 
 /**
  * Determine if visibility imposes restrictions
  * @param {number|null|undefined} visibilitySM - Visibility in statute miles
- * @param {number} [thresholdSM=VISIBILITY_RESTRICTION_SM] - Threshold in SM
+ * @param {number} thresholdSM - Threshold in SM
  * @returns {boolean} True if restricted
  */
-function isVisibilityRestricted(visibilitySM, thresholdSM = VISIBILITY_RESTRICTION_SM) {
+export function isVisibilityRestricted(visibilitySM, thresholdSM = VISIBILITY_RESTRICTION_SM) {
     return visibilitySM != null && visibilitySM < thresholdSM;
 }
 
-// Expose to global
-window.VISIBILITY_RESTRICTION_SM = VISIBILITY_RESTRICTION_SM;
-window.isVisibilityRestricted = isVisibilityRestricted;
+// ── Shared validation helpers ────────────────────────────────────────────
+/**
+ * Check if KCPS METAR is valid and available
+ * @param {Object} data - Weather data object
+ * @returns {boolean} True if KCPS METAR is valid
+ */
+export function isKcpsMetarValid(data) {
+    if (!data?.kcps) return false;
+    const metar = data.kcps.metar;
+    return !!(metar && metar.trim().replace(/\0/g, '').length > 0 && !data.kcps.rejectionReason);
+}
+
+/**
+ * Check if KSTL METAR is valid and available
+ * @param {Object} data - Weather data object
+ * @returns {boolean} True if KSTL METAR is valid
+ */
+export function isKstlMetarValid(data) {
+    if (!data?.kstl) return false;
+    const metar = data.kstl.metar;
+    return !!(metar && metar.trim().replace(/\0/g, '').length > 0 && !data.kstl.rejectionReason);
+}
+
+/**
+ * Get effective weather data (KCPS if valid, otherwise KSTL)
+ * @param {Object} data - Weather data object
+ * @returns {Object|null} Effective weather data or null if neither station is valid
+ */
+export function getEffectiveWeatherData(data) {
+    if (!data) return null;
+    if (isKcpsMetarValid(data)) return data.kcps;
+    if (isKstlMetarValid(data)) return data.kstl;
+    return null;
+}
+
+// ── Shared time formatting helpers ──────────────────────────────────────
+/**
+ * Get METAR age text (e.g., "(12 min ago)", "(2 hrs ago)")
+ * @param {string} timestamp - ISO 8601 timestamp string
+ * @returns {string} Formatted time ago string
+ */
+export function getMinutesAgo(timestamp) {
+    if (!timestamp) return '';
+    
+    const metarTime = new Date(timestamp);
+    const now = new Date();
+    const diffMinutes = Math.floor((now - metarTime) / (1000 * 60));
+    
+    if (diffMinutes < 1) return '(< 1 min ago)';
+    if (diffMinutes < 60) return `(${diffMinutes} min${diffMinutes > 1 ? 's' : ''} ago)`;
+    
+    const hours = Math.floor(diffMinutes / 60);
+    const mins = diffMinutes % 60;
+    
+    if (hours === 1 && mins === 0) return '(1 hr ago)';
+    if (mins === 0) return `(${hours} hrs ago)`;
+    
+    if (hours >= 24) {
+        const dateStr = metarTime.toISOString().slice(0, 10);
+        const timeStr = metarTime.toISOString().slice(11, 16);
+        return `(Stale: ${dateStr} ${timeStr}Z)`;
+    }
+    
+    return `(${hours} hr${hours > 1 ? 's' : ''} ${mins} min${mins > 1 ? 's' : ''} ago)`;
+}
+
+/**
+ * Format update time display
+ * @param {Date|Object|null} timeData - Date object, timestamp string, or null
+ * @param {string} format - 'full' (default) or 'time-only'
+ * @returns {string} Formatted time string
+ */
+export function formatUpdateTime(timeData, format = 'full') {
+    if (!timeData) return 'N/A';
+    
+    const date = timeData instanceof Date ? timeData : new Date(timeData);
+    if (isNaN(date.getTime())) return 'N/A';
+    
+    if (format === 'time-only') {
+        return date.toLocaleTimeString([], { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+        });
+    }
+    
+    return date.toLocaleString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+    });
+}

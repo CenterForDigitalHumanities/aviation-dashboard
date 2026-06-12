@@ -140,10 +140,10 @@
         }
 
         .card.scrollable {
-                    overflow-y: auto;
-                    flex: 0 0 auto;
-                    max-height: 100%;
-                }
+            overflow-y: auto;
+            flex: 0 0 auto;
+            max-height: 100%;
+        }
 
         h2,
         h3 {
@@ -309,6 +309,7 @@
             background-color: #333333 !important;
             color: #fff !important;
         }
+
         body.dark-theme .embed-container [id^="metartaf-"]:hover,
         body.dark-theme .embed-container [id^="metartaf-"]:active,
         body.dark-theme .embed-container [id^="metartaf-"]:focus {
@@ -490,6 +491,7 @@
         }
 
         @media (max-width: 900px) {
+
             html,
             body {
                 height: auto;
@@ -636,7 +638,8 @@
             <div class="card scrollable">
                 <h2>Heat Index and Temperature Flight Restrictions</h2>
                 <p class="heat-note"><em>Based on KCPS METAR</em>
-                    <span id="heatFallbackBadge" class="fallback-badge" title="KCPS unavailable — using KSTL METAR">Using KSTL</span>
+                    <span id="heatFallbackBadge" class="fallback-badge"
+                        title="KCPS unavailable — using KSTL METAR">Using KSTL</span>
                 </p>
                 <table>
                     <thead>
@@ -688,7 +691,8 @@
 
             <div class="card">
                 <h2>Current Conditions (KCPS)
-                    <span id="fallbackBadge" class="fallback-badge" title="KCPS unavailable — using KSTL conditions">Using KSTL</span>
+                    <span id="fallbackBadge" class="fallback-badge"
+                        title="KCPS unavailable — using KSTL conditions">Using KSTL</span>
                 </h2>
                 <div class="current-conditions-grid">
                     <div class="conditions-col">
@@ -755,7 +759,9 @@
             <div class="card" style="flex-shrink: 0;">
                 <h2>St. Louis Downtown Airport</h2>
                 <div id="metar-embed-container" class="embed-container">
-                    <a href="https://metar-taf.com/metar/KCPS" id="metartaf-dashboard" style="font-size:18px; font-weight:500; color:#000; width:100%; height:100%; display:block">METAR St. Louis Downtown Airport</a>
+                    <a href="https://metar-taf.com/metar/KCPS" id="metartaf-dashboard"
+                        style="font-size:18px; font-weight:500; color:#000; width:100%; height:100%; display:block">METAR
+                        St. Louis Downtown Airport</a>
                 </div>
             </div>
         </div>
@@ -768,9 +774,21 @@
     </div>
 
     <!-- Shared weather utilities -->
-    <script src="shared-weather.js"></script>
+    <script type="module">
+        import {
+            fetchWeatherDataFromJSON,
+            isKcpsMetarValid,
+            isKstlMetarValid,
+            getEffectiveWeatherData,
+            formatUpdateTime,
+            calculateHeatIndex,
+            calculateHumidity,
+            getEffectiveWindSpeed,
+            calculateCrosswind,
+            isCeilingRestricted,
+            isVisibilityRestricted
+        } from './shared-weather.js';
 
-    <script>
         // Theme toggle functionality
         // KCPS approximate coordinates for sunrise/sunset estimation
         const KCPS_LAT = 38.5707;
@@ -984,8 +1002,8 @@
                 }
 
                 // Display METAR data
-                const kcpsMetarValid = !!(!data?.kcps.rejectionReason && data.kcps.metar?.trim().replace(/\0/g, '').length > 0);
-                const kstlMetarValid = !!(!data?.kstl.rejectionReason && data.kstl.metar?.trim().replace(/\0/g, '').length > 0);
+                const kcpsMetarValid = isKcpsMetarValid(data);
+                const kstlMetarValid = isKstlMetarValid(data);
 
                 if (kcpsMetarValid) {
                     document.getElementById("metarKCPS").innerText = data.kcps.metar.replace(/\0/g, '');
@@ -1016,7 +1034,7 @@
                 // Toggle strikethrough on KCPS references when using KSTL fallback
                 const heatNoteEm = document.querySelector('.heat-note em');
                 const currentConditionsH2 = document.getElementById('fallbackBadge')?.closest('h2');
-                
+
                 if (heatNoteEm) heatNoteEm.style.textDecoration = showFallback ? 'line-through' : 'none';
                 if (currentConditionsH2) currentConditionsH2.style.textDecoration = showFallback ? 'line-through' : 'none';
 
@@ -1106,7 +1124,7 @@
             // Note: METAR cloudCeiling is already in AGL (Above Ground Level)
             const visibilitySM = data.visibility;
             const effectiveWindSpeed = getEffectiveWindSpeed(data.windSpeed, data.windGust);
-            
+
             let crosswind12 = null;
             let crosswind30 = null;
             if (data.windDirection != null && data.windSpeed != null) {
@@ -1156,19 +1174,19 @@
             if (instCommVisibilityRestricted) instCommFactors.push('visibility below 3 SM');
             if (instCommSurfaceRestricted) instCommFactors.push('surface winds at or above 30 kt');
             if (instCommCrosswindRestricted) instCommFactors.push('crosswind above 20 kt');
-            
+
             // Student Pilot Restrictions (Ceiling unified to 1,500 ft AGL)
             setStatus('studentCeilingStatus', studentCeilingRestricted, 'RESTRICTED: Ceiling too low');
             setStatus('studentVisibilityStatus', studentVisibilityRestricted, 'RESTRICTED: Visibility too low');
             setStatus('studentSurfaceWindStatus', studentSurfaceRestricted, 'RESTRICTED: Surface winds too high');
             setStatus('studentCrosswindStatus', studentCrosswindRestricted, 'RESTRICTED: Crosswind too high');
-            
+
             // Private Pilot Restrictions (Ceiling unified to 1,500 ft AGL)
             setStatus('privateCeilingStatus', privateCeilingRestricted, 'RESTRICTED: Ceiling too low');
             setStatus('privateVisibilityStatus', privateVisibilityRestricted, 'RESTRICTED: Visibility too low');
             setStatus('privateSurfaceWindStatus', privateSurfaceRestricted, 'RESTRICTED: Surface winds too high');
             setStatus('privateCrosswindStatus', privateCrosswindRestricted, 'RESTRICTED: Crosswind too high');
-            
+
             // Instrument/Commercial Pilot Restrictions
             setStatus('instCommVisibilityStatus', instCommVisibilityRestricted, 'RESTRICTED: Visibility too low');
             setStatus('instCommCeilingStatus', instCommCeilingRestricted, 'RESTRICTED: Ceiling too low');
