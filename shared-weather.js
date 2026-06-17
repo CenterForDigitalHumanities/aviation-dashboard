@@ -13,7 +13,7 @@
 // Weather data is served from a public GitHub Gist, which provides permissive CORS headers.
 // The Gist is updated by GitHub Actions pulling from the AWC API.
 export const WEATHER_DATA_URL = "https://gist.githubusercontent.com/cubap/8559048ba1cac126b5eb03e56309e73f/raw/weather-data.json";
-export const METAR_MAX_AGE_MS = 60 * 60 * 1000; // 1 hour in milliseconds
+export const METAR_MAX_AGE_MS = 2 * 60 * 60 * 1000; // 2 hours — AWC API publishes METARs every ~30 min, workflow runs every 15 min
 
 /**
  * Fetch pre-parsed weather data from GitHub Gist
@@ -140,7 +140,7 @@ export function validateWeatherData(data) {
         const diffMs = now.getTime() - metarTime.getTime();
         const diffMin = Math.round(diffMs / 60000);
 
-        if (diffMin > 60) {
+        if (diffMin > 120) {
             data[key] = { ...station, rejectionReason: `stale (${diffMin} min ago)` };
         } else if (diffMin < -120) {
             data[key] = { ...station, rejectionReason: "invalid (future timestamp)" };
