@@ -1,29 +1,29 @@
 {
-  "lastUpdated": "2026-06-26T19:05:18.948166+00:00",
-  "kstl": {
-    "metar": "SPECI KSTL 261856Z 18007KT 10SM BKN017 BKN036 OVC075 26/22 A2994 RMK AO2 T02560217 $",
-    "windDirection": 180,
-    "windSpeed": 7,
-    "windGust": null,
-    "visibility": 10.0,
-    "temperatureC": 25.6,
-    "dewPointC": 21.7,
-    "cloudCeiling": 1700,
-    "altimeter": "A2994",
-    "timestamp": "2026-06-26T18:56:00.000Z",
-    "station": "KSTL"
-  },
+  "lastUpdated": "2026-06-26T19:51:08.914955+00:00",
   "kcps": {
-    "metar": "KCPS 261853Z 19004KT 10SM SCT018 BKN041 BKN048 26/22 A2994 RMK AO2 SLP133 T02610222 $",
-    "windDirection": 190,
+    "metar": "SPECI KCPS 261946Z 14004KT 10SM -RA BKN023 BKN030 OVC041 24/23 A2994 RMK AO2 RAB06 P0014 T02390228 $",
+    "windDirection": 140,
     "windSpeed": 4,
     "windGust": null,
     "visibility": 10.0,
-    "temperatureC": 26.1,
-    "dewPointC": 22.2,
-    "cloudCeiling": 4100,
+    "temperatureC": 23.9,
+    "dewPointC": 22.8,
+    "cloudCeiling": 2300,
     "altimeter": "A2994",
-    "timestamp": "2026-06-26T19:00:00.000Z",
+    "timestamp": "2026-06-26T19:46:00.000Z",
     "station": "KCPS"
+  },
+  "kstl": {
+    "metar": "SPECI KSTL 261940Z 17007KT 5SM R30R/4000VP6000FT -RA BR SCT017 BKN028 OVC041 24/22 A2994 RMK AO2 RAB20 P0009 T02390222 $",
+    "windDirection": 170,
+    "windSpeed": 7,
+    "windGust": null,
+    "visibility": 5.0,
+    "temperatureC": 23.9,
+    "dewPointC": 22.2,
+    "cloudCeiling": 2800,
+    "altimeter": "A2994",
+    "timestamp": "2026-06-26T19:40:00.000Z",
+    "station": "KSTL"
   }
 }
