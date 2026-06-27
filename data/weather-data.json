@@ -1,29 +1,29 @@
 {
-  "lastUpdated": "2026-06-27T19:07:55.067091+00:00",
-  "kcps": {
-    "metar": "KCPS 271853Z 14004KT 10SM VCTS FEW022 26/24 A2990 RMK AO2 LTG DSNT NW-NE RAE15 SLP120 P0000 T02610239 $",
-    "windDirection": 140,
+  "lastUpdated": "2026-06-27T19:44:00.975264+00:00",
+  "kstl": {
+    "metar": "SPECI KSTL 271911Z 34004KT 8SM -RA FEW027 SCT050 BKN095 BKN130 BKN250 24/23 A2990 RMK AO2 TSE11 P0005 T02440228 $",
+    "windDirection": 340,
     "windSpeed": 4,
     "windGust": null,
+    "visibility": 8.0,
+    "temperatureC": 24.4,
+    "dewPointC": 22.8,
+    "cloudCeiling": 9500,
+    "altimeter": "A2990",
+    "timestamp": "2026-06-27T19:11:00.000Z",
+    "station": "KSTL"
+  },
+  "kcps": {
+    "metar": "SPECI KCPS 271906Z 07005KT 10SM FEW009 27/24 A2990 RMK AO2 LTG DSNT NW-NE T02670239 $",
+    "windDirection": 70,
+    "windSpeed": 5,
+    "windGust": null,
     "visibility": 10.0,
-    "temperatureC": 26.1,
+    "temperatureC": 26.7,
     "dewPointC": 23.9,
     "cloudCeiling": null,
     "altimeter": "A2990",
-    "timestamp": "2026-06-27T19:00:00.000Z",
+    "timestamp": "2026-06-27T19:06:00.000Z",
     "station": "KCPS"
-  },
-  "kstl": {
-    "metar": "KSTL 271851Z 29013KT 9SM TSRA FEW027CB BKN036 BKN055 BKN250 23/22 A2991 RMK AO2 TSB13 SLP118 OCNL LTGIC NW-NE TS NW-NE MOV E P0069 T02330217 $",
-    "windDirection": 290,
-    "windSpeed": 13,
-    "windGust": null,
-    "visibility": 9.0,
-    "temperatureC": 23.3,
-    "dewPointC": 21.7,
-    "cloudCeiling": 3600,
-    "altimeter": "A2991",
-    "timestamp": "2026-06-27T19:00:00.000Z",
-    "station": "KSTL"
   }
 }
