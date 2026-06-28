@@ -1,16 +1,29 @@
 {
-  "lastUpdated": "2026-06-28T12:43:38.322367+00:00",
-  "kstl": {
-    "metar": "KSTL 281151Z 16004KT 10SM BKN055 BKN070 BKN250 26/23 A2988 RMK AO2 SLP106 70077 T02560228 10256 20233 52005 $",
-    "windDirection": 160,
-    "windSpeed": 4,
+  "lastUpdated": "2026-06-28T13:13:42.342702+00:00",
+  "kcps": {
+    "metar": "KCPS 281253Z 00000KT 10SM CLR 26/24 A2988 RMK AO2 SLP114 T02610239 $",
+    "windDirection": 0,
+    "windSpeed": 0,
     "windGust": null,
     "visibility": 10.0,
-    "temperatureC": 25.6,
-    "dewPointC": 22.8,
-    "cloudCeiling": 5500,
+    "temperatureC": 26.1,
+    "dewPointC": 23.9,
+    "cloudCeiling": null,
     "altimeter": "A2988",
-    "timestamp": "2026-06-28T12:00:00.000Z",
+    "timestamp": "2026-06-28T13:00:00.000Z",
+    "station": "KCPS"
+  },
+  "kstl": {
+    "metar": "KSTL 281251Z 21005KT 10SM BKN070 BKN250 27/23 A2989 RMK AO2 SLP107 T02720233 $",
+    "windDirection": 210,
+    "windSpeed": 5,
+    "windGust": null,
+    "visibility": 10.0,
+    "temperatureC": 27.2,
+    "dewPointC": 23.3,
+    "cloudCeiling": 7000,
+    "altimeter": "A2989",
+    "timestamp": "2026-06-28T13:00:00.000Z",
     "station": "KSTL"
   }
 }
