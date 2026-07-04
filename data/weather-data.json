@@ -1,29 +1,29 @@
 {
-  "lastUpdated": "2026-07-04T22:45:51.676011+00:00",
+  "lastUpdated": "2026-07-04T23:18:35.024811+00:00",
   "kcps": {
-    "metar": "SPECI KCPS 042237Z 29008G17KT 10SM VCTS -RA BKN100 BKN120 23/21 A2995 RMK AO2 LTG DSNT SE AND S TSE12B16E31 P0001 T02330206 $",
+    "metar": "SPECI KCPS 042313Z 29005G17KT 10SM -RA FEW080 SCT100 BKN120 23/21 A2991 RMK AO2 LTG DSNT NE AND E P0001 T02330206 $",
     "windDirection": 290,
-    "windSpeed": 8,
+    "windSpeed": 5,
     "windGust": 17,
     "visibility": 10.0,
     "temperatureC": 23.3,
     "dewPointC": 20.6,
-    "cloudCeiling": 10000,
-    "altimeter": "A2995",
-    "timestamp": "2026-07-04T22:37:00.000Z",
+    "cloudCeiling": 12000,
+    "altimeter": "A2991",
+    "timestamp": "2026-07-04T23:13:00.000Z",
     "station": "KCPS"
   },
   "kstl": {
-    "metar": "KSTL 042151Z 24018G31KT 10SM -TSRA FEW012 SCT055CB BKN110 BKN250 23/21 A2999 RMK AO2 PK WND 21042/2133 WSHFT 2043 RAE22B32 SLP144 FRQ LTGICCGCC S-W TS S-W MOV E P0079 T02280211 $",
-    "windDirection": 240,
-    "windSpeed": 18,
-    "windGust": 31,
+    "metar": "KSTL 042251Z 09006KT 10SM -RA FEW050 BKN130 OVC250 23/21 A2992 RMK AO2 RAE12B43 TSE50 PRESFR SLP122 P0000 T02330211 $",
+    "windDirection": 90,
+    "windSpeed": 6,
+    "windGust": null,
     "visibility": 10.0,
-    "temperatureC": 22.8,
+    "temperatureC": 23.3,
     "dewPointC": 21.1,
-    "cloudCeiling": 11000,
-    "altimeter": "A2999",
-    "timestamp": "2026-07-04T22:00:00.000Z",
+    "cloudCeiling": 13000,
+    "altimeter": "A2992",
+    "timestamp": "2026-07-04T23:00:00.000Z",
     "station": "KSTL"
   }
 }
