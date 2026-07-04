@@ -1,5 +1,18 @@
 {
-  "lastUpdated": "2026-07-04T19:54:18.353603+00:00",
+  "lastUpdated": "2026-07-04T20:18:35.250201+00:00",
+  "kcps": {
+    "metar": "SPECI KCPS 042008Z 19009G46KT 4SM +TSRA BKN015 BKN049 OVC060 26/20 A2995 RMK AO2 PK WND 36046/2001 WSHFT 1952 LTG DSNT W AND NW P0047 T02560200 $",
+    "windDirection": 190,
+    "windSpeed": 9,
+    "windGust": 46,
+    "visibility": 4.0,
+    "temperatureC": 25.6,
+    "dewPointC": 20,
+    "cloudCeiling": 1500,
+    "altimeter": "A2995",
+    "timestamp": "2026-07-04T20:08:00.000Z",
+    "station": "KCPS"
+  },
   "kstl": {
     "metar": "KSTL 041951Z 13008G15KT 8SM -RA SCT036 BKN090 BKN150 26/22 A2997 RMK AO2 PK WND 32027/1853 RAE23B42 TSE43 SLP137 P0027 T02610217 $",
     "windDirection": 130,
@@ -12,18 +25,5 @@
     "altimeter": "A2997",
     "timestamp": "2026-07-04T20:00:00.000Z",
     "station": "KSTL"
-  },
-  "kcps": {
-    "metar": "SPECI KCPS 041931Z 10SM TS FEW050 31/23 A2998 RMK AO2 LTG DSNT N AND NW TSB25 PRESRR T03060233 $",
-    "windDirection": null,
-    "windSpeed": null,
-    "windGust": null,
-    "visibility": 10.0,
-    "temperatureC": 30.6,
-    "dewPointC": 23.3,
-    "cloudCeiling": null,
-    "altimeter": "A2998",
-    "timestamp": "2026-07-04T19:31:00.000Z",
-    "station": "KCPS"
   }
 }
