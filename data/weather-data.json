@@ -1,29 +1,29 @@
 {
-  "lastUpdated": "2026-07-11T11:45:28.531575+00:00",
-  "kcps": {
-    "metar": "KCPS 111053Z AUTO 00000KT 10SM OVC034 22/21 A2994 RMK AO2 RAE21 SLP134 P0002 T02170211 $",
-    "windDirection": 0,
-    "windSpeed": 0,
-    "windGust": null,
-    "visibility": 10.0,
-    "temperatureC": 21.7,
-    "dewPointC": 21.1,
-    "cloudCeiling": 3400,
-    "altimeter": "A2994",
-    "timestamp": "2026-07-11T11:00:00.000Z",
-    "station": "KCPS"
-  },
+  "lastUpdated": "2026-07-11T12:14:54.980467+00:00",
   "kstl": {
-    "metar": "KSTL 111051Z 15004KT 10SM OVC023 22/21 A2994 RMK AO2 RAE16 SLP125 P0000 T02220206 $",
-    "windDirection": 150,
+    "metar": "SPECI KSTL 111212Z 19008KT 1/2SM R30R/3500VP6000FT +TSRA FG BKN013CB OVC017 22/22 A2998 RMK AO2 TSB08 OCNL LTGIC SW TS SW MOV E P0001 T02220217 $",
+    "windDirection": 190,
+    "windSpeed": 8,
+    "windGust": null,
+    "visibility": 0.5,
+    "temperatureC": 22.2,
+    "dewPointC": 21.7,
+    "cloudCeiling": 1300,
+    "altimeter": "A2998",
+    "timestamp": "2026-07-11T12:12:00.000Z",
+    "station": "KSTL"
+  },
+  "kcps": {
+    "metar": "SPECI KCPS 111204Z VRB04KT 10SM BKN029 OVC039 23/22 A2996 RMK AO2 LTG DSNT N AND W T02280217 $",
+    "windDirection": "VRB",
     "windSpeed": 4,
     "windGust": null,
     "visibility": 10.0,
-    "temperatureC": 22.2,
-    "dewPointC": 20.6,
-    "cloudCeiling": 2300,
-    "altimeter": "A2994",
-    "timestamp": "2026-07-11T11:00:00.000Z",
-    "station": "KSTL"
+    "temperatureC": 22.8,
+    "dewPointC": 21.7,
+    "cloudCeiling": 2900,
+    "altimeter": "A2996",
+    "timestamp": "2026-07-11T12:04:00.000Z",
+    "station": "KCPS"
   }
 }
