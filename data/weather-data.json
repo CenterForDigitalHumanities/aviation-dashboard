@@ -1,29 +1,29 @@
 {
-  "lastUpdated": "2026-07-20T06:30:09.218937+00:00",
+  "lastUpdated": "2026-07-20T07:44:40.293690+00:00",
   "kcps": {
-    "metar": "KCPS 200553Z AUTO 00000KT 7SM BKN042 24/22 A2993 RMK AO2 SLP131 T02390222 10300 20239 403220239 56002 $",
+    "metar": "KCPS 200653Z AUTO 00000KT 6SM HZ CLR 24/22 A2992 RMK AO2 SLP129 T02440217 $",
     "windDirection": 0,
     "windSpeed": 0,
     "windGust": null,
-    "visibility": 7.0,
-    "temperatureC": 23.9,
-    "dewPointC": 22.2,
-    "cloudCeiling": 4200,
-    "altimeter": "A2993",
-    "timestamp": "2026-07-20T06:00:00.000Z",
+    "visibility": 6.0,
+    "temperatureC": 24.4,
+    "dewPointC": 21.7,
+    "cloudCeiling": null,
+    "altimeter": "A2992",
+    "timestamp": "2026-07-20T07:00:00.000Z",
     "station": "KCPS"
   },
   "kstl": {
-    "metar": "KSTL 200551Z COR 07005KT 7SM SCT050 26/21 A2995 RMK AO2 SLP129 T02560211 10300 20256 403170250 55001",
-    "windDirection": 70,
-    "windSpeed": 5,
+    "metar": "KSTL 200651Z COR 09004KT 7SM CLR 24/21 A2994 RMK AO2 SLP125 T02440211",
+    "windDirection": 90,
+    "windSpeed": 4,
     "windGust": null,
     "visibility": 7.0,
-    "temperatureC": 25.6,
+    "temperatureC": 24.4,
     "dewPointC": 21.1,
     "cloudCeiling": null,
-    "altimeter": "A2995",
-    "timestamp": "2026-07-20T06:00:00.000Z",
+    "altimeter": "A2994",
+    "timestamp": "2026-07-20T07:00:00.000Z",
     "station": "KSTL"
   }
 }
