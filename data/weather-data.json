@@ -1,29 +1,29 @@
 {
-  "lastUpdated": "2026-08-01T00:55:11.464416+00:00",
+  "lastUpdated": "2026-08-01T01:32:03.771512+00:00",
   "kstl": {
-    "metar": "KSTL 010051Z AUTO 16014G22KT 10SM OVC011 24/22 A2977 RMK AO2 SLP069 T02440217 $",
-    "windDirection": 160,
-    "windSpeed": 14,
-    "windGust": 22,
-    "visibility": 10.0,
-    "temperatureC": 24.4,
-    "dewPointC": 21.7,
-    "cloudCeiling": 1100,
-    "altimeter": "A2977",
-    "timestamp": "2026-08-01T01:00:00.000Z",
-    "station": "KSTL"
-  },
-  "kcps": {
-    "metar": "KCPS 312353Z 16005KT 10SM OVC012 24/22 A2979 RMK AO2 RAE2254B32E35 SLP082 P0000 60004 T02390222 10261 20222 56020 $",
-    "windDirection": 160,
-    "windSpeed": 5,
+    "metar": "SPECI KSTL 010126Z AUTO 18012KT 10SM VCTS BKN011 24/22 A2975 RMK AO2 LTG DSNT SW-NW RAB02E11 P0000 T02390222 $",
+    "windDirection": 180,
+    "windSpeed": 12,
     "windGust": null,
     "visibility": 10.0,
     "temperatureC": 23.9,
     "dewPointC": 22.2,
-    "cloudCeiling": 1200,
-    "altimeter": "A2979",
-    "timestamp": "2026-08-01T00:00:00.000Z",
+    "cloudCeiling": 1100,
+    "altimeter": "A2975",
+    "timestamp": "2026-08-01T01:26:00.000Z",
+    "station": "KSTL"
+  },
+  "kcps": {
+    "metar": "KCPS 010053Z 17007KT 10SM OVC010 24/22 A2977 RMK AO2 SLP077 T02390222 $",
+    "windDirection": 170,
+    "windSpeed": 7,
+    "windGust": null,
+    "visibility": 10.0,
+    "temperatureC": 23.9,
+    "dewPointC": 22.2,
+    "cloudCeiling": 1000,
+    "altimeter": "A2977",
+    "timestamp": "2026-08-01T01:00:00.000Z",
     "station": "KCPS"
   }
 }
