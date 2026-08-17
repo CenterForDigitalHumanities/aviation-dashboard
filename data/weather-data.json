@@ -1,16 +1,16 @@
 {
-  "lastUpdated": "2026-08-17T03:05:15.934832+00:00",
+  "lastUpdated": "2026-08-17T03:30:48.394116+00:00",
   "kcps": {
-    "metar": "SPECI KCPS 170258Z AUTO 36019G33KT 1 1/4SM +TSRA BR 23/22 A2999 RMK AO2 PK WND 34033/0250 LTG DSNT ALQDS RAB50 TSB25E48 P0023 T02330222 $",
-    "windDirection": 360,
-    "windSpeed": 19,
-    "windGust": 33,
-    "visibility": 1.25,
+    "metar": "SPECI KCPS 170320Z AUTO VRB05KT 10SM -TSRA BKN021 23/22 A2999 RMK AO2 PK WND 34033/0250 LTG DSNT ALQDS RAB0250 TSB0225E0248E13B15 P0041 T02330217 $",
+    "windDirection": "VRB",
+    "windSpeed": 5,
+    "windGust": null,
+    "visibility": 10.0,
     "temperatureC": 23.3,
-    "dewPointC": 22.2,
-    "cloudCeiling": null,
+    "dewPointC": 21.7,
+    "cloudCeiling": 2100,
     "altimeter": "A2999",
-    "timestamp": "2026-08-17T02:58:00.000Z",
+    "timestamp": "2026-08-17T03:20:00.000Z",
     "station": "KCPS"
   },
   "kstl": {
