@@ -1,29 +1,29 @@
 {
-  "lastUpdated": "2026-08-22T17:49:36.453754+00:00",
-  "kcps": {
-    "metar": "KCPS 221653Z 35008KT 10SM CLR 27/19 A3006 RMK AO2 SLP174 T02720189 $",
-    "windDirection": 350,
-    "windSpeed": 8,
+  "lastUpdated": "2026-08-22T18:02:16.930546+00:00",
+  "kstl": {
+    "metar": "KSTL 221751Z COR 31011KT 10SM FEW120 SCT250 28/18 A3007 RMK AO2 SLP170 T02830178 10289 20222 50008",
+    "windDirection": 310,
+    "windSpeed": 11,
     "windGust": null,
     "visibility": 10.0,
-    "temperatureC": 27.2,
-    "dewPointC": 18.9,
-    "cloudCeiling": null,
-    "altimeter": "A3006",
-    "timestamp": "2026-08-22T17:00:00.000Z",
-    "station": "KCPS"
-  },
-  "kstl": {
-    "metar": "KSTL 221651Z COR 34011G18KT 10SM FEW120 SCT250 28/19 A3007 RMK AO2 SLP171 T02780189",
-    "windDirection": 340,
-    "windSpeed": 11,
-    "windGust": 18,
-    "visibility": 10.0,
-    "temperatureC": 27.8,
-    "dewPointC": 18.9,
+    "temperatureC": 28.3,
+    "dewPointC": 17.8,
     "cloudCeiling": null,
     "altimeter": "A3007",
-    "timestamp": "2026-08-22T17:00:00.000Z",
+    "timestamp": "2026-08-22T18:00:00.000Z",
     "station": "KSTL"
+  },
+  "kcps": {
+    "metar": "KCPS 221753Z 34012KT 10SM CLR 29/18 A3005 RMK AO2 SLP171 T02890183 10289 20217 50005 $",
+    "windDirection": 340,
+    "windSpeed": 12,
+    "windGust": null,
+    "visibility": 10.0,
+    "temperatureC": 28.9,
+    "dewPointC": 18.3,
+    "cloudCeiling": null,
+    "altimeter": "A3005",
+    "timestamp": "2026-08-22T18:00:00.000Z",
+    "station": "KCPS"
   }
 }
