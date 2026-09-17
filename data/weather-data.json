@@ -1,29 +1,29 @@
 {
-  "lastUpdated": "2026-09-17T21:46:02.571343+00:00",
+  "lastUpdated": "2026-09-17T22:03:09.600455+00:00",
+  "kstl": {
+    "metar": "KSTL 172151Z COR 30008KT 10SM SCT060 SCT110 BKN250 35/20 A3014 RMK AO2 CB DSNT W-N MOV E SLP194 T03610200 56021 $",
+    "windDirection": 300,
+    "windSpeed": 8,
+    "windGust": null,
+    "visibility": 10.0,
+    "temperatureC": 35,
+    "dewPointC": 20,
+    "cloudCeiling": 25000,
+    "altimeter": "A3014",
+    "timestamp": "2026-09-17T22:00:00.000Z",
+    "station": "KSTL"
+  },
   "kcps": {
-    "metar": "KCPS 172053Z VRB03KT 10SM CLR 36/21 A3013 RMK AO2 LTG DSNT NE AND NW SLP199 T03610211 56022 $",
-    "windDirection": "VRB",
-    "windSpeed": 3,
+    "metar": "KCPS 172153Z 20006KT 10SM CLR 36/21 A3013 RMK AO2 SLP197 T03610211 $",
+    "windDirection": 200,
+    "windSpeed": 6,
     "windGust": null,
     "visibility": 10.0,
     "temperatureC": 36.1,
     "dewPointC": 21.1,
     "cloudCeiling": null,
     "altimeter": "A3013",
-    "timestamp": "2026-09-17T21:00:00.000Z",
+    "timestamp": "2026-09-17T22:00:00.000Z",
     "station": "KCPS"
-  },
-  "kstl": {
-    "metar": "KSTL 172051Z COR VRB06KT 10SM SCT060 SCT110 SCT250 36/20 A3015 RMK AO2 CB DSNT W-N MOV E SLP194 T03610200 56021 $",
-    "windDirection": "VRB",
-    "windSpeed": 6,
-    "windGust": null,
-    "visibility": 10.0,
-    "temperatureC": 36.1,
-    "dewPointC": 20,
-    "cloudCeiling": null,
-    "altimeter": "A3015",
-    "timestamp": "2026-09-17T21:00:00.000Z",
-    "station": "KSTL"
   }
 }
