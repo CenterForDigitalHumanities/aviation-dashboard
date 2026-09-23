@@ -1,18 +1,5 @@
 {
-  "lastUpdated": "2026-09-23T10:24:52.573929+00:00",
-  "kstl": {
-    "metar": "KSTL 230951Z COR 01003KT 10SM FEW022 SCT080 14/12 A3025 RMK AO2 SLP238 T01440122 $",
-    "windDirection": 10,
-    "windSpeed": 3,
-    "windGust": null,
-    "visibility": 10.0,
-    "temperatureC": 14.4,
-    "dewPointC": 12.2,
-    "cloudCeiling": null,
-    "altimeter": "A3025",
-    "timestamp": "2026-09-23T10:00:00.000Z",
-    "station": "KSTL"
-  },
+  "lastUpdated": "2026-09-23T10:35:03.394477+00:00",
   "kcps": {
     "metar": "KCPS 230953Z AUTO 36003KT 10SM CLR 14/12 A3024 RMK AO2 SLP237 T01390122 $",
     "windDirection": 360,
@@ -25,5 +12,18 @@
     "altimeter": "A3024",
     "timestamp": "2026-09-23T10:00:00.000Z",
     "station": "KCPS"
+  },
+  "kstl": {
+    "metar": "KSTL 230951Z COR 01003KT 10SM FEW022 SCT080 14/12 A3025 RMK AO2 SLP238 T01440122 $",
+    "windDirection": 10,
+    "windSpeed": 3,
+    "windGust": null,
+    "visibility": 10.0,
+    "temperatureC": 14.4,
+    "dewPointC": 12.2,
+    "cloudCeiling": null,
+    "altimeter": "A3025",
+    "timestamp": "2026-09-23T10:00:00.000Z",
+    "station": "KSTL"
   }
 }
