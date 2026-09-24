@@ -1,29 +1,29 @@
 {
-  "lastUpdated": "2026-09-24T05:47:22.440814+00:00",
+  "lastUpdated": "2026-09-24T06:06:26.777161+00:00",
   "kcps": {
-    "metar": "KCPS 240453Z AUTO 05008KT 10SM OVC028 18/13 A3028 RMK AO2 SLP252 T01830128 $",
-    "windDirection": 50,
-    "windSpeed": 8,
-    "windGust": null,
-    "visibility": 10.0,
-    "temperatureC": 18.3,
-    "dewPointC": 12.8,
-    "cloudCeiling": 2800,
-    "altimeter": "A3028",
-    "timestamp": "2026-09-24T05:00:00.000Z",
-    "station": "KCPS"
-  },
-  "kstl": {
-    "metar": "KSTL 240451Z COR 08008KT 10SM OVC029 18/13 A3029 RMK AO2 SLP250 T01830128 $",
+    "metar": "KCPS 240553Z AUTO 08008KT 10SM OVC026 18/13 A3027 RMK AO2 SLP250 T01780128 10194 20178 402220139 50000 $",
     "windDirection": 80,
     "windSpeed": 8,
     "windGust": null,
     "visibility": 10.0,
-    "temperatureC": 18.3,
+    "temperatureC": 17.8,
     "dewPointC": 12.8,
-    "cloudCeiling": 2900,
-    "altimeter": "A3029",
-    "timestamp": "2026-09-24T05:00:00.000Z",
+    "cloudCeiling": 2600,
+    "altimeter": "A3027",
+    "timestamp": "2026-09-24T06:00:00.000Z",
+    "station": "KCPS"
+  },
+  "kstl": {
+    "metar": "KSTL 240551Z COR 06007KT 10SM OVC025 18/13 A3028 RMK AO2 SLP248 T01780128 10200 20178 402110133 58000 $",
+    "windDirection": 60,
+    "windSpeed": 7,
+    "windGust": null,
+    "visibility": 10.0,
+    "temperatureC": 17.8,
+    "dewPointC": 12.8,
+    "cloudCeiling": 2500,
+    "altimeter": "A3028",
+    "timestamp": "2026-09-24T06:00:00.000Z",
     "station": "KSTL"
   }
 }
