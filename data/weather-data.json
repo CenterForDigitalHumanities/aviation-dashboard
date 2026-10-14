@@ -1,29 +1,29 @@
 {
-  "lastUpdated": "2026-10-14T05:48:52.745402+00:00",
-  "kstl": {
-    "metar": "KSTL 140451Z COR 22010KT 10SM FEW055 SCT200 27/22 A2995 RMK AO2 SLP128 T02720217 $",
-    "windDirection": 220,
-    "windSpeed": 10,
-    "windGust": null,
-    "visibility": 10.0,
-    "temperatureC": 27.2,
-    "dewPointC": 21.7,
-    "cloudCeiling": null,
-    "altimeter": "A2995",
-    "timestamp": "2026-10-14T05:00:00.000Z",
-    "station": "KSTL"
-  },
+  "lastUpdated": "2026-10-14T06:38:04.779468+00:00",
   "kcps": {
-    "metar": "KCPS 140453Z AUTO 23004KT 10SM CLR 27/22 A2994 RMK AO2 SLP135 T02670217 $",
-    "windDirection": 230,
-    "windSpeed": 4,
+    "metar": "KCPS 140553Z AUTO 22005KT 10SM BKN075 27/22 A2994 RMK AO2 SLP134 T02670217 10294 20261 403440172 50011 $",
+    "windDirection": 220,
+    "windSpeed": 5,
     "windGust": null,
     "visibility": 10.0,
     "temperatureC": 26.7,
     "dewPointC": 21.7,
-    "cloudCeiling": null,
+    "cloudCeiling": 7500,
     "altimeter": "A2994",
-    "timestamp": "2026-10-14T05:00:00.000Z",
+    "timestamp": "2026-10-14T06:00:00.000Z",
     "station": "KCPS"
+  },
+  "kstl": {
+    "metar": "KSTL 140551Z COR 32010G22KT 10SM BKN035 BKN055 BKN200 27/20 A2998 RMK AO2 PK WND 28036/0534 WSHFT 0529 SLP136 T02670200 10311 20267 403390217 50016 $",
+    "windDirection": 320,
+    "windSpeed": 10,
+    "windGust": 22,
+    "visibility": 10.0,
+    "temperatureC": 26.7,
+    "dewPointC": 20,
+    "cloudCeiling": 3500,
+    "altimeter": "A2998",
+    "timestamp": "2026-10-14T06:00:00.000Z",
+    "station": "KSTL"
   }
 }
