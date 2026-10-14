@@ -1,29 +1,29 @@
 {
-  "lastUpdated": "2026-10-14T09:50:07.659647+00:00",
+  "lastUpdated": "2026-10-14T10:03:37.674816+00:00",
   "kcps": {
-    "metar": "SPECI KCPS 140937Z AUTO 34012G21KT 6SM -TSRA BR 22/21 A2996 RMK AO2 LTG DSNT SW-N RAB12B28 TSB10E27 P0033 T02170211 $",
-    "windDirection": 340,
-    "windSpeed": 12,
-    "windGust": 21,
-    "visibility": 6.0,
+    "metar": "KCPS 140953Z AUTO 36006KT 10SM VCTS -RA 22/21 A2996 RMK AO2 LTG DSNT ALQDS RAB12B28 TSB10E27E48 SLP140 P0033 T02170211 $",
+    "windDirection": 360,
+    "windSpeed": 6,
+    "windGust": null,
+    "visibility": 10.0,
     "temperatureC": 21.7,
     "dewPointC": 21.1,
     "cloudCeiling": null,
     "altimeter": "A2996",
-    "timestamp": "2026-10-14T09:37:00.000Z",
+    "timestamp": "2026-10-14T10:00:00.000Z",
     "station": "KCPS"
   },
   "kstl": {
-    "metar": "SPECI KSTL 140943Z COR 02008KT 10SM FEW004 SCT027 SCT090 OVC150 21/21 A2995 RMK AO2 PK WND 28029/0905 FRQ LTGICCCCG DSNT NE-S RAB0857E38 TSE42 CB DSNT NE-S MOV NE P0073 T02110206 $",
-    "windDirection": 20,
-    "windSpeed": 8,
+    "metar": "KSTL 140951Z COR 00000KT 10SM FEW005 SCT044 SCT095 OVC150 21/21 A2997 RMK AO2 PK WND 28029/0905 FRQ LTGICCG DSNT NE-SE RAB0857E38 TSE42 CB DSNT NE-SE MOV NE SLP134 P0073 T02110206 $",
+    "windDirection": 0,
+    "windSpeed": 0,
     "windGust": null,
     "visibility": 10.0,
     "temperatureC": 21.1,
     "dewPointC": 20.6,
     "cloudCeiling": 15000,
-    "altimeter": "A2995",
-    "timestamp": "2026-10-14T09:43:00.000Z",
+    "altimeter": "A2997",
+    "timestamp": "2026-10-14T10:00:00.000Z",
     "station": "KSTL"
   }
 }
