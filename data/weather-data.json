@@ -1,29 +1,29 @@
 {
-  "lastUpdated": "2026-10-30T01:46:06.434546+00:00",
+  "lastUpdated": "2026-10-30T02:03:48.022168+00:00",
   "kcps": {
-    "metar": "SPECI KCPS 300133Z 09010KT 10SM FEW055 FEW080 BKN100 21/17 A3015 RMK AO2 PK WND 36027/0101 WSHFT 0103 LTG DSNT NE AND NW RAB04E21 TSE0055B12E27 P0001 T02060167 $",
-    "windDirection": 90,
-    "windSpeed": 10,
+    "metar": "KCPS 300153Z 04005KT 10SM BKN060 BKN100 21/17 A3016 RMK AO2 PK WND 36027/0101 WSHFT 0103 RAB04E21 TSE0055B12E27 SLP213 P0001 T02110172 $",
+    "windDirection": 40,
+    "windSpeed": 5,
     "windGust": null,
     "visibility": 10.0,
-    "temperatureC": 20.6,
-    "dewPointC": 16.7,
-    "cloudCeiling": 10000,
-    "altimeter": "A3015",
-    "timestamp": "2026-10-30T01:33:00.000Z",
+    "temperatureC": 21.1,
+    "dewPointC": 17.2,
+    "cloudCeiling": 6000,
+    "altimeter": "A3016",
+    "timestamp": "2026-10-30T02:00:00.000Z",
     "station": "KCPS"
   },
   "kstl": {
-    "metar": "SPECI KSTL 300130Z COR 05004KT 10SM TS SCT055CB BKN110 OVC200 21/18 A3017 RMK AO2 OCNL LTGCC SE-W TS SE-W MOV SE T02110178 $",
-    "windDirection": 50,
-    "windSpeed": 4,
+    "metar": "KSTL 300151Z COR 02003KT 10SM FEW055 BKN110 OVC200 21/18 A3018 RMK AO2 OCNL LTGIC DSNT S-SW CB DSNT S-SW MOV SE AO2 SLP212 T02110178 $",
+    "windDirection": 20,
+    "windSpeed": 3,
     "windGust": null,
     "visibility": 10.0,
     "temperatureC": 21.1,
     "dewPointC": 17.8,
     "cloudCeiling": 11000,
-    "altimeter": "A3017",
-    "timestamp": "2026-10-30T01:30:00.000Z",
+    "altimeter": "A3018",
+    "timestamp": "2026-10-30T02:00:00.000Z",
     "station": "KSTL"
   }
 }
